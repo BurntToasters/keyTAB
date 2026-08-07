@@ -1,42 +1,31 @@
 {
+  "name": "keytab",
   "private": true,
-  "name": "alt-tab-macos",
+  "type": "module",
   "version": "1.0.0",
-  "author": "",
-  "license": "MIT",
-  "husky": {
-    "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "*.swift": [
-      "node scripts/swiftformat.js --lint"
-    ]
+  "buildNumber": 1,
+  "license": "GPL-3.0-only",
+  "engines": {
+    "node": ">=22.12"
   },
   "scripts": {
-    "format": "node scripts/swiftformat.js",
-    "format:check": "node scripts/swiftformat.js --lint"
-  },
-  "devDependencies": {
-    "@commitlint/cli": "^8.1.0",
-    "@commitlint/config-conventional": "^8.1.0",
-    "@semantic-release/changelog": "^3.0.4",
-    "@semantic-release/git": "^7.0.16",
-    "fontkit": "^1.8.0",
-    "glob": "^10.0.0",
-    "husky": "^3.0.4",
-    "lint-staged": "^13.0.0",
-    "marked": "^0.8.0",
-    "semantic-release": "^15.13.24"
-  },
-  "engines": {
-    "node": ">=18.0.0"
-  },
-  "dependencies": {
-    "@types/node": "^22.10.2",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.7.2"
+    "sync-version": "node scripts/sync-version.mjs",
+    "validate": "node scripts/validate.mjs",
+    "build:debug": "node scripts/build.mjs debug",
+    "test:node": "node --test scripts/tests/*.test.mjs",
+    "test:all": "node scripts/test-all.mjs",
+    "workspace:bootstrap": "npm ci --ignore-scripts && npm run sync-version",
+    "workspace:prepare": "npm run workspace:bootstrap && npm run test:all",
+    "release:preflight": "node scripts/release-preflight.mjs --release",
+    "release:prepare": "node scripts/release.mjs prepare",
+    "release:session:verify": "node scripts/release-session.mjs verify",
+    "release:mac:continue": "npm run release:session:verify && node scripts/release.mjs continue",
+    "release:mac:resume": "npm run release:preflight && npm run release:mac:continue",
+    "release:mac": "npm run release:preflight && npm run release:prepare && npm run release:mac:continue",
+    "mac:ssh:keychain": "bash scripts/mac-keychain-ssh.sh",
+    "release:mac:ssh": "npm run mac:ssh:keychain && npm run release:mac",
+    "release:mac:ssh:resume": "npm run mac:ssh:keychain && npm run release:mac:resume",
+    "release:publish": "node scripts/release.mjs publish",
+    "release:verify:published": "node scripts/release.mjs verify-published"
   }
 }

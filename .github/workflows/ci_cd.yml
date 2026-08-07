@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: [main, beta]
+  pull_request:
+    branches: [main, beta]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.12
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm run sync-version -- --check
+      - run: npm run validate
+      - run: npm run test:all
+      - run: KEYTAB_UNSIGNED_BUILD=1 npm run build:debug

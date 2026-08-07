@@ -1,18 +1,5 @@
-## Acknowledgments
+# Acknowledgments
 
-These third-party libraries are used:
+KeyTab builds on AltTab v11.4.4 by Louis Pontoise and its contributors. See `NOTICE.md` and `contributors.md` for provenance.
 
-**ShortcutRecorder**
-[Website](https://github.com/Kentzo/ShortcutRecorder) - [CC 4.0 License](https://github.com/Kentzo/ShortcutRecorder/blob/master/LICENSE.txt)
-
-**Sparkle**
-[Website](https://github.com/sparkle-project/Sparkle) - [License](https://github.com/sparkle-project/Sparkle/blob/master/LICENSE)
-
-**LetsMove**
-[Website](https://github.com/potionfactory/LetsMove) - [Public domain](https://github.com/potionfactory/LetsMove#license)
-
-**AppCenter**
-[Website](https://github.com/microsoft/appcenter-sdk-apple) - [Custom](https://github.com/microsoft/appcenter-sdk-apple/blob/develop/LICENSE)
-
-**SwiftyBeaver**
-[Website](https://github.com/SwiftyBeaver/SwiftyBeaver) - [MIT License](https://github.com/SwiftyBeaver/SwiftyBeaver/blob/master/LICENSE)
+KeyTab also includes Sparkle 2.9.1 and ShortcutRecorder. Complete dependency attribution and exact license texts are bundled with the app and documented in `THIRD_PARTY_NOTICES.md`.

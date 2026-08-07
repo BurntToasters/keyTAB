@@ -1,7 +1,4 @@
 #!/bin/bash
+set -euo pipefail
 
-xcodebuild \
-  -workspace alt-tab-macos.xcworkspace \
-  -scheme Debug \
-  -configuration Debug \
-  -derivedDataPath ~/git/alt-tab-macos/DerivedData
+npm run build:debug
