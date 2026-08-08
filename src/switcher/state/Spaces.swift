@@ -17,10 +17,9 @@ class Spaces {
     /// captured on main first (`NSScreen.main` is main-only) and threaded through. See #5721: this is what
     /// lets the expensive Space refresh run off the switcher's render path.
     struct Snapshot {
-        let managedDisplaySpaces: [NSDictionary]
+        let topology: [SpaceTopologyParser.Display]?
         let currentSpaceId: CGSSpaceID?
         let windowToSpacesMap: [CGWindowID: [CGSSpaceID]]
-        let mainScreenUuid: ScreenUuid?
     }
 
     static func mainScreenUuid() -> ScreenUuid? {
@@ -30,26 +29,31 @@ class Spaces {
     /// OFF-MAIN safe: only CGS calls + pure parsing of their results. `includeWindowMap` adds the per-Space
     /// `windowsInSpaces` fan-out (only the per-window membership refresh needs it).
     static func query(_ mainScreenUuid: ScreenUuid?, includeWindowMap: Bool) -> Snapshot {
-        let raw = CGSCopyManagedDisplaySpaces(CGS_CONNECTION) as! [NSDictionary]
+        let raw = CGSCopyManagedDisplaySpaces(CGS_CONNECTION) as? [NSDictionary] ?? []
+        let topology = SpaceTopologyParser.parse(raw, mainDisplayIdentifier: mainScreenUuid.map { $0 as String })
         // rare scenario: NSScreen.main is nil → no uuid → keep the previous current Space (nil here)
         let current = mainScreenUuid.map { CGSManagedDisplayGetCurrentSpace(CGS_CONNECTION, $0) }
         var map = [CGWindowID: [CGSSpaceID]]()
         if includeWindowMap {
             // one query per Space, inverted, so N per-window CGSCopySpacesForWindows calls become M per-Space calls
-            let allSpaceIds = raw.flatMap { ($0["Spaces"] as! [NSDictionary]).map { $0["id64"] as! CGSSpaceID } }
+            let allSpaceIds = topology?.flatMap(\.spaceIds) ?? []
             for spaceId in allSpaceIds {
                 for wid in CGSCallScheduler.windowsInSpaces([spaceId]) {
                     map[wid, default: []].append(spaceId)
                 }
             }
         }
-        return Snapshot(managedDisplaySpaces: raw, currentSpaceId: current, windowToSpacesMap: map, mainScreenUuid: mainScreenUuid)
+        return Snapshot(topology: topology, currentSpaceId: current, windowToSpacesMap: map)
     }
 
     /// MAIN-thread: write the statics from a snapshot. Returns whether topology / visible Spaces / current
     /// Space changed, so callers can skip a re-render when nothing moved.
     @discardableResult
     static func applyTopology(_ s: Snapshot) -> Bool {
+        guard let topology = s.topology else {
+            Logger.error { "Ignoring invalid managed Space topology" }
+            return false
+        }
         let beforeIds = idsAndIndexes.map { $0.0 }
         let beforeVisible = visibleSpaces
         let beforeCurrent = currentSpaceId
@@ -57,18 +61,14 @@ class Spaces {
         screenSpacesMap.removeAll()
         visibleSpaces.removeAll()
         var spaceIndex = SpaceIndex(1)
-        s.managedDisplaySpaces.forEach { (screen: NSDictionary) in
-            var display = screen["Display Identifier"] as! ScreenUuid
-            if display as String == "Main", let mainUuid = s.mainScreenUuid {
-                display = mainUuid
-            }
-            (screen["Spaces"] as! [NSDictionary]).forEach { (space: NSDictionary) in
-                let spaceId = space["id64"] as! CGSSpaceID
+        topology.forEach { screen in
+            let display = screen.identifier as CFString
+            screen.spaceIds.forEach { spaceId in
                 idsAndIndexes.append((spaceId, spaceIndex))
                 screenSpacesMap[display, default: []].append(spaceId)
                 spaceIndex += 1
             }
-            visibleSpaces.append((screen["Current Space"] as! NSDictionary)["id64"] as! CGSSpaceID)
+            visibleSpaces.append(screen.currentSpaceId)
         }
         if let current = s.currentSpaceId {
             currentSpaceId = current

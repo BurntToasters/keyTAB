@@ -7,7 +7,7 @@ import Darwin
 //  - Skip if already in any Applications folder (and not nested in another .app)
 //  - Detect running instance at destination → switch to it and quit self
 //  - NSAlert with suppression checkbox
-//  - Copy bundle, strip com.apple.quarantine xattr, relaunch
+//  - Copy bundle and relaunch
 //  - If launched from a disk image: detach DMG after relaunch
 // Intentionally drops:
 //  - AuthorizationExecuteWithPrivileges path (deprecated since 10.7; alt-tab users
@@ -157,10 +157,7 @@ enum MoveToApplicationsFolder {
     private static func relaunch(at destinationPath: String, dmgDevice: String?) {
         let pid = ProcessInfo.processInfo.processIdentifier
         let quoted = shellQuoted(destinationPath)
-        // Strip quarantine xattr so the relaunched binary doesn't trigger Gatekeeper's
-        // "scary file from internet" prompt.
-        let preOpen = "/usr/bin/xattr -d -r com.apple.quarantine \(quoted) 2>/dev/null"
-        var script = "(while /bin/kill -0 \(pid) >&/dev/null; do /bin/sleep 0.1; done; \(preOpen); /usr/bin/open \(quoted))"
+        var script = "(while /bin/kill -0 \(pid) >&/dev/null; do /bin/sleep 0.1; done; /usr/bin/open \(quoted))"
         if let dmgDevice {
             // 5s grace lets the old PID actually die before unmount; if files are open hdiutil will refuse.
             script += " && (/bin/sleep 5 && /usr/bin/hdiutil detach \(shellQuoted(dmgDevice)) >&/dev/null) &"

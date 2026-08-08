@@ -8,6 +8,20 @@ enum KeyRepeatTimerTestable {
     /// can't get permanently wedged. A genuine safety net now — it used to be the normal path, see below.
     static let missedVisibleSignalBudget: TimeInterval = 1
 
+    static func repeatInterval(_ rawTicks: String?) -> TimeInterval {
+        seconds(rawTicks, fallbackTicks: 6, acceptsZero: false)
+    }
+
+    static func initialDelay(_ rawTicks: String?) -> TimeInterval {
+        seconds(rawTicks, fallbackTicks: 25, acceptsZero: true)
+    }
+
+    private static func seconds(_ rawTicks: String?, fallbackTicks: Double, acceptsZero: Bool) -> TimeInterval {
+        guard let rawTicks, let ticks = Double(rawTicks), ticks.isFinite,
+              acceptsZero ? ticks >= 0 : ticks > 0 else { return fallbackTicks / 60 }
+        return ticks / 60
+    }
+
     /// A slow show (WindowServer busy after a fullscreen/Space transition) can present the panel ~500ms after
     /// the timer was armed. The initial-delay grace must be measured from when the user could actually SEE the
     /// switcher, else repeats queued during the invisible gap fire the instant it appears and jump the

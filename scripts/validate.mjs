@@ -72,6 +72,7 @@ export function validateWorkspace({ release = false, bundle = null } = {}) {
   ];
   scanText(ownedFiles, /AppCenter|ProGated|LicenseManager|LicenseState|LicenseAPI|LicenseCookie|MachineFingerprint|UpgradeTab|FeedbackWindow|14-day[^\n]*trial|LemonSqueezy|polar\.sh|checkout/i, "paywall or telemetry residue", failures);
   scanText(ownedFiles, /com\.lwouis\.alt-tab-macos|com\.lwouis\.alttab|alt_tab_macos/i, "old runtime identifier", failures);
+  scanText(ownedFiles, /xattr[^\n]*com\.apple\.quarantine/i, "Gatekeeper quarantine bypass", failures);
   const restricted = [path.join(root, "src"), path.join(root, "resources")].flatMap(filesUnder).filter((file) => !file.includes(`${path.sep}vendor${path.sep}`) && /\.(otf|ttf)$/i.test(file));
   assert(restricted.length === 0, `restricted bundled fonts remain: ${restricted.map((file) => path.relative(root, file)).join(", ")}`, failures);
   for (const file of filesUnder(path.join(root, "src")).filter((entry) => entry.endsWith(".swift"))) {

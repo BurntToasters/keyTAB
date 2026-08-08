@@ -330,7 +330,7 @@ class App: NSApplication {
     }
 
     static func checkIfShortcutsShouldBeDisabled(_ activeWindow: Window?, _ activeApp: Application?) {
-        let app = activeWindow?.application ?? activeApp!
+        guard let app = activeWindow?.application ?? activeApp else { return }
         // The `.whenFullscreen` rule must reflect whether the frontmost app is CURRENTLY showing a fullscreen
         // window. Don't trust only the window the triggering event carried: it is often nil or stale (RDP's
         // fullscreen session window can't be AX-acquired, so `focusedWindow` reads nil; an activation fires

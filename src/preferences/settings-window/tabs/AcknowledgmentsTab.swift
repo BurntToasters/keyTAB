@@ -29,8 +29,9 @@ class AcknowledgmentsTab {
     }
 
     private static func makeTextView(_ sectionName: String, _ columnWidth: CGFloat) -> NSTextView {
-        let markdownFileUrl = Bundle.main.url(forResource: sectionName, withExtension: "md")!
-        var content = try! String(contentsOf: markdownFileUrl, encoding: .utf8)
+        var content = Bundle.main.url(forResource: sectionName, withExtension: "md")
+            .flatMap { try? String(contentsOf: $0, encoding: .utf8) }
+            ?? NSLocalizedString("Acknowledgments are unavailable.", comment: "")
         if content.last == "\n" {
             content.removeLast()
         }

@@ -72,7 +72,7 @@ class CGSCallScheduler {
 
 // Raw SkyLight / CGWindowList calls — fileprivate so the only way to reach them is through a use-case.
 fileprivate func rawWindowSpaces(_ wid: CGWindowID) -> [CGSSpaceID] {
-    return CGSCopySpacesForWindows(CGS_CONNECTION, CGSSpaceMask.all.rawValue, [wid] as CFArray) as! [CGSSpaceID]
+    return CGSCopySpacesForWindows(CGS_CONNECTION, CGSSpaceMask.all.rawValue, [wid] as CFArray) as? [CGSSpaceID] ?? []
 }
 
 fileprivate func rawExistingWindowIds(_ wids: [CGWindowID]) -> Set<CGWindowID>? {
@@ -90,5 +90,5 @@ fileprivate func rawWindowsInSpaces(_ spaceIds: [CGSSpaceID], _ includeInvisible
     if includeInvisible {
         options = [options, .invisible1, .invisible2]
     }
-    return CGSCopyWindowsWithOptionsAndTags(CGS_CONNECTION, 0, spaceIds as CFArray, options.rawValue, &set_tags, &clear_tags) as! [CGWindowID]
+    return CGSCopyWindowsWithOptionsAndTags(CGS_CONNECTION, 0, spaceIds as CFArray, options.rawValue, &set_tags, &clear_tags) as? [CGWindowID] ?? []
 }

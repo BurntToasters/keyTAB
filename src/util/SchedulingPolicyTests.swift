@@ -5,6 +5,15 @@ import XCTest
 /// `ThrottlerWithKey`, `AXCallScheduler`) branch on these, so keeping them green keeps that behavior fixed.
 final class SchedulingPolicyTests: XCTestCase {
 
+    func testDispatchIntervalsConvertToMilliseconds() {
+        XCTAssertEqual(DispatchTimeInterval.seconds(2).toMilliseconds, 2000)
+        XCTAssertEqual(DispatchTimeInterval.milliseconds(250).toMilliseconds, 250)
+        XCTAssertEqual(DispatchTimeInterval.microseconds(2500).toMilliseconds, 2)
+        XCTAssertEqual(DispatchTimeInterval.nanoseconds(2_500_000).toMilliseconds, 2)
+        XCTAssertEqual(DispatchTimeInterval.never.toMilliseconds, .max)
+        XCTAssertEqual(DispatchTimeInterval.seconds(.max).toMilliseconds, .max)
+    }
+
     // MARK: - A. ThrottleDecision
 
     func testThrottleFirstCallRunsNow() {

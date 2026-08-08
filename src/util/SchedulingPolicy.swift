@@ -1,5 +1,19 @@
 import Foundation
 
+extension DispatchTimeInterval {
+    var toMilliseconds: Int {
+        switch self {
+            case .seconds(let value):
+                let converted = value.multipliedReportingOverflow(by: 1000)
+                return converted.overflow ? .max : converted.partialValue
+            case .milliseconds(let value): return value
+            case .microseconds(let value): return value / 1000
+            case .nanoseconds(let value): return value / 1_000_000
+            default: return .max
+        }
+    }
+}
+
 /// Pure scheduling decisions extracted from `Throttler` / `ThrottlerWithKey` and `AXCallScheduler`, so the
 /// timing logic is unit-testable without real clocks or queues (same pattern as `SelectionResolver` /
 /// `AxQueryRouting`). The owners keep the actual clock reads + queue dispatch; they just branch on these.

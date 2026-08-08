@@ -195,9 +195,9 @@ class WindowCaptureScreenshotsPrivateApi {
         // we use CGSHWCaptureWindowList because it can screenshot minimized windows, which CGWindowListCreateImage can't
         var windowId_ = wid
         ActiveWindowCaptures.increment()
-        let list = CGSHWCaptureWindowList(CGS_CONNECTION, &windowId_, 1, [.ignoreGlobalClipShape, .bestResolution, .fullSize]).takeRetainedValue() as! [CGImage]
-        ActiveWindowCaptures.decrement()
-        return list.first
+        defer { ActiveWindowCaptures.decrement() }
+        let list = CGSHWCaptureWindowList(CGS_CONNECTION, &windowId_, 1, [.ignoreGlobalClipShape, .bestResolution, .fullSize]).takeRetainedValue()
+        return (list as? [CGImage])?.first
     }
 }
 

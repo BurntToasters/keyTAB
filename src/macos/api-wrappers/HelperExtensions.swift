@@ -366,18 +366,6 @@ extension Optional {
     }
 }
 
-extension DispatchTimeInterval {
-    var toMilliseconds: Int {
-        switch self {
-            case .seconds(let s): return s / 1000
-            case .milliseconds(let ms): return ms
-            case .microseconds(let us): return us * 1000
-            case .nanoseconds(let ns): return ns * 1_000_000
-            default: return .max
-        }
-    }
-}
-
 extension NSRunningApplication {
     func debugId() -> String { "(pid:\(processIdentifier) \(bundleIdentifier ?? bundleURL?.absoluteString ?? executableURL?.absoluteString ?? localizedName))" }
 }

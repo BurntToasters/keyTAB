@@ -49,8 +49,8 @@ class KeyRepeatTimer {
         guard timerIsSuspended && atShortcut.state != .up && (atShortcut.scope == .local || !holdModifierIsReleased()) else { return }
         currentTimerShortcutName = atShortcut.id
         // reading these user defaults every time guarantees we have the latest value, if the user has updated those
-        let repeatRate = ticksToSeconds(CachedUserDefaults.globalString("KeyRepeat") ?? "6")
-        let initialDelay = ticksToSeconds(CachedUserDefaults.globalString("InitialKeyRepeat") ?? "25")
+        let repeatRate = KeyRepeatTimerTestable.repeatInterval(CachedUserDefaults.globalString("KeyRepeat"))
+        let initialDelay = KeyRepeatTimerTestable.initialDelay(CachedUserDefaults.globalString("InitialKeyRepeat"))
         armedAt = ProcessInfo.processInfo.systemUptime
         currentInitialDelay = initialDelay
         Logger.debug { "\(currentTimerShortcutName) repeatRate:\(repeatRate)s initialDelay:\(initialDelay)s" }
@@ -86,11 +86,4 @@ class KeyRepeatTimer {
         return currentModifiers & holdModifiers != holdModifiers
     }
 
-    // NSEvent.keyRepeatInterval exists, but it doesn't seem to update when System Settings are updated, or when the user runs `defaults write -g KeyRepeat X`
-    // On the other side, defaults.string(forKey: "KeyRepeat") always reflects the current value correctly
-    private static func ticksToSeconds(_ appleNumber: String) -> Double {
-        // These numbers are "ticks". Apple has hardcoded that 60 ticks == 1s
-        // It has stayed like this on recent macOS releases, and is the same on high refresh-rate monitors (e.g. 120 FPS)
-        return Double(appleNumber)! / 60
-    }
 }

@@ -79,6 +79,9 @@
 		5F5849B000000000000000C2 /* WindowEventReducerSpaceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F5849B000000000000000C1 /* WindowEventReducerSpaceTests.swift */; };
 		5F5849B100000000000000B2 /* WindowEventReducerFocusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F5849B100000000000000B1 /* WindowEventReducerFocusTests.swift */; };
 		5F5849B100000000000000C2 /* WindowEventReducerMinimizeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F5849B100000000000000C1 /* WindowEventReducerMinimizeTests.swift */; };
+		5F5A8B000000000000000002 /* SpaceTopologyParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F5A8B000000000000000001 /* SpaceTopologyParser.swift */; };
+		5F5A8B000000000000000003 /* SpaceTopologyParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F5A8B000000000000000001 /* SpaceTopologyParser.swift */; };
+		5F5A8B000000000000000102 /* SpaceTopologyParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F5A8B000000000000000101 /* SpaceTopologyParserTests.swift */; };
 		5E5EA12E0000000000000002 /* KeyRepeatTimerTestable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E5EA12E0000000000000001 /* KeyRepeatTimerTestable.swift */; };
 		5E5EA12E0000000000000003 /* KeyRepeatTimerTestable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E5EA12E0000000000000001 /* KeyRepeatTimerTestable.swift */; };
 		5E5EA12E0000000000000102 /* KeyRepeatTimerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E5EA12E0000000000000101 /* KeyRepeatTimerTests.swift */; };
@@ -412,6 +415,8 @@
 		5F5849B000000000000000C1 /* WindowEventReducerSpaceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowEventReducerSpaceTests.swift; sourceTree = "<group>"; };
 		5F5849B100000000000000B1 /* WindowEventReducerFocusTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowEventReducerFocusTests.swift; sourceTree = "<group>"; };
 		5F5849B100000000000000C1 /* WindowEventReducerMinimizeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowEventReducerMinimizeTests.swift; sourceTree = "<group>"; };
+		5F5A8B000000000000000001 /* SpaceTopologyParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceTopologyParser.swift; sourceTree = "<group>"; };
+		5F5A8B000000000000000101 /* SpaceTopologyParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceTopologyParserTests.swift; sourceTree = "<group>"; };
 		5E5EA12E0000000000000001 /* KeyRepeatTimerTestable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyRepeatTimerTestable.swift; sourceTree = "<group>"; };
 		5E5EA12E0000000000000101 /* KeyRepeatTimerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyRepeatTimerTests.swift; sourceTree = "<group>"; };
 		5F117E40000000000000F001 /* WindowFilterResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowFilterResolver.swift; sourceTree = "<group>"; };
@@ -912,6 +917,8 @@
 				5F791E4A2F1C65E100B6419C /* ApplicationDiscriminator.swift */,
 				5F906A332F16A18000B99924 /* Screens.swift */,
 				D04BA7CF9C2D1BEC7C05AB24 /* Spaces.swift */,
+				5F5A8B000000000000000001 /* SpaceTopologyParser.swift */,
+				5F5A8B000000000000000101 /* SpaceTopologyParserTests.swift */,
 				5E1EC110000000000000C001 /* SelectionResolver.swift */,
 				5E5EA12C0000000000000001 /* SearchModeResolver.swift */,
 				5E5EA12D0000000000000001 /* ShortcutModifierResolver.swift */,
@@ -1797,6 +1804,8 @@
 				5C5A1100000000000000C003 /* WindowAcquisitionPolicy.swift in Sources */,
 				5EA8E110000000000000F203 /* SchedulingPolicy.swift in Sources */,
 				5EA8E110000000000000F212 /* SchedulingPolicyTests.swift in Sources */,
+				5F5A8B000000000000000003 /* SpaceTopologyParser.swift in Sources */,
+				5F5A8B000000000000000102 /* SpaceTopologyParserTests.swift in Sources */,
 				5EA8E110000000000000DA03 /* DragAndDropResolver.swift in Sources */,
 				5EA8E110000000000000DA12 /* DragAndDropResolverTests.swift in Sources */,
 				5F4753072CEE5A2E002C6C5E /* AppearanceTestable.swift in Sources */,
@@ -1906,6 +1915,7 @@
 				D04BADCDA9F9A6C3D6499877 /* SystemPermissions.swift in Sources */,
 				5F117E40000000000000F202 /* PermissionCalloutResolver.swift in Sources */,
 				D04BABEECBC6D922298BC93A /* Spaces.swift in Sources */,
+				5F5A8B000000000000000002 /* SpaceTopologyParser.swift in Sources */,
 				D04BA6187A91A847844B6ABB /* Window.swift in Sources */,
 				5F21C9E82C6E96A00091F72F /* SheetWindow.swift in Sources */,
 				D04BA737008AA2CD4E230A21 /* Application.swift in Sources */,

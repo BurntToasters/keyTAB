@@ -7,7 +7,7 @@ extension CGWindow {
     static let floatingWindow = CGWindowLevelForKey(.floatingWindow)
 
     static func windows(_ option: CGWindowListOption) -> [CGWindow] {
-        return CGWindowListCopyWindowInfo([.excludeDesktopElements, option], kCGNullWindowID) as! [CGWindow]
+        return CGWindowListCopyWindowInfo([.excludeDesktopElements, option], kCGNullWindowID) as? [CGWindow] ?? []
     }
 
     // periphery:ignore

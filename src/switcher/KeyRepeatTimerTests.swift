@@ -3,6 +3,18 @@ import XCTest
 final class KeyRepeatTimerTests: XCTestCase {
     private let initialDelay: TimeInterval = 0.4
 
+    func testSystemTimingDefaultsRejectMalformedAndUnsafeValues() {
+        XCTAssertEqual(KeyRepeatTimerTestable.repeatInterval("6"), 0.1)
+        XCTAssertEqual(KeyRepeatTimerTestable.initialDelay("25"), 25.0 / 60.0)
+        for value in [nil, "", "not-a-number", "nan", "inf", "0", "-1"] {
+            XCTAssertEqual(KeyRepeatTimerTestable.repeatInterval(value), 0.1)
+        }
+        for value in [nil, "", "not-a-number", "nan", "inf", "-1"] {
+            XCTAssertEqual(KeyRepeatTimerTestable.initialDelay(value), 25.0 / 60.0)
+        }
+        XCTAssertEqual(KeyRepeatTimerTestable.initialDelay("0"), 0)
+    }
+
     // MARK: A. Visible timestamp known — gate from visibility
 
     /// visible 0.5s ago, initialDelay 0.4s → applies.
