@@ -38,5 +38,5 @@ test("release signing accepts one Sparkle source and keeps secrets out of argume
 test("child processes receive only explicitly allowed secrets", () => {
   const environment = { PATH: "/bin", GH_TOKEN: "github-secret", KEYTAB_SPARKLE_PRIVATE_KEY: "sparkle-secret", KEYTAB_GPG_PASSPHRASE: "gpg-secret" };
   assert.deepEqual(childEnvironment(environment), { PATH: "/bin" });
-  assert.deepEqual(childEnvironment(environment, {}, ["GH_TOKEN"]), { PATH: "/bin", GH_TOKEN: "github-secret" });
+  assert.deepEqual(childEnvironment(environment, {}, ["KEYTAB_SPARKLE_PRIVATE_KEY"]), { PATH: "/bin", KEYTAB_SPARKLE_PRIVATE_KEY: "sparkle-secret" });
 });

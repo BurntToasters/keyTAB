@@ -20,7 +20,7 @@ export function validateRepositoryState({ version, branch, origin, status, head,
 }
 
 function optional(command, args) {
-  const result = run(command, args, { capture: true, allowFailure: true, allowSecrets: command === "gh" ? ["GH_TOKEN", "GITHUB_TOKEN"] : [] });
+  const result = run(command, args, { capture: true, allowFailure: true });
   return result.status === 0 ? String(result.stdout).trim() : null;
 }
 

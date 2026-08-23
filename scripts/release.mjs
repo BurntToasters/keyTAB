@@ -9,15 +9,15 @@ import { runPreflight, sparkleCredentialSources } from "./release-preflight.mjs"
 import { createSession, verifySession } from "./release-session.mjs";
 
 function ghResult(args) {
-  return run("gh", args, { capture: true, allowFailure: true, allowSecrets: ["GH_TOKEN", "GITHUB_TOKEN"] });
+  return run("gh", args, { capture: true, allowFailure: true });
 }
 
 function ghRun(args) {
-  return run("gh", args, { allowSecrets: ["GH_TOKEN", "GITHUB_TOKEN"] });
+  return run("gh", args);
 }
 
 function ghOutput(args) {
-  return output("gh", args, { allowSecrets: ["GH_TOKEN", "GITHUB_TOKEN"] });
+  return output("gh", args);
 }
 
 export function expectedDraftTarget(info, commit) {

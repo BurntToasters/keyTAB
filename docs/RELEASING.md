@@ -11,13 +11,13 @@ A release host needs Node.js 22.12 or newer, the Developer ID Application identi
 - `KEYTAB_GPG_KEY`: GPG fingerprint, long key ID, or signing identity.
 - `KEYTAB_GPG_PASSPHRASE`: optional unattended-host passphrase. Prefer `gpg-agent`; when set, KeyTab passes the value through standard input, never a command argument.
 - Configure exactly one Sparkle source: `KEYTAB_SPARKLE_ACCOUNT`, `KEYTAB_SPARKLE_PRIVATE_KEY_FILE`, or `KEYTAB_SPARKLE_PRIVATE_KEY`. Wrap direct multiline key material in double quotes in `.env`; it is passed through standard input. Relative key-file paths resolve from the repository root.
-- `GH_TOKEN`: optional GitHub CLI token; existing `gh` authentication also works.
+- Authenticate the release host with `gh auth login`; GitHub credentials stay in the CLI credential store rather than `.env`.
 - `KEYTAB_KEYCHAIN_PASSWORD` or legacy `SSH_USER_PWD`: SSH release-host login keychain password.
 - `KEYTAB_KEYCHAIN_PATH`: optional SSH release-host keychain path.
 
 Do not put the Sparkle public key in `.env`. Commit the public key as `SPARKLE_PUBLIC_KEY` in `config/base.xcconfig` so every distributed app can verify updates. Never commit `.env`, private keys, passphrases, tokens, or keychain passwords.
 
-Node scripts remove private key material, GPG passphrases, keychain passwords, and GitHub tokens from child-process environments by default. Sparkle and GPG secrets travel only through standard input; GitHub tokens are forwarded only to `gh` commands.
+Node scripts remove private key material, GPG passphrases, keychain passwords, and GitHub token variables from child-process environments by default. Sparkle and GPG secrets travel only through standard input; `gh` reads authentication from its credential store.
 
 `npm run release:mac:ssh` unlocks the login keychain, verifies the canonical public repository, clean pushed branch and credentials, runs `test:all` once, records a source and toolchain-bound 24-hour session, and continues through the signed universal build and draft upload. `release:mac:ssh:resume` reuses only a still-valid matching session.
 

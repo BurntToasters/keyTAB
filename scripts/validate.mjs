@@ -88,9 +88,10 @@ export function validateWorkspace({ release = false, bundle = null } = {}) {
     assert(fs.existsSync(path.join(root, required)), `missing compliance file: ${required}`, failures);
   }
   const envExample = fs.readFileSync(path.join(root, ".env.example"), "utf8");
-  const envKeys = ["KEYTAB_SIGNING_IDENTITY", "KEYTAB_NOTARY_PROFILE", "KEYTAB_SPARKLE_ACCOUNT", "KEYTAB_SPARKLE_PRIVATE_KEY_FILE", "KEYTAB_SPARKLE_PRIVATE_KEY", "KEYTAB_GPG_KEY", "KEYTAB_GPG_PASSPHRASE", "GH_TOKEN", "KEYTAB_KEYCHAIN_PASSWORD", "SSH_USER_PWD", "KEYTAB_KEYCHAIN_PATH"];
+  const envKeys = ["KEYTAB_SIGNING_IDENTITY", "KEYTAB_NOTARY_PROFILE", "KEYTAB_SPARKLE_ACCOUNT", "KEYTAB_SPARKLE_PRIVATE_KEY_FILE", "KEYTAB_SPARKLE_PRIVATE_KEY", "KEYTAB_GPG_KEY", "KEYTAB_GPG_PASSPHRASE", "KEYTAB_KEYCHAIN_PASSWORD", "SSH_USER_PWD", "KEYTAB_KEYCHAIN_PATH"];
   for (const key of envKeys) assert(new RegExp(`^${key}=`, "m").test(envExample), `.env.example is missing ${key}`, failures);
-  for (const key of ["KEYTAB_SPARKLE_PRIVATE_KEY", "KEYTAB_GPG_PASSPHRASE", "GH_TOKEN", "KEYTAB_KEYCHAIN_PASSWORD", "SSH_USER_PWD"]) assert(new RegExp(`^${key}=$`, "m").test(envExample), `.env.example must not contain ${key}`, failures);
+  for (const key of ["KEYTAB_SPARKLE_PRIVATE_KEY", "KEYTAB_GPG_PASSPHRASE", "KEYTAB_KEYCHAIN_PASSWORD", "SSH_USER_PWD"]) assert(new RegExp(`^${key}=$`, "m").test(envExample), `.env.example must not contain ${key}`, failures);
+  assert(!/^GH_TOKEN=/m.test(envExample), ".env.example must use GitHub CLI authentication", failures);
   if (release) {
     const sparkleLine = baseConfig.split("\n").find((line) => line.startsWith("SPARKLE_PUBLIC_KEY =")) ?? "";
     assert(sparkleLine.replace("SPARKLE_PUBLIC_KEY =", "").trim().length > 0, "new KeyTab Sparkle public key is not configured", failures);
