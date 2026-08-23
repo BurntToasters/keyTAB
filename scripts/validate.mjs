@@ -56,6 +56,8 @@ export function validateWorkspace({ release = false, bundle = null } = {}) {
   const info = fs.readFileSync(path.join(root, "Info.plist"), "utf8");
   assert(info.includes("<key>SUEnableSystemProfiling</key>\n\t<false/>"), "Sparkle system profiling must be disabled", failures);
   assert(!info.includes("CFBundleURLTypes"), "custom activation URL scheme remains", failures);
+  const entitlements = fs.readFileSync(path.join(root, "KeyTab.entitlements"), "utf8");
+  assert(!entitlements.includes("com.apple.security.cs.disable-library-validation"), "library validation must remain enabled", failures);
   assert(!ownedSwiftImportsSwiftUI(), "KeyTab-owned SwiftUI remains", failures);
   const ownedInterfaceFiles = filesUnder(path.join(root, "resources")).filter((file) => /\.(xib|storyboard)$/i.test(file));
   assert(ownedInterfaceFiles.length === 0, `KeyTab-owned Interface Builder files remain: ${ownedInterfaceFiles.map((file) => path.relative(root, file)).join(", ")}`, failures);
@@ -73,6 +75,7 @@ export function validateWorkspace({ release = false, bundle = null } = {}) {
   scanText(ownedFiles, /AppCenter|ProGated|LicenseManager|LicenseState|LicenseAPI|LicenseCookie|MachineFingerprint|UpgradeTab|FeedbackWindow|14-day[^\n]*trial|LemonSqueezy|polar\.sh|checkout/i, "paywall or telemetry residue", failures);
   scanText(ownedFiles, /com\.lwouis\.alt-tab-macos|com\.lwouis\.alttab|alt_tab_macos/i, "old runtime identifier", failures);
   scanText(ownedFiles, /xattr[^\n]*com\.apple\.quarantine/i, "Gatekeeper quarantine bypass", failures);
+  scanText(filesUnder(path.join(root, "scripts")), /readOnlyToken\s*=\s*["'][^"'$]{16,}["']/i, "hardcoded external-service token", failures);
   const restricted = [path.join(root, "src"), path.join(root, "resources")].flatMap(filesUnder).filter((file) => !file.includes(`${path.sep}vendor${path.sep}`) && /\.(otf|ttf)$/i.test(file));
   assert(restricted.length === 0, `restricted bundled fonts remain: ${restricted.map((file) => path.relative(root, file)).join(", ")}`, failures);
   for (const file of filesUnder(path.join(root, "src")).filter((entry) => entry.endsWith(".swift"))) {
