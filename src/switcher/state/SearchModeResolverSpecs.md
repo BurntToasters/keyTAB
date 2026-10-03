@@ -35,7 +35,7 @@ the Edit menu, call `App.cycleSelection`).
 - **Key routing precedence** (while editing): IME-composing or an open context menu wins first (never
   steal composing keystrokes) → arrows drive selection → Tab is swallowed → a matched when-active
   shortcut passes to the shortcut pipeline → everything else (typed text, **cmd+A/C/V/X**) goes to the
-  `NSSearchField`, which handles select-all/copy/paste/cut natively. AltTab does not intercept those.
+  `NSSearchField`, which handles select-all/copy/paste/cut natively. KeyTab does not intercept those.
 - **Any when-active shortcut works in editing via hold+key** (`editingShortcutMatch`, #5781 generalized):
   in search you release the activation modifiers to type, so a when-active shortcut bound to a bare
   printable key (e.g. the default `closeWindow = W`, `quitApp = Q`) must not steal the keystroke — you

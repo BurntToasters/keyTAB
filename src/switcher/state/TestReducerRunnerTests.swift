@@ -161,7 +161,7 @@ final class TestReducerRunnerTests: XCTestCase {
             .input(.spaceMembershipChanged(wid: 5, spaceId: 100, added: true, now: 100.1, inSpaceTransition: false)),
             .input(.spaceMembershipChanged(wid: 5, spaceId: 1, added: false, now: 100.2, inSpaceTransition: false)),
             // discovery finally lands, and CGS agrees it is on the fullscreen Space
-            .track(TrackedWindow(id: "wid-5", wid: 5, pid: 1, title: "lwouis",
+            .track(TrackedWindow(id: "wid-5", wid: 5, pid: 1, title: "keytab",
                 size: CGSize(width: 1440, height: 900), position: .zero, spaceIds: [100], spaceIndexes: [],
                 isOnAllSpaces: false, spaceIsBorrowed: false, isFullscreen: true, isFullscreenMirrored: false,
                 isMinimized: false, isMainWindow: false, isWindowlessApp: false, cgsPhantomLatch: false,
@@ -186,7 +186,7 @@ final class TestReducerRunnerTests: XCTestCase {
     func testFullscreenBurstKeepsTheHeldTileWhileAnotherFullscreenWindowExists() {
         let pid: pid_t = 779
         func fullscreenWindow(_ wid: CGWindowID, space: UInt64, focus: Int) -> TrackedWindow {
-            TrackedWindow(id: "wid-\(wid)", wid: wid, pid: pid, title: "lwouis",
+            TrackedWindow(id: "wid-\(wid)", wid: wid, pid: pid, title: "keytab",
                 size: CGSize(width: 1440, height: 900), position: .zero, spaceIds: [space], spaceIndexes: [],
                 isOnAllSpaces: false, spaceIsBorrowed: false, isFullscreen: true, isFullscreenMirrored: false,
                 isMinimized: false, isMainWindow: false, isWindowlessApp: false, cgsPhantomLatch: false,
@@ -233,7 +233,7 @@ final class TestReducerRunnerTests: XCTestCase {
 
     private func win(_ wid: CGWindowID, size: CGSize, position: CGPoint = .zero, spaceIds: [UInt64],
                      borrowed: Bool = false, fullscreen: Bool = false, leftSpace: UInt64? = nil,
-                     focus: Int = 0, title: String = "lwouis") -> TrackedWindow {
+                     focus: Int = 0, title: String = "keytab") -> TrackedWindow {
         TrackedWindow(id: "wid-\(wid)", wid: wid, pid: 779, title: title, size: size, position: position,
             spaceIds: spaceIds, spaceIndexes: [], isOnAllSpaces: false, spaceIsBorrowed: borrowed,
             isFullscreen: fullscreen, isFullscreenMirrored: false, isMinimized: false, isMainWindow: false,
@@ -556,7 +556,7 @@ final class TestReducerRunnerTests: XCTestCase {
         s.formGroup([30, 21], representative: 30, reason: "fixture")
         let harness = TestReducerRunner(initial: s)
         // the windowed active's AX read claims 21 as ITS tab, moving it out of the fullscreen group
-        harness.run([.input(.titleAndTabsRead(wid: 20, tabTitles: ["lwouis", "lwouis"], tabGroupToken: nil, reconcileTabs: true,
+        harness.run([.input(.titleAndTabsRead(wid: 20, tabTitles: ["keytab", "keytab"], tabGroupToken: nil, reconcileTabs: true,
                                               changedSoFar: false))])
         XCTAssertEqual(harness.violations, [], "convergence: \(harness.trace)")
         // and it no longer wears the fullscreen flag it inherited from the group it left

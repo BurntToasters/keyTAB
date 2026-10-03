@@ -88,7 +88,7 @@ final class StapledTicketTests: XCTestCase {
         XCTAssertEqual(try Data(contentsOf: stapled), ticket)
     }
 
-    /// An install AltTab cannot write to (another account's, a read-only volume) keeps its ticket stapled.
+    /// An install KeyTab cannot write to (another account's, a read-only volume) keeps its ticket stapled.
     func testAReadOnlyBundleKeepsItsTicketStapled() throws {
         try ticket.write(to: stapled)
         try FileManager.default.setAttributes([.posixPermissions: 0o555], ofItemAtPath: contents.path)

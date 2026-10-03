@@ -8,7 +8,7 @@ The Exceptions tab lets the user add per-app rules. `ExceptionMatcher` answers t
 rules drive, both pure:
 
 - **`hidesWindow`** — should this window be hidden from the switcher? (the exception's `hide` rule)
-- **`disablesShortcuts`** — should AltTab's global shortcuts be turned off while this app is frontmost?
+- **`disablesShortcuts`** — should KeyTab's global shortcuts be turned off while this app is frontmost?
   (the exception's `ignore` rule)
 
 Both share a **bundle-id prefix gate**: an exception applies to an app iff the exception's

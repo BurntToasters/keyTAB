@@ -1,4 +1,4 @@
-project: alt-tab-macos.xcodeproj
+project: KeyTab.xcodeproj
 schemes:
 - Release
 index_exclude:

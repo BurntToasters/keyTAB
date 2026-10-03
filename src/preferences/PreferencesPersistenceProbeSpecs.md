@@ -3,14 +3,14 @@
 ## Summary
 
 `PreferencesPersistenceProbe` is the pure decision layer behind the launch-time warning that fires when
-macOS isn't persisting AltTab's preferences to disk (issue #5790). It takes a list of `SuiteFacts` (the
+macOS isn't persisting KeyTab's preferences to disk (issue #5790). It takes a list of `SuiteFacts` (the
 filesystem state of each `UserDefaults` suite's backing plist, gathered by the `PreferencesPersistenceCheck`
 shell) and returns a `Verdict`: `.ok`, or `.broken` naming the offending plist paths. It holds no state and
 touches no filesystem — same split as `WsEventRouting` / `DragAndDropResolver`.
 
 ## Why a filesystem check, not a write-and-read-back canary
 
-AltTab writes prefs through `cfprefsd`, which caches in memory and defers the disk flush. That makes an
+KeyTab writes prefs through `cfprefsd`, which caches in memory and defers the disk flush. That makes an
 in-process "write a value, read it back" probe useless: the read hits the cache and looks fine even when the
 value never reaches disk. `CFPreferencesAppSynchronize`'s success return is documented-unreliable, and a
 cross-launch canary can't distinguish a genuine first launch from a broken store without an external marker.
@@ -32,7 +32,7 @@ plist itself.
   the ownership fix. The kernel `continue`s after recording the symlink.
 - **Absent is never broken.** `exists == false` short-circuits before either check, regardless of the
   `isWritable` value the shell happened to pass. This is what keeps first-launch users (no plist yet) quiet.
-- **All suites in scope, reported separately.** The probe runs over every suite AltTab persists to
+- **All suites in scope, reported separately.** The probe runs over every suite KeyTab persists to
   (`standard`/preferences, `.license`, `.usage`). `.broken` carries two path lists so the shell can tailor
   the explanation: symlinked paths get the "un-sync it" advice, unwritable paths get the "fix ownership"
   advice. Either list may be empty, but not both (that would be `.ok`).

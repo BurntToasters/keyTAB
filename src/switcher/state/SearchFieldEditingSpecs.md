@@ -4,9 +4,9 @@
 
 Typing in the switcher's search field is plain AppKit text editing: `NSSearchField` puts an `NSTextView`
 field editor behind its cell, and that field editor already knows how to insert, delete, replace a
-selection, handle ⌘A/⌘C/⌘V/⌘X, and walk grapheme clusters. AltTab reimplements none of it.
+selection, handle ⌘A/⌘C/⌘V/⌘X, and walk grapheme clusters. KeyTab reimplements none of it.
 
-The one thing AltTab owns is **who has the caret, and where it sits when we take it**. `SearchFieldEditing`
+The one thing KeyTab owns is **who has the caret, and where it sits when we take it**. `SearchFieldEditing`
 is that rule as a pure kernel; `TilesView` performs it (`makeFirstResponder`, `NSText.selectedRange`).
 
 ### Why the rule exists at all

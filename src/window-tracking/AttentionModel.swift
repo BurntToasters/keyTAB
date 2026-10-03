@@ -181,7 +181,7 @@ enum AttentionModelInput: Equatable {
     case windowInvalidated(UInt32)
     /// `NSWorkspace` named an app. It names no window, and that is the whole point of the split.
     case frontProcessChanged(ProcessGeneration)
-    /// The same, for the activation provoked by a switch AltTab asked for and has not heard back about. The
+    /// The same, for the activation provoked by a switch KeyTab asked for and has not heard back about. The
     /// app's stored answer predates that switch, so it names nothing here either — and this time not even a
     /// read, because the answer is already out.
     case frontProcessChangedAwaitingAnswer(ProcessGeneration)

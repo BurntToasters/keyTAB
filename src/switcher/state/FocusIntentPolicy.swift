@@ -24,7 +24,7 @@ struct FocusGeneration: RawRepresentable, Hashable, Comparable {
 struct FocusIntentPolicy {
     /// The process-wide AX messaging timeout (`AXUIElement.globalMessagingTimeoutInSeconds`), which is the
     /// longest a stale operation can plausibly have been blocked. Past it, the front the user is looking at is
-    /// more likely one they chose than one AltTab owes them.
+    /// more likely one they chose than one KeyTab owes them.
     static let repairHorizon: TimeInterval = 1
 
     struct Intent: Equatable {
@@ -36,7 +36,7 @@ struct FocusIntentPolicy {
 
     private var nextGeneration = UInt64(1)
     private(set) var current: Intent?
-    /// **The switch AltTab has asked for and not yet heard about.** Once an operation has run, it reads the
+    /// **The switch KeyTab has asked for and not yet heard about.** Once an operation has run, it reads the
     /// app's focused window back (`readFocusedWindowAfterFocusing`); until that answer lands, what the app
     /// would say about its focused window is about the window the user is LEAVING. Its one reader does not
     /// write the order from the request either: attention refuses to reuse that previous answer on the
@@ -74,7 +74,7 @@ struct FocusIntentPolicy {
         return awaited
     }
 
-    /// A focus that this policy cannot re-assert took over: `Window.focus()` also lands on AltTab's own
+    /// A focus that this policy cannot re-assert took over: `Window.focus()` also lands on KeyTab's own
     /// window and on a windowless app, and neither is a wid this can front. Pending operations still have to
     /// stop, so they are superseded with nothing to repair to.
     mutating func supersede() {
@@ -146,7 +146,7 @@ class FocusIntents {
         withPolicy { $0.heardBack(pid: pid) }
     }
 
-    /// Is AltTab still waiting to hear where its own switch into this app landed? See
+    /// Is KeyTab still waiting to hear where its own switch into this app landed? See
     /// `FocusIntentPolicy.awaited`.
     func isAwaitingAnswer(from pid: pid_t) -> Bool {
         withPolicy { $0.awaitedAnswer(now: ProcessInfo.processInfo.systemUptime)?.pid == pid }
@@ -156,7 +156,7 @@ class FocusIntents {
     private var refusalArmedForQa = false
 
     /// **Fault injection (`--qa-refuse-next-focus`): the next focus operation makes none of its OS calls**, as
-    /// if macOS had refused the switch. That is the state #6055 is about, a switch AltTab asked for and the OS
+    /// if macOS had refused the switch. That is the state #6055 is about, a switch KeyTab asked for and the OS
     /// never carried out, and no app can be made to refuse one on demand.
     func refuseNextForQa() {
         lock.lock()

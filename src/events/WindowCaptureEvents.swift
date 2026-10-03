@@ -394,7 +394,7 @@ class ActiveWindowCaptures {
         // CANCELLED on the normal path, not just neutered by `done`. An `asyncAfter` block that has lost the
         // race still exists and still wakes the process at its deadline, so a 60-window show used to leave 60
         // wakeups behind it, all firing seconds after the switcher was gone. `done` still guards the race;
-        // `cancel` is what keeps an idle AltTab idle.
+        // `cancel` is what keeps an idle KeyTab idle.
         let watchdog = DispatchWorkItem {
             guard done.claim() else { return }
             Logger.warning { "a window capture never answered after \(Int(watchdogSeconds))s; releasing its slot" }

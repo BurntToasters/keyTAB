@@ -5,7 +5,7 @@ import Cocoa
 ///
 /// **It observes and never decides.** Every entry point here is called after the decision it describes has
 /// already been made — by `AttentionEngine`, by `AxObserverRegistry`, by `WindowAttentionEvents` — so
-/// switching telemetry off cannot change what AltTab does.
+/// switching telemetry off cannot change what KeyTab does.
 class TrackingTelemetryRecorder {
     static var state = TrackingTelemetryState()
 

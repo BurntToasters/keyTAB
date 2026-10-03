@@ -123,7 +123,7 @@ class Application: NSObject {
     /// Observing an `NSRunningApplication` property makes AppKit subscribe to a LaunchServices notification
     /// callback, and when that subscription fails AppKit raises NSInternalInconsistencyException
     /// ("Failed to register for runningApplicationNotificationCallback") instead of returning, which
-    /// terminated AltTab from `init`. Losing an observer only costs the mirror's freshness: the value
+    /// terminated KeyTab from `init`. Losing an observer only costs the mirror's freshness: the value
     /// seeded above stands, and `RunningApplicationsEvents` still sees launches and quits.
     private func observeMirror<Value>(_ keyPath: KeyPath<NSRunningApplication, Value>,
                                       _ handler: @escaping (NSRunningApplication, NSKeyValueObservedChange<Value>) -> Void) -> NSKeyValueObservation? {

@@ -54,7 +54,7 @@ final class NativeHotkeyResolverTests: XCTestCase {
     // MARK: - C. ⌘` alone — disables nothing
 
     /// Binding ⌘\` disables no native hotkey: the OS's ⌘` is handled by AppKit inside the front app, which
-    /// AltTab's Carbon hotkey already pre-empts, and neither switcher hotkey overlaps it.
+    /// KeyTab's Carbon hotkey already pre-empts, and neither switcher hotkey overlaps it.
     func testCommandKeyAboveTabAloneDisablesNothing() {
         let result = NativeHotkeyResolver.resolve(
             shortcuts: [snap(cmdKey, kVK_ANSI_Grave)],

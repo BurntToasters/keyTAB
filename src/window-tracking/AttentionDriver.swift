@@ -37,7 +37,7 @@ struct AttentionDriver {
         let representativeOf: (CGWindowID) -> CGWindowID?
         /// the app that is frontmost RIGHT NOW, from the model rather than from observed transitions
         let frontmostPid: () -> pid_t?
-        /// is a `kAXFocusedWindow` answer for this app already on its way, because AltTab asked it to focus a
+        /// is a `kAXFocusedWindow` answer for this app already on its way, because KeyTab asked it to focus a
         /// window and reads back where focus landed (`FocusIntents.awaitedAnswer`)
         let answerPending: (pid_t) -> Bool
     }
@@ -242,7 +242,7 @@ struct AttentionDriver {
     }
 
     /// A pid the model has not seen — or has seen under an older generation — is registered before its event
-    /// is offered, so it does not answer `staleGeneration` for every app that was already running when AltTab
+    /// is offered, so it does not answer `staleGeneration` for every app that was already running when KeyTab
     /// started.
     private mutating func register(_ pid: pid_t, _ context: Context) -> ProcessGeneration? {
         guard let process = context.generation(pid) else { return nil }

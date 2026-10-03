@@ -2,19 +2,19 @@
 
 ## Summary
 
-AltTab parks its stapled notarization ticket while it runs and puts it back when it quits. At rest the bundle
+KeyTab parks its stapled notarization ticket while it runs and puts it back when it quits. At rest the bundle
 is exactly what was downloaded; while it runs, macOS's permission checks skip the ticket.
 
 ## Why this exists (#6067)
 
-Each window screenshot makes macOS check three times that AltTab may record the screen. Each check rebuilds
-AltTab's code identity from the bundle on disk, and when a ticket is stapled it also extracts that ticket and
+Each window screenshot makes macOS check three times that KeyTab may record the screen. Each check rebuilds
+KeyTab's code identity from the bundle on disk, and when a ticket is stapled it also extracts that ticket and
 registers it with the system again. Measured on macOS 27 (M5): ~10ms of a 30ms check at rest; 45ms vs 19ms
 per check during a 43-window refresh, which took 5.5s stapled and 2.9s with the ticket parked. The checks are
 serialized in the OS, so this sets how fast all thumbnails can refresh.
 
 The ticket itself only serves Gatekeeper's first look at a downloaded copy, and Gatekeeper has already let
-AltTab run by the time this code executes. The ticket lives at `Contents/CodeResources`, outside the
+KeyTab run by the time this code executes. The ticket lives at `Contents/CodeResources`, outside the
 signature's seal, so moving it changes no code signature: the Screen Recording grant, the Keychain license
 items and Gatekeeper's record of the app are all untouched.
 
@@ -22,7 +22,7 @@ items and Gatekeeper's record of the app are all untouched.
 
 `Contents/Resources/en.lproj/locversion.plist`. The signature's resource rules omit that path, so the bundle
 stays valid with the ticket there (checked with `codesign --verify --deep --strict` and `spctl`). Any other new
-name in the bundle breaks the seal, after which macOS no longer matches AltTab to its Screen Recording grant
+name in the bundle breaks the seal, after which macOS no longer matches KeyTab to its Screen Recording grant
 and asks again. `.DS_Store` is omitted too, but Finder writes that name. A new `.lproj` folder would read as a
 new language.
 
@@ -45,14 +45,14 @@ new language.
 - **testRestoreNeverOverwritesAStapledTicket** — with both present, nothing moves.
 - **testATicketLeftParkedByACrashIsRestoredAtTheNextQuit** — a crash skips the restore; the next launch has
   nothing to park and the next quit restores it.
-- **testAReadOnlyBundleKeepsItsTicketStapled** — an install AltTab cannot write to keeps its ticket.
+- **testAReadOnlyBundleKeepsItsTicketStapled** — an install KeyTab cannot write to keeps its ticket.
 
 ## Edge cases
 
 - **The app copied while it runs**, e.g. to another Mac: the copy carries the ticket parked. If it arrives
   quarantined, Gatekeeper fetches the ticket online at first launch, so an offline first launch there is
-  refused. Re-downloading AltTab fixes it.
+  refused. Re-downloading KeyTab fixes it.
 - **Updates** (Sparkle, Homebrew) replace the whole bundle, parked ticket included, and the new version brings
   its own ticket.
-- **App Management**: macOS lets code signed by the same team modify an app bundle, so AltTab may rename files
+- **App Management**: macOS lets code signed by the same team modify an app bundle, so KeyTab may rename files
   in its own bundle.

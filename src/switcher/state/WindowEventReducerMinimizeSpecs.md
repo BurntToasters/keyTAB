@@ -134,7 +134,7 @@ carrying the bit from the OS to the kernel could be deleted with the suite green
 - **testTheWindowServerQueryResyncsTheOnScreenBit** — the batched query corrects a window whose order events
   were missed.
 - **testDiscoverySeedsTheOnScreenBit** — seeded from the row discovery already holds, since no order event
-  fires for windows that were open before AltTab started.
+  fires for windows that were open before KeyTab started.
 - **testAnAdoptedInactiveTabIsNeverSeededOnScreen** — except for a known background tab, whose row is stale.
 - **testTheKernelProjectionCarriesTheOnScreenBit** — `tabWindow` forwards it, the last link no kernel test
   can check.

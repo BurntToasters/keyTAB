@@ -51,7 +51,7 @@ Fullscreen windows use `captureSampleBuffer` because the screenshot API fails wh
 - **Lost discovery callback**: unit tests cover timeout recovery, late-callback rejection, late-watchdog
   rejection, and progress of requests arriving during a lost call. Live QA `CP-03` drops one real discovery
   callback through a debug-only hook, then checks that a new window gets its capture on a later summon
-  without restarting AltTab.
+  without restarting KeyTab.
 
 - **Stale fullscreen state**: `isFullscreen` is snapshotted on the main thread when the burst is built, so
   a window mid-transition can be routed to `captureScreenshot` and fail with -3811. Deliberately no

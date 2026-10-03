@@ -967,7 +967,7 @@ enum WindowEventReducer {
                 }
             }
             // Seed the ordered-in bit from the same WindowServer row this discovery was discriminated on.
-            // Without it the bit is false for every window that was already open when AltTab launched — no
+            // Without it the bit is false for every window that was already open when KeyTab launched — no
             // order event ever fires for those — so tab-grouping's "an on-screen window is nobody's
             // background tab" rule would be unarmed exactly at cold start, which is when a whole desktop of
             // same-frame windows is discovered at once. Forced false for a tab we already know is in the

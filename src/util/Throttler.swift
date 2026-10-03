@@ -5,7 +5,7 @@ class Throttler {
     /// Starts with no last run, so the FIRST call is a leading edge rather than one throttled against the
     /// instant this object happened to be built. Swift builds a static lazily, i.e. inside the first call
     /// itself, so `now` there meant the first call always paid the whole delay: the launch window inventory
-    /// could not run in AltTab's first second however early it was asked for, and a summon at +0.4s drew an
+    /// could not run in KeyTab's first second however early it was asked for, and a summon at +0.4s drew an
     /// empty switcher and filled it 1.3s later.
     private var slot = ThrottleSlot<() -> Void>()
 
@@ -25,7 +25,7 @@ class Throttler {
         }
     }
 
-    /// See `ThrottleSlot.reset`. For a throttle scoped to one switcher session rather than to AltTab's
+    /// See `ThrottleSlot.reset`. For a throttle scoped to one switcher session rather than to KeyTab's
     /// lifetime.
     func reset() {
         dispatchPrecondition(condition: .onQueue(.main))

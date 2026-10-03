@@ -39,7 +39,7 @@ order and unroll the free pairs as input states (see the "Race interleavings" se
   beside the group it left at (1116,683). The capture of a stale `tabCount`.
 - **`terminalActive9Titles` / `terminal9TabsTracked`** — mid-creation of a 9-tab group: active reports 9 `~`,
   only 5 background siblings tracked yet (3 tabs not yet discovered).
-- **`finderActive4Tabs`** — Finder 4-tab window, AXTabGroup `["QRHYWK4QHQ","lwouis","lwouis","lwouis"]`; only
+- **`finderActive4Tabs`** — Finder 4-tab window, AXTabGroup `["QRHYWK4QHQ","keytab","keytab","keytab"]`; only
   the active tab is a real window (Finder inactive tabs aren't separate windows).
 - **`terminalSeparate4Windows`** — DEFAULT tabbing: 4 genuinely separate Terminal windows, same size/position,
   all hold a Space, none exposes an AXTabGroup. The "must never group" ground truth.
@@ -49,8 +49,8 @@ order and unroll the free pairs as input states (see the "Race interleavings" se
   fullscreen Space 2 at 1440×864, background tabs frozen at 757×543 (Space-less), AXTabGroup unreadable (nil).
 - **`dragOut*`** — "Move Tab to New Window": the leaving tab shrinks 757×543 → 757×527 (tab bar gone) and goes
   standalone; the 3 survivors stay 757×543. Pre-drag group `[30238, 30236, 30231, 30230]`.
-- **`finderGitActive` / `finderLwouisInactiveTab` / `finderMoviesStandalone`** — the maintainer's recorded
-  Finder case: tabs "lwouis"(inactive)/"git"(active) +
+- **`finderGitActive` / `finderKeytabInactiveTab` / `finderMoviesStandalone`** — the maintainer's recorded
+  Finder case: tabs "keytab"(inactive)/"git"(active) +
   a same-app standalone "Movies". Distinct titles, so a clean unambiguous match.
 - **`tabbedWindowMovedBetweenSpaces`** — a tabbed window changing Space: 1326 (leave old) + 1325 (join new),
   each carrying (spaceId, wid). The events that fire reconcile so the group follows the move.
@@ -92,7 +92,7 @@ order and unroll the free pairs as input states (see the "Race interleavings" se
 - **`finderSelfOnlyLinkNewTabGapVisible` / `Backgrounding`** — rec8: a window linked only to ITSELF (its tabs
   untracked) confirms no cluster; a self-only link must never be written or trusted.
 - **`finderTwoCascadedWindowsActiveA` / `TabsA` / `TabsB`** — rec11: two windows 29px apart (the macOS cascade
-  offset), same size, every tab titled "lwouis" — position is the ONLY fact separating them. Also proves the
+  offset), same size, every tab titled "keytab" — position is the ONLY fact separating them. Also proves the
   AX title COUNT bounds nothing (Finder destroys backgrounded tabs' windows).
 - **`finderTabSwitchIncomingStale` / `IncomingSettled` / `Outgoing`** — rec13: the windowed tab-switch
   handover, which no claim path covers (geometry needs a Space-less member; the title claim needs a brand-new
@@ -157,7 +157,7 @@ closed one window mid-way). Both AXTabGroups were captured from the log: A = ["U
 the durable invariant a between-groups move must preserve: each group's `matchSiblings` resolves ONLY its own
 tabs, never the other group's or the standalones. (Automating the atomic single-tab drag is impractical —
 TextEdit Cmd-T = Show Fonts, a torn-off tab detaches into a new window unless dropped exactly on a tab bar,
-and AltTab's off-screen windows block computer-use drop targets — so it was done by hand and read from the log.)
+and KeyTab's off-screen windows block computer-use drop targets — so it was done by hand and read from the log.)
 `textEditGroup6` is a separate real single-group capture (distinct titles, the clean-match contrast to `~`).
 
 ## Event-replay fixtures (`ReplayScenariosTests` — see `TestReducerRunnerSpecs.md`)
@@ -243,8 +243,8 @@ coarser layer.
   frame (⇒ expelled from its group), the recorded rec13 switch settles at the same frame (⇒ membership
   stays), and the rec13 stale-position trap documents why the verdict is re-checked (and frames WS-refreshed)
   rather than trusted once.
-- **testFinderStandaloneWindowNotSweptIntoGroup** — "Movies" (same app, non-tabbed) stays out of the git/lwouis group.
-- **testFinderInactiveTabIsPhantomUntilTabbed** — "lwouis" Space-less ⇒ phantom until `isTabbed`.
+- **testFinderStandaloneWindowNotSweptIntoGroup** — "Movies" (same app, non-tabbed) stays out of the git/keytab group.
+- **testFinderInactiveTabIsPhantomUntilTabbed** — "keytab" Space-less ⇒ phantom until `isTabbed`.
 - **testFullscreenDragOutExtractedWindowsAreUnlinked** — 3 separate fullscreen Finder windows on 3 Spaces, all
   still carrying the original group's stale link ⇒ the two holding their own fullscreen Space are reported as
   having LEFT the group (unlink), so all three show.
@@ -270,11 +270,11 @@ coarser layer.
 - **testSpacesSettleThenTheTwoFullscreenWindowsResolveSeparately** — the same windows once the Spaces settle:
   each Space resolves on its own, and the other fullscreen window is never a background tab.
 - **testWindowDiscoveredAtLaunchNeverClaimsAnotherRealWindow** — "the void": two separate Finder windows share
-  the tab title "lwouis"; at launch both are merely newly TRACKED (nothing created), so the on-screen claim
+  the tab title "keytab"; at launch both are merely newly TRACKED (nothing created), so the on-screen claim
   must not fire. It firing tabbed a REAL window, hid it, and the switcher's default selection was computed
   without it — then it reappeared, leaving the selection stale on an unrelated tile.
 - **testSeparateWindowSharingATabTitleIsNeverClaimed** — rec10: several Finder groups share the tab title
-  "lwouis"; a separate window at its own frame must never be claimed by title.
+  "keytab"; a separate window at its own frame must never be claimed by title.
 - **testTabSwitchInOneWindowIsNotAnnexedByAnotherSameSizeWindow** — the rec10 theft itself: a tab
   backgrounding INSIDE window B is not adoptable by a same-size unrelated window (a live group — one whose
   own member still holds a Space — is never orphaned; `isOrphanedTab`).

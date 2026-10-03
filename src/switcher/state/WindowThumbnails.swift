@@ -170,7 +170,7 @@ enum WindowThumbnails {
         guard (!eligibleWindows.isEmpty || windowRemoved) else { return }
         // ScreenCaptureKit's capture path is unreliable before macOS 26: macOS 14 crashes inside Apple's own
         // teardown (-[SCStreamManager serverDidDisconnect], a top crash in 11.3.0) and macOS 15 hits the bugs
-        // in #5190 (https://github.com/lwouis/alt-tab-macos/issues/5190). Apple rewrote ScreenCaptureKit's
+        // in #5190 (https://github.com/keytab/alt-tab-macos/issues/5190). Apple rewrote ScreenCaptureKit's
         // internals for macOS 26, so we only use it there; everything older captures via CGSHWCaptureWindowList.
         if #available(macOS 26.0, *) {
             WindowCaptureScreenshots.oneTimeScreenshots(eligibleWindows, source, prioritizedIds: prioritizedIds)

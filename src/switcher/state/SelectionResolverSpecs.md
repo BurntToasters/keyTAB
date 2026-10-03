@@ -93,7 +93,7 @@ An app left with only minimized windows under `Minimized windows: Hide` had the 
 
 That makes the answer exact for the filters that drop a whole app (`Non-active apps`, an Exceptions rule) and
 deliberately coarse for the two that can drop the current window while a SIBLING window of the same app stays
-drawn: `Spaces to show: other Spaces` and `Screens to show: screen showing AltTab`. Under those the pick still
+drawn: `Spaces to show: other Spaces` and `Screens to show: screen showing KeyTab`. Under those the pick still
 steps one tile too far, exactly as it did before — a known gap, not a regression. The only rule that would
 close it is per-window identity, and the cheap version (the frontmost app's lowest `lastFocusOrder` window)
 selects the current window itself in the grouped-tab case below, where a hidden tab holds rank 0 while the

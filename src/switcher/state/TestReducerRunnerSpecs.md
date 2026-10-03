@@ -176,7 +176,7 @@ report a violation. These are tests OF the harness, not of the reducer.
 An 815 cannot move the window order any more (see `WindowEventReducerFocusSpecs`), so what is left here is
 the bookkeeping it still owns: an untracked wid it names, and the sequences a real capture recorded.
 
-- **testTwoAltTabsIntoTheSameAppBothMoveTheOrder** — two alt-tabs 219ms apart into one app. The second is a
+- **testTwoKeyTabsIntoTheSameAppBothMoveTheOrder** — two alt-tabs 219ms apart into one app. The second is a
   switch inside the app that is already frontmost, so no activation follows it and the app's answer is the
   only thing that says the user moved. Unheard, nothing ever corrects it (#5785's stuck switcher).
 - **testLeavingFullscreenDoesNotRefrontTheAppsOtherWindows** — the recorded #5849 follow-up: leaving
@@ -236,13 +236,13 @@ order nothing pins, so both arrival orders are tested — the same thing `Handov
 
 ### D. The z-order seed (`zOrderRead`, the very first summon)
 
-The blocking CGS stacking query AltTab fires while it has no focus history, applied through the MRU model
+The blocking CGS stacking query KeyTab fires while it has no focus history, applied through the MRU model
 instead of over it. It is re-made as startup discovery lands (`Windows.reseedZOrderDuringStartup`) so the
 order settles before the user looks; the first summon still fires one last call, which should now find
 nothing to change. Anything it decides after a render, the user watches happen — which is why what it moved
 has to be reported accurately.
 
-- **testZOrderSeedsWindowsWithNoFocusHistory** — with no focus history at all, stacking IS the order: AltTab
+- **testZOrderSeedsWindowsWithNoFocusHistory** — with no focus history at all, stacking IS the order: KeyTab
   launched into a desktop it did not watch being built, and top-most first is the best guess it has.
 - **testZOrderNeverDemotesAWindowThatWasActuallyFocused** — a window the OS told us was focused keeps its
   place, because the seed is written into the `focusedAt` TIEBREAK rather than over it. Teeth-verified:

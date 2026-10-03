@@ -598,7 +598,7 @@ class Window {
         return nil
     }
 
-    /// Seed the per-app focused-window fact after discovery. An app already frontmost when AltTab starts has
+    /// Seed the per-app focused-window fact after discovery. An app already frontmost when KeyTab starts has
     /// produced no activation or AX focus change, so `kAXFocusedWindow` is the only initial answer (#5665).
     ///
     /// The answer is always recorded as a fact about that process; `AttentionModel` alone decides whether the

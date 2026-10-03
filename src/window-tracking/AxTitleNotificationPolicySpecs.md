@@ -9,7 +9,7 @@ delivery can name any element in the app: a window, a static text, a group, a to
 asked for its wid, and `_AXUIElementGetWindow` answers with the **containing window's** id for a descendant.
 
 So a wid says *which window the element sits in*. It never says *the element is that window*. Two other
-places in AltTab already pay a role read against exactly this fact, before a brute-force scan accepts a
+places in KeyTab already pay a role read against exactly this fact, before a brute-force scan accepts a
 candidate (`BruteForceWindowMatch.isTargetWindowRoot`, #5849) and before a pushed element is adopted as a
 window's own (`Applications.applyObservedElement`). The title path is the third.
 

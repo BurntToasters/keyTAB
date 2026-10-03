@@ -3,7 +3,7 @@
 ## Summary
 
 `PhantomWindowDetector` decides whether a window is a **phantom** — present in macOS APIs (AX returns it
-as a live window with a valid `CGWindowID`) but not something the app means to show the user, so AltTab
+as a live window with a valid `CGWindowID`) but not something the app means to show the user, so KeyTab
 shouldn't offer it as a switch target. The pixel content may be absent, black, or anything; that's the
 symptom, not the definition. Producers: alpha=0 Outlook reminders (#5170/#5448), `orderOut:` /
 `show:false` Electron windows (Codex/Slack #5714, Joplin #5495, Sprig #5496), WeChat/Teams/DingTalk
@@ -25,7 +25,7 @@ They're independent, which gives two strengths of phantom:
 
 ## The two facts, and what they replaced
 
-There are exactly two phantom families, and the batched WindowServer query AltTab already issues states both
+There are exactly two phantom families, and the batched WindowServer query KeyTab already issues states both
 of them outright rather than by inference:
 
 | family | producer | the fact |

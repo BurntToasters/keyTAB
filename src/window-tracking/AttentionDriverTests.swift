@@ -137,8 +137,8 @@ final class AttentionDriverTests: XCTestCase {
         XCTAssertEqual(outcome.wid, 9)
     }
 
-    /// #6055: AltTab's own switch names nothing. When the focus did not take, no activation follows, and the
-    /// read AltTab makes of the target app afterwards is a fact about that app, so the front stays where the
+    /// #6055: KeyTab's own switch names nothing. When the focus did not take, no activation follows, and the
+    /// read KeyTab makes of the target app afterwards is a fact about that app, so the front stays where the
     /// OS left it.
     func testAFocusThatDidNotTakeLeavesTheFrontAlone() {
         var driver = AttentionDriver()
@@ -150,7 +150,7 @@ final class AttentionDriverTests: XCTestCase {
         XCTAssertEqual(driver.attention.visibleFront?.wid, 2)
     }
 
-    /// Picking another window of an app AltTab has just asked to switch: the activation arrives before the
+    /// Picking another window of an app KeyTab has just asked to switch: the activation arrives before the
     /// app has answered, and its cached answer is the window the user is leaving. Fronting that one would
     /// leave it at the top of the order until the real answer lands, and one tile from the next default pick.
     func testAnActivationWeAreStillWaitingOnDoesNotFrontTheCachedWindow() {
@@ -188,7 +188,7 @@ final class AttentionDriverTests: XCTestCase {
 
     // MARK: process generations
 
-    /// An app already running when AltTab started must not answer as a stale generation.
+    /// An app already running when KeyTab started must not answer as a stale generation.
     func testUnseenPidIsRegisteredBeforeItsEvent() {
         var driver = AttentionDriver()
         let outcome = driver.decide(.appActivated(pid: pid, now: 0), context: context())

@@ -10,9 +10,9 @@ import Darwin
 //  - Copy bundle and relaunch
 //  - If launched from a disk image: detach DMG after relaunch
 // Intentionally drops:
-//  - AuthorizationExecuteWithPrivileges path (deprecated since 10.7; alt-tab users
+//  - AuthorizationExecuteWithPrivileges path (deprecated since 10.7; KeyTab users
 //    drag from DMG → /Applications is writable in the common case)
-//  - AppleScript trash fallback (alt-tab is not subject to app translocation since it
+//  - AppleScript trash fallback (KeyTab is not subject to app translocation since it
 //    requires Accessibility permission, which can't be granted to translocated apps)
 enum MoveToApplicationsFolder {
     // Same key as LetsMove so users who already opted out stay opted out across the migration.

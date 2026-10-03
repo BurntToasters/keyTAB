@@ -31,7 +31,7 @@ class AxObserverRegistry {
     private static let destroyCorrelations = ConcurrentMap<pid_t, AxDestroyCorrelation>()
 
     /// **Pids whose `elementDestroyed` deliveries are dropped on arrival**, so the app looks to the rest of
-    /// AltTab exactly like one whose accessibility implementation accepted the subscription and never posts:
+    /// KeyTab exactly like one whose accessibility implementation accepted the subscription and never posts:
     /// the capability never turns on, and every close falls back to the WindowServer's order-out probe.
     ///
     /// It exists because that app is not otherwise reproducible. AppKit posts a window's destroy from the
@@ -60,7 +60,7 @@ class AxObserverRegistry {
     }
 
     /// **The join `AXUIElementDestroyed` needs.** Its element is dead by callback time, so it cannot be asked
-    /// its wid — but `CFEqual` recognises it against the element AltTab cached for the window when it was
+    /// its wid — but `CFEqual` recognises it against the element KeyTab cached for the window when it was
     /// discovered, locally, in ~30ns and with no IPC. Mirrored off `Window.axUiElement`, which is main-owned,
     /// because the callback arrives on the AX thread.
     ///
@@ -160,7 +160,7 @@ class AxObserverRegistry {
         var sourceInstalled = false
     }
 
-    /// AltTab's own process is excluded: a same-process AX read runs AppKit on the CALLING thread, and this
+    /// KeyTab's own process is excluded: a same-process AX read runs AppKit on the CALLING thread, and this
     /// provider's whole point is to do that work off-main. `AXUIElement.onCorrectThread` exists for the reads
     /// we cannot avoid; an observer we can simply not create.
     func processStarted(_ pid: pid_t) {
@@ -533,7 +533,7 @@ class AxObserverRegistry {
     /// trips per press. Here it is one window, on a real user action, and `AXCallScheduler`'s per-key dedup
     /// collapses a burst.
     /// Gating on "this app has shown tabs before" was tried and is worse than useless: an app whose windows
-    /// happened to have no tabs when AltTab started has the gate closed, so the tabs it opens later are never
+    /// happened to have no tabs when KeyTab started has the gate closed, so the tabs it opens later are never
     /// read on the notification at all.
     private static func readTabGroup(_ element: AXUIElement, pid: pid_t) -> TabGroupObservation {
         element.tabGroupObservation(pid: pid)

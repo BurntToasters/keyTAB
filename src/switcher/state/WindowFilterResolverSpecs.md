@@ -30,7 +30,7 @@ The predicate, in order:
    make sense for real windows.
 6. For **real windows**: also exclude fullscreen / minimized (when set), windows not in a visible space
    (`.visible`) or in a visible space (`.nonVisible`), windows off the preferred screen
-   (`.showingAltTab`), and non-frontmost native **tabs** (unless tabs are shown as separate windows).
+   (`.showingKeyTab`), and non-frontmost native **tabs** (unless tabs are shown as separate windows).
 
 Precedence matters: `isPhantom` wins over everything (even a would-be-shown windowless row).
 
@@ -80,7 +80,7 @@ Mirrors `WindowFilterResolverTests.swift` 1:1. Each test flips one knob from an 
   settings.
 
 ### H. Screens
-- **testOnlyPreferredScreenHidesOffScreenWindow** / **testOnlyPreferredScreenShowsOnScreenWindow** — `.showingAltTab` keeps only windows on the preferred screen.
+- **testOnlyPreferredScreenHidesOffScreenWindow** / **testOnlyPreferredScreenShowsOnScreenWindow** — `.showingKeyTab` keeps only windows on the preferred screen.
 - **testOnlyPreferredScreenShowsHeldTab** — a held tab is never dropped by the screen gate either (same
   fix, third gate: the Space-less tab has no Space to resolve a screen from).
 

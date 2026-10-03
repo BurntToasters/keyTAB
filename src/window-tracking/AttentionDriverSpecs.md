@@ -7,11 +7,11 @@ MEANS.
 The translation is the architecture. The reducer's vocabulary is shaped by where an event came from; the
 model's by what it says about the user. Four groups:
 
-- **a plain activation names an app and nothing else** — `frontProcessChanged`, never a window. When AltTab
+- **a plain activation names an app and nothing else** — `frontProcessChanged`, never a window. When KeyTab
   asked that app for the switch and is still waiting to hear where focus landed, it is
   `frontProcessChangedAwaitingAnswer`: same app, and the app's cached answer is left out of it because it
   predates the switch
-- **a namer names a window of one app** — the click, and the app answering about itself. AltTab's own switch
+- **a namer names a window of one app** — the click, and the app answering about itself. KeyTab's own switch
   is not a namer: it is heard through the activation and the app's answers, like any other switch
 - **an app failing to answer names nothing, and says so** — the bounded read coming back empty is
   `focusedWindowUnknown`, which is a value rather than a silence
@@ -44,10 +44,10 @@ model's by what it says about the user. Four groups:
   it through the current tab mapping on activation, rather than retaining a stale representative.
 - **testAClickFrontsItsWindowWithoutWaitingForTheActivation** — the click names both levels at once, so it
   fronts a window of an app that has not activated yet. The only source that survives a wedged app.
-- **testAFocusThatDidNotTakeLeavesTheFrontAlone** — #6055. AltTab's switch moves nothing by itself: when the
+- **testAFocusThatDidNotTakeLeavesTheFrontAlone** — #6055. KeyTab's switch moves nothing by itself: when the
   focus did not take, the read of the target app afterwards is a fact about that app, and the front stays
   where the OS left it.
-- **testAnActivationWeAreStillWaitingOnDoesNotFrontTheCachedWindow** — the activation AltTab's own switch
+- **testAnActivationWeAreStillWaitingOnDoesNotFrontTheCachedWindow** — the activation KeyTab's own switch
   provokes arrives before the app has answered. Its cached answer is the window being left, so it neither
   fronts it nor spends a read; the answer that follows is what moves the front.
 - **testAnAnswerMapsThroughTheTabRepresentative** — an app answering with a background tab moves the tile that
@@ -57,7 +57,7 @@ model's by what it says about the user. Four groups:
 
 ### C. Process generations and ordering
 
-- **testUnseenPidIsRegisteredBeforeItsEvent** — an app already running when AltTab started is activated
+- **testUnseenPidIsRegisteredBeforeItsEvent** — an app already running when KeyTab started is activated
   normally (it asks for a read) rather than as a stale generation.
 - **testRelaunchedPidDoesNotInheritTheDeadProcessesFact** — a relaunched pid starts with no fact, so its first
   activation asks for a read instead of landing on the dead process's window.
@@ -78,7 +78,7 @@ model's by what it says about the user. Four groups:
 
 ## Seeding the front process
 
-The model learns which app is in front from activations. An app that was already frontmost when AltTab
+The model learns which app is in front from activations. An app that was already frontmost when KeyTab
 started produced none, so every answer it gave was about a process the model did not think was in front, and
 Cmd+` inside it moved nothing. `syncFrontmost` reads the front app from the model of the world before
 translating an answer, which is a correction rather than a claim about the user.

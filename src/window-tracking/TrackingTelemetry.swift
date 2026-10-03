@@ -9,7 +9,7 @@ import Foundation
 /// pins the encoded key set so a later field cannot smuggle one in.
 ///
 /// Nothing here decides anything. It is written by the shell after a decision has already been made, so
-/// switching telemetry off can never change what AltTab does.
+/// switching telemetry off can never change what KeyTab does.
 struct TrackingTelemetryState: Equatable {
     static let schemaVersion = 1
 

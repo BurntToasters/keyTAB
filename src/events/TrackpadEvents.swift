@@ -129,7 +129,7 @@ class TrackpadEvents {
             absorbGestures = touchEventHandler(cgEvent)
         } else if type == .tapDisabledByUserInput || type == .tapDisabledByTimeout {
             // This is the tap that detects gestures at all: if it stays down, gestures are simply gone
-            // and the only cure is relaunching AltTab. Say so in the log (#5137).
+            // and the only cure is relaunching KeyTab. Say so in the log (#5137).
             Logger.info { "detect tap disabled \(type == .tapDisabledByTimeout ? "byTimeout" : "byUserInput") wanted:\(shouldBeEnabled == true)" }
             if shouldBeEnabled { CGEvent.tapEnable(tap: detectTap!, enable: true) }
         }

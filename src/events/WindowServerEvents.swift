@@ -234,10 +234,10 @@ class WindowServerEvents {
         readFocusedWindow(pid, key: "pid-\(pid)-activation-focus", viaActivationRead: true)
     }
 
-    /// **AltTab's own switch is heard from the OS, never assumed.** Once the focus operation has run, ask the
+    /// **KeyTab's own switch is heard from the OS, never assumed.** Once the focus operation has run, ask the
     /// app where key focus actually landed. A switch inside the app that is already frontmost produces no
     /// activation, so for an app whose AX focus notifications never arrive this read is the only thing that
-    /// says the user moved (`testTwoAltTabsIntoTheSameAppBothMoveTheOrder`). A focus that did not take reads
+    /// says the user moved (`testTwoKeyTabsIntoTheSameAppBothMoveTheOrder`). A focus that did not take reads
     /// back the window that kept focus, and the order stays true to the screen (#6055).
     static func readFocusedWindowAfterFocusing(_ pid: pid_t) {
         readFocusedWindow(pid, key: "pid-\(pid)-post-focus", viaActivationRead: false)

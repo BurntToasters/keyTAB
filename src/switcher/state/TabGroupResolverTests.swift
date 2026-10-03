@@ -279,8 +279,8 @@ final class TabGroupResolverTests: XCTestCase {
 
     func testMatchesInactiveSiblingByTitle() {
         let active = tw(wid: 1, title: "git")
-        let sibling = tw(wid: 2, spaceIds: [], title: "lwouis")
-        let m = TabGroupResolver.matchSiblings(active: active, axTitles: ["git", "lwouis"],
+        let sibling = tw(wid: 2, spaceIds: [], title: "keytab")
+        let m = TabGroupResolver.matchSiblings(active: active, axTitles: ["git", "keytab"],
             sameAppWindows: [active, sibling])
         XCTAssertEqual(m, SiblingMatch(siblingWids: [1, 2], matchedWids: [2], untrackedTitles: [], toUntabWids: []))
     }
@@ -297,32 +297,32 @@ final class TabGroupResolverTests: XCTestCase {
         // An on-Space, non-tabbed window is by definition NOT an inactive tab — even with a matching title
         // and close position (Finder cmd-N: new window, same name, cascaded ~28px). Without this, the new
         // window was claimed to fill a title whose real tab has no window and vanished from the switcher.
-        let active = tw(wid: 1, title: "lwouis")
-        let newWindow = tw(wid: 2, position: CGPoint(x: 128, y: 128), spaceIds: [1], title: "lwouis")
-        let m = TabGroupResolver.matchSiblings(active: active, axTitles: ["lwouis", "lwouis"],
+        let active = tw(wid: 1, title: "keytab")
+        let newWindow = tw(wid: 2, position: CGPoint(x: 128, y: 128), spaceIds: [1], title: "keytab")
+        let m = TabGroupResolver.matchSiblings(active: active, axTitles: ["keytab", "keytab"],
             sameAppWindows: [active, newWindow])
-        XCTAssertEqual(m, SiblingMatch(siblingWids: [1], matchedWids: [], untrackedTitles: ["lwouis"], toUntabWids: []))
+        XCTAssertEqual(m, SiblingMatch(siblingWids: [1], matchedWids: [], untrackedTitles: ["keytab"], toUntabWids: []))
     }
 
     func testFullscreenWindowIsNeverClaimedAsAWindowedGroupsTab() {
         // rec24c: switching Spaces TO a fullscreen window made it transiently Space-less (transition
-        // noise), its shared "lwouis" title matched a windowed group's active, and positionsCompatible's
+        // noise), its shared "keytab" title matched a windowed group's active, and positionsCompatible's
         // fullscreen waiver would otherwise let the windowed group annex the fullscreen WINDOW. The
         // fullscreen Space invariant forbids it: a fullscreen window is its own window on its own Space,
         // never a windowed group's tab. Space-less BUT fullscreen ⇒ not claimable.
-        let active = tw(wid: 1, position: CGPoint(x: 260, y: 392), spaceIds: [3628], title: "lwouis")
-        let fullscreen = tw(wid: 2, position: CGPoint(x: 0, y: 0), spaceIds: [], title: "lwouis",
+        let active = tw(wid: 1, position: CGPoint(x: 260, y: 392), spaceIds: [3628], title: "keytab")
+        let fullscreen = tw(wid: 2, position: CGPoint(x: 0, y: 0), spaceIds: [], title: "keytab",
             isFullscreen: true)
-        let m = TabGroupResolver.matchSiblings(active: active, axTitles: ["lwouis", "lwouis"],
+        let m = TabGroupResolver.matchSiblings(active: active, axTitles: ["keytab", "keytab"],
             sameAppWindows: [active, fullscreen])
-        XCTAssertEqual(m, SiblingMatch(siblingWids: [1], matchedWids: [], untrackedTitles: ["lwouis"], toUntabWids: []))
+        XCTAssertEqual(m, SiblingMatch(siblingWids: [1], matchedWids: [], untrackedTitles: ["keytab"], toUntabWids: []))
     }
 
     func testUntrackedTitleReported() {
         let active = tw(wid: 1, title: "git")
-        let m = TabGroupResolver.matchSiblings(active: active, axTitles: ["git", "lwouis"],
+        let m = TabGroupResolver.matchSiblings(active: active, axTitles: ["git", "keytab"],
             sameAppWindows: [active])
-        XCTAssertEqual(m, SiblingMatch(siblingWids: [1], matchedWids: [], untrackedTitles: ["lwouis"], toUntabWids: []))
+        XCTAssertEqual(m, SiblingMatch(siblingWids: [1], matchedWids: [], untrackedTitles: ["keytab"], toUntabWids: []))
     }
 
     func testStillTabbedSiblingKeptDespiteNoTitle() {
@@ -376,10 +376,10 @@ final class TabGroupResolverTests: XCTestCase {
 
     func testFarPositionNotMatched() {
         let active = tw(wid: 1, position: CGPoint(x: 100, y: 100), title: "git")
-        let far = tw(wid: 2, position: CGPoint(x: 900, y: 900), spaceIds: [], title: "lwouis")
-        let m = TabGroupResolver.matchSiblings(active: active, axTitles: ["git", "lwouis"],
+        let far = tw(wid: 2, position: CGPoint(x: 900, y: 900), spaceIds: [], title: "keytab")
+        let m = TabGroupResolver.matchSiblings(active: active, axTitles: ["git", "keytab"],
             sameAppWindows: [active, far])
-        XCTAssertEqual(m, SiblingMatch(siblingWids: [1], matchedWids: [], untrackedTitles: ["lwouis"], toUntabWids: []))
+        XCTAssertEqual(m, SiblingMatch(siblingWids: [1], matchedWids: [], untrackedTitles: ["keytab"], toUntabWids: []))
     }
 
     func testZeroSizedMergeUsesTheExactTabCountAcrossFrozenFrames() {
@@ -421,12 +421,12 @@ final class TabGroupResolverTests: XCTestCase {
         // re-take. The discovery read kept it; the plain `axMainWindow` read that landed in the same
         // millisecond had no `activeIsNewlyDiscovered` and untabbed it, and the burst drew 3 Finder tiles
         // instead of 2 until the geometry pass repaired it.
-        let active = tw(wid: 3, size: .zero, position: .zero, title: "lwouis", tabbedSiblingWids: [1, 2, 3],
+        let active = tw(wid: 3, size: .zero, position: .zero, title: "keytab", tabbedSiblingWids: [1, 2, 3],
                         lastFocusOrder: 0, tabCount: 3)
-        let rep = tw(wid: 2, title: "lwouis", tabbedSiblingWids: [1, 2, 3], isOrderedIn: true, lastFocusOrder: 1)
-        let background = tw(wid: 1, spaceIds: [], title: "lwouis", isTabbed: true,
+        let rep = tw(wid: 2, title: "keytab", tabbedSiblingWids: [1, 2, 3], isOrderedIn: true, lastFocusOrder: 1)
+        let background = tw(wid: 1, spaceIds: [], title: "keytab", isTabbed: true,
                             tabbedSiblingWids: [1, 2, 3], lastFocusOrder: 2)
-        let m = TabGroupResolver.matchSiblings(active: active, axTitles: ["lwouis", "lwouis", "lwouis"],
+        let m = TabGroupResolver.matchSiblings(active: active, axTitles: ["keytab", "keytab", "keytab"],
                                                 sameAppWindows: [active, rep, background])
         XCTAssertEqual(m.siblingWids.sorted(), [1, 2, 3])
         XCTAssertEqual(m.toUntabWids, [], "ejecting the representative is what drew the third tile")

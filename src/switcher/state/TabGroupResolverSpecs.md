@@ -3,7 +3,7 @@
 ## Summary
 
 `TabGroupResolver` holds the pure decisions behind macOS **OS-tab** detection — deciding which windows are
-inactive tabs of one tabbed window, given the facts AltTab can read. macOS exposes no public API that maps
+inactive tabs of one tabbed window, given the facts KeyTab can read. macOS exposes no public API that maps
 an inactive tab to its window: `_AXUIElementGetWindow` on an AXTabButton returns the *parent* window's WID,
 not the tab's own, so tabs must be matched to windows **by title**. Inactive tabs also appear in no CGS
 list, so the WindowServer-driven
@@ -394,8 +394,8 @@ and silence is not a verdict.
 
 ### B. matchSiblings
 
-- **testMatchesInactiveSiblingByTitle** — active "git" with titles [git, lwouis] + a same-app Space-less
-  window "lwouis" → matched; `siblingWids` = [active, lwouis].
+- **testMatchesInactiveSiblingByTitle** — active "git" with titles [git, keytab] + a same-app Space-less
+  window "keytab" → matched; `siblingWids` = [active, keytab].
 - **testNewlyDiscoveredActiveClaimsOnScreenSameSizeSibling** — a brand-new active tab
   (`activeIsNewlyDiscovered`) + a same-app, same-size sibling still on a (stale) Space → the sibling IS
   claimed (its 1326 hasn't landed), grouping the pair atomically so it doesn't flash as a 2nd tile.

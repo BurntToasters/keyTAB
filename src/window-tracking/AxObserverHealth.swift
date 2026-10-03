@@ -62,7 +62,7 @@ enum AxNotificationCapability: CaseIterable, Hashable {
     /// covers only the on-screen case and 804 arrives 57-231s later.
     ///
     /// The notification's element is already dead, so `_AXUIElementGetWindow` cannot name it — but `CFEqual`
-    /// against the element AltTab cached for the window does, locally, in ~30ns
+    /// against the element KeyTab cached for the window does, locally, in ~30ns
     /// (`AxObserverRegistry.trackedElements`). An unmatched delivery is dropped before any attribute read,
     /// which is what makes the known bursts (Finder: 16 in one millisecond, all sub-window elements) free.
     case elementDestroyed
@@ -202,7 +202,7 @@ struct AxObserverRetryPolicy: Equatable {
     let initialRetryDelay: UInt64
     let maximumRetryDelay: UInt64
     /// The FIRST sparse wait, doubling up to `sparseCooldown`. A flat 30s here meant an app that was wedged
-    /// when AltTab started and then began answering again waited out a full cooldown before anyone asked it
+    /// when KeyTab started and then began answering again waited out a full cooldown before anyone asked it
     /// anything, which for the user is half a minute of the switcher not offering windows that are on
     /// screen. The growth costs a handful of extra attempts in the first minute against an app that is
     /// permanently silent, and nothing at all after that.

@@ -16,7 +16,7 @@ attention plane is documented in [`../window-tracking/AttentionOrderSpecs.md`](.
   actions (raise/minimize/close/fullscreen) also remain. Focused/main selects a known group's representative;
   it does not prove full tab membership, which remains a composite of AXTabGroup reads and physical fallback.
 - **Window order → the attention model.** `NSWorkspace` names the front process; AX, the type-13 cross-app
-  click, and AltTab's own intent name a window inside a process. Only a committed attention decision or a
+  click, and KeyTab's own intent name a window inside a process. Only a committed attention decision or a
   structural repair may write MRU.
 - **Accessibility permission is still required** — focusing another app's window is permission-gated
   regardless of AX-vs-SLS. The win here is reliability and no observer churn, not fewer permissions.

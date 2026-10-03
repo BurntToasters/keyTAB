@@ -488,7 +488,7 @@ class Windows {
 
     /// **The startup guess, re-made as windows turn up.**
     ///
-    /// AltTab launches into a desktop it did not watch being built, so it has no focus history and has to
+    /// KeyTab launches into a desktop it did not watch being built, so it has no focus history and has to
     /// guess; screen stacking is that guess. The guess used to be fired once a second after launch and once
     /// more on the first summon. Measured 2026-08-25 across four processes: the startup inventory it is
     /// meant to rank lands ~280ms AFTER that timer, because `manuallyRefreshAllWindows` is asynchronous and
@@ -630,7 +630,7 @@ class Windows {
     /// **A window exact attention evidence named before ordinary discovery completed.** The WindowServer row
     /// supplies physical state while AX acquisition catches up.
     ///
-    /// **Only for a window a click, AltTab, or an app focus notification named.** Retaining every unresolved WindowServer
+    /// **Only for a window a click, KeyTab, or an app focus notification named.** Retaining every unresolved WindowServer
     /// row was tried and reverted: a healthy app fails to resolve a wid constantly, because a background
     /// native tab exposes no AX window element at all, and tracking those made them look already-tracked to
     /// the inactive-tab brute force, which then never went looking for them. A tab group came back with one
@@ -699,7 +699,7 @@ class Windows {
     }
 
     /// Exact attention named this window, so it is shown on that evidence rather than waiting for AX
-    /// acquisition. This covers a click, AltTab's own target, and the app's focus notification. Admission
+    /// acquisition. This covers a click, KeyTab's own target, and the app's focus notification. Admission
     /// only: it does not move the window order.
     static func promoteAttentionEvidence(_ wid: CGWindowID) {
         let representativeWid = WindowSurfaceInventory.representativeWid(wid)

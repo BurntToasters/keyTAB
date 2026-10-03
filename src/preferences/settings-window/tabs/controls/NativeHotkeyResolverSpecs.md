@@ -2,9 +2,9 @@
 
 ## Summary
 
-AltTab triggers its switcher via a Carbon `RegisterEventHotKey`. The native ⌘⇥ / ⌘⇧⇥ symbolic
+KeyTab triggers its switcher via a Carbon `RegisterEventHotKey`. The native ⌘⇥ / ⌘⇧⇥ symbolic
 hotkeys, when enabled, are consumed by the Dock/WindowServer **before** any app-level Carbon hotkey — so
-binding ⌘⇥ to AltTab requires disabling the corresponding native one. ⌘` is not in that set: the OS
+binding ⌘⇥ to KeyTab requires disabling the corresponding native one. ⌘` is not in that set: the OS
 handles it inside the front app, after the Carbon hotkey has already been matched, so binding it needs
 no native disable (see `CGSSymbolicHotKey`).
 
@@ -26,7 +26,7 @@ iteration order isn't stable across launches) — leaving native ⌘⇥ enabled 
 - **Collect, don't pick.** Every native predicate a shortcut matches contributes to `disable`; nothing
   is dropped. The `enable` set is the complement over `CGSSymbolicHotKey.allCases`.
 - **⌘⇥ pairing.** Disabling `.commandTab` implicitly disables `.commandShiftTab` too, so the native
-  reverse switcher doesn't fire while AltTab owns ⌘⇥.
+  reverse switcher doesn't fire while KeyTab owns ⌘⇥.
 - **No globals.** `combinedModifiersMatch` takes the hold modifiers as an explicit
   `holdShortcutModifiers: [UInt32]` parameter rather than reading `ControlsTab.shortcuts`, so the
   resolver is independent of any global state.
@@ -53,7 +53,7 @@ Mirrors `NativeHotkeyResolverTests.swift` 1:1.
   enabled; there is no native hotkey to disable for it.
 
 ### D. Default option config — no native switcher overlap
-- **testOptionTabDoesNotOverrideNativeSwitchers** — AltTab's default ⌥⇥ / hold ⌥ doesn't overlap
+- **testOptionTabDoesNotOverrideNativeSwitchers** — KeyTab's default ⌥⇥ / hold ⌥ doesn't overlap
   any native command-tab hotkey, so every native hotkey stays enabled.
 
 ### E. Empty config — nothing to override

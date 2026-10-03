@@ -38,7 +38,7 @@ may erase a cached answer when its window ceases to exist; it never names or mov
   that is the only thing that emits it. A plain activation names no window from any source when the app's
   focused window did not change; that is the one hole nothing else fills.
 - an activation for a process with a cached app answer needs no read either
-- **an answer already on its way beats the one already here** — the activation provoked by a switch AltTab
+- **an answer already on its way beats the one already here** — the activation provoked by a switch KeyTab
   asked for takes the front for that app and names no window: the app's cached answer is about the window the
   user is LEAVING, and fronting it walks that window to the top of the order. No read either, since the one
   that will answer this is already out. The answer then moves the front even when it names the cached window,

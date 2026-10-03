@@ -124,7 +124,7 @@ cannot make a window undiscoverable.
 
 **A window that changes nothing is the case this budget cannot judge alone**, and the caller owns that half:
 it records no failure reached while the screen is locked, and drops a process's records once it starts
-answering accessibility again. Without those, a wake wrote off every window AltTab did not already hold an
+answering accessibility again. Without those, a wake wrote off every window KeyTab did not already hold an
 element for, and a quiescent background app never moved its window set to earn another attempt (#6031).
 
 - **testAFreshSurfaceIsAlwaysAttempted** — a surface with no failure on record is swept, as before.

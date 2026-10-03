@@ -4,7 +4,7 @@
 
 ## Summary
 
-`PreferencesMigrations` upgrades a user's stored `UserDefaults` from an older AltTab version to the current schema. It runs once per launch (`migratePreferences()`), comparing the stored `preferencesVersion` to the app version and applying each registered migration whose version threshold the stored version is at or below. Most migrations are small, self-contained `UserDefaults` transforms (rename a key, remap an index, split one key into two, convert a Bool string to an enum index).
+`PreferencesMigrations` upgrades a user's stored `UserDefaults` from an older KeyTab version to the current schema. It runs once per launch (`migratePreferences()`), comparing the stored `preferencesVersion` to the app version and applying each registered migration whose version threshold the stored version is at or below. Most migrations are small, self-contained `UserDefaults` transforms (rename a key, remap an index, split one key into two, convert a Bool string to an enum index).
 
 **Why this is the highest-value safety net:** these run on every upgrade against real users' data. A mistake silently corrupts settings for the entire installed base — and there's no UI signal when it goes wrong. The tests pin each transform's exact input→output.
 
@@ -82,4 +82,4 @@ Mirrors `PreferencesMigrationsTests.swift` 1:1.
 - **testShortcutIndexesMoveSuffix4To10AndSetCount** — suffix `4` → `10`; `shortcutCount` set to `3` when a 3rd shortcut exists.
 
 ### P. Dropdowns: English text → indexes
-- **testDropdownTextValuesBecomeIndexes** — `appsToShow "Active app"` → `"1"`; `screensToShow "Screen showing AltTab"` → `"1"`.
+- **testDropdownTextValuesBecomeIndexes** — `appsToShow "Active app"` → `"1"`; `screensToShow "Screen showing KeyTab"` → `"1"`.

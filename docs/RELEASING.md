@@ -29,4 +29,4 @@ Stable updates use `appcast.xml`. Beta updates use `appcast-beta.xml`; publishin
 
 Every binary release must use a public tag containing the complete corresponding GPL source, build scripts, vendored sources, provenance, and dependency notices. CI has read-only repository permission and performs only validation, tests, and an unsigned compile smoke build.
 
-Public release remains blocked until original KeyTab artwork replaces the imported placeholder, the KeyTab Sparkle public key is committed, the canonical repository is public, and signed/notarized native checks pass on supported Intel and Apple Silicon systems.
+Public release remains blocked until the KeyTab Sparkle public key is committed, the canonical repository is public, and signed/notarized native checks pass on supported Intel and Apple Silicon systems.

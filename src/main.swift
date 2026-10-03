@@ -41,7 +41,7 @@ let signalSources = queuedSignals.map { s -> DispatchSourceSignal in
 // ...and UNBLOCK them, because a blocked signal is never delivered (neither to a handler nor to a dispatch
 // source) and the mask is not ours to begin with: `posix_spawn` hands the child the signal mask of the
 // thread that spawned it, so a launcher that spawns from a libdispatch worker (where signals are masked)
-// starts AltTab unquittable. TERM, INT and HUP sit pending forever and only SIGKILL ends it, which is
+// starts KeyTab unquittable. TERM, INT and HUP sit pending forever and only SIGKILL ends it, which is
 // exactly the path that skips the capture drain below. Measured 2026-09-01, same binary and same pty either
 // way: spawned from a blocked-mask parent it outlived every TERM; unblocked it exited in 0.26s.
 var handledMask = sigset_t()

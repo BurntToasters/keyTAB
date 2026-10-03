@@ -243,7 +243,7 @@ enum TabGroupResolver {
     /// of four, and the three real tabs were exposed to the dead-window sweep.
     ///
     /// The cascade is also, exactly, the offset the split exists to catch (rec11/rec12: two Finder windows one
-    /// 29px step apart, both at the default 920×436, every tab titled "lwouis", mutually claimable on every
+    /// 29px step apart, both at the default 920×436, every tab titled "keytab", mutually claimable on every
     /// other fact we had). The two requirements genuinely collide on position, so this is settled with the fact
     /// that ISN'T position: the visible's own AXTabGroup COUNT, the half of the AX read that is never in doubt.
     /// When it equals the cluster size, AX has accounted for every member and there is no room left for a
@@ -301,7 +301,7 @@ enum TabGroupResolver {
     /// window switched a tab its outgoing active went Space-less and held, which left the bottom window as the
     /// cluster's only genuine holder: {bottom's active, bottom's one discovered tab, top's held ex-active} is
     /// 3 members against the bottom's declared 3, nothing was linked yet, and the waiver handed the top
-    /// window's active straight to the bottom window's group. Every Finder window is titled "lwouis", so the
+    /// window's active straight to the bottom window's group. Every Finder window is titled "keytab", so the
     /// title path then matched across the merged group too and one tile stood for both windows (measured
     /// 2026-09-10). A merge is untouched: the windows it absorbs were plain untabbed windows, so their count
     /// is 0. So is an ordinary tab swap — the held outgoing tab sits at its successor's position, which is the
@@ -842,7 +842,7 @@ enum TabGroupResolver {
     ///
     /// **No position tolerance here, ever.** macOS CASCADES new windows by 29px, so any tolerance near that
     /// merges real windows: two Finder windows one cascade step apart, both at the default 920×436 and every
-    /// tab titled "lwouis" (Finder names tabs after the folder), were mutually claimable on every fact we
+    /// tab titled "keytab" (Finder names tabs after the folder), were mutually claimable on every fact we
     /// had. One window's active tab swallowed the other's tabs and the second window lost every member, one
     /// tile for two windows (rec11).
     ///

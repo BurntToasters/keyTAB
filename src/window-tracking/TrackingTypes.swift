@@ -1,6 +1,6 @@
 import Foundation
 
-/// **A pid plus the generation AltTab assigned it.** macOS reuses pids, so a bare pid cannot say whether a
+/// **A pid plus the generation KeyTab assigned it.** macOS reuses pids, so a bare pid cannot say whether a
 /// callback belongs to the process that is running now or to the one that died a second ago. Every rule keyed
 /// on identity keys on this instead.
 struct ProcessGeneration: Hashable, Comparable {
@@ -12,7 +12,7 @@ struct ProcessGeneration: Hashable, Comparable {
     }
 }
 
-/// A WindowServer window number bound to the process generation AltTab observed owning it. Window numbers
+/// A WindowServer window number bound to the process generation KeyTab observed owning it. Window numbers
 /// are session-unique on macOS; qualifying ownership prevents a stale per-process callback from being
 /// attributed to a different process while keeping the WindowServer number as the surface identity.
 struct WindowIdentity: Hashable, Comparable {

@@ -4,7 +4,7 @@
 
 `GestureTriggerKernel` is the pure state machine for the trackpad gesture *trigger*: the decision,
 taken while the switcher is **closed**, of whether the fingers on the trackpad just performed
-AltTab's summon swipe. `GestureTracker` is its bookkeeping — where each finger of the current gesture
+KeyTab's summon swipe. `GestureTracker` is its bookkeeping — where each finger of the current gesture
 started, so travelled distance can be measured.
 
 `TrackpadEvents` stays the adapter: it owns the event taps, maps `NSTouch` into `GestureTouch`
@@ -16,7 +16,7 @@ Distances are fractions of the trackpad surface, the way `NSTouch.normalizedPosi
 
 ## Why it is extracted (#5137)
 
-"The trackpad gesture stops working, several times a day, and only relaunching AltTab fixes it." The
+"The trackpad gesture stops working, several times a day, and only relaunching KeyTab fixes it." The
 trigger keeps state that outlives a single gesture, and two pieces of it could hold a value that made
 every later swipe fail. Neither is reachable from a live pass, and neither left a trace in the log,
 so the only way to hold the behaviour still is to test the state machine directly.

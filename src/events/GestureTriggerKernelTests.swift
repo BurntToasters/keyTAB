@@ -104,7 +104,7 @@ final class GestureTriggerKernelTests: XCTestCase {
     }
 
     /// The regression guard. Raising the fingers ends the gesture, and the cancelled swipe must not
-    /// outlive it: this is what used to kill gestures until AltTab was relaunched, because
+    /// outlive it: this is what used to kill gestures until KeyTab was relaunched, because
     /// `swipeStillPossible` gates its own recomputation and nothing on this path cleared it.
     func testCancelledSwipeDoesNotSurviveTheFingersBeingRaised() {
         let kernel = GestureTriggerKernel()

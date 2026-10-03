@@ -1,13 +1,13 @@
 import Foundation
 
-/// **Parks the notarization ticket while AltTab runs, and puts it back when it quits.**
+/// **Parks the notarization ticket while KeyTab runs, and puts it back when it quits.**
 ///
 /// `stapler` writes the ticket to `Contents/CodeResources`, the one path the signature does not seal, so moving
 /// it changes neither the code signature nor anything tied to it: the Screen Recording grant, the Keychain
 /// license items, Gatekeeper's record of the app. The ticket is for Gatekeeper's first look at a downloaded
-/// copy, which has already happened by the time AltTab runs.
+/// copy, which has already happened by the time KeyTab runs.
 ///
-/// It is worth moving because macOS validates AltTab's bundle from disk for every permission check, three per
+/// It is worth moving because macOS validates KeyTab's bundle from disk for every permission check, three per
 /// window screenshot, with nothing cached. When a ticket is stapled, that validation also extracts it and
 /// registers it with the system again ("Registering stapled ticket with system" in tccd's log). Measured on
 /// macOS 27 (M5): ~10ms of a 30ms check at rest; 45ms vs 19ms per check during a 43-window refresh, which took
@@ -15,7 +15,7 @@ import Foundation
 ///
 /// It is parked at `Contents/Resources/en.lproj/locversion.plist` because the signature's own resource rules
 /// omit that path (`^Resources/.*\.lproj/locversion.plist$`), so the bundle stays valid with the ticket there.
-/// Any other new name in the bundle breaks the seal, and then tccd can no longer match AltTab to its grant and
+/// Any other new name in the bundle breaks the seal, and then tccd can no longer match KeyTab to its grant and
 /// macOS asks for Screen Recording again. `.DS_Store` is omitted too, but Finder writes that name. Staying
 /// inside the bundle means an update, which replaces the whole bundle, takes the parked ticket with it; a
 /// crash or a forced exit leaves it parked, and the next quit restores it.

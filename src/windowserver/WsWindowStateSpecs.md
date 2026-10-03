@@ -3,7 +3,7 @@
 ## Summary
 
 `WsWindowState` is the pure decode of a `WsRawWindow` (the raw fields read from the WindowServer in one
-`SLSWindowQueryWindows` batch) into the booleans AltTab's model needs: on-screen (ordered-in), **minimized**,
+`SLSWindowQueryWindows` batch) into the booleans KeyTab's model needs: on-screen (ordered-in), **minimized**,
 fullscreen, and an application-window-level hint. The bit and mask constants below were reverse-engineered
 live on macOS 26 by diffing the same window across states; the tests pin those exact observed values so a
 future macOS that shifts them fails loudly here rather than silently mis-decoding.

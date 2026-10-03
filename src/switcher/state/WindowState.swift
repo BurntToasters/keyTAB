@@ -35,7 +35,7 @@ struct WindowState: Equatable {
     // cached AXMain (is this the app's main window). Read off-main with the other window attributes; used only
     // as the one-window-per-app cold-start fallback when attention has not named a representative.
     var isMainWindow = false
-    /// How much AltTab actually KNOWS about this window, as opposed to what the WindowServer says exists.
+    /// How much KeyTab actually KNOWS about this window, as opposed to what the WindowServer says exists.
     /// Defaults to `.axVerified` because every window that comes through the ordinary discovery path was
     /// discriminated against real AX attributes before it was constructed.
     var axStatus = AxSemanticStatus.axVerified

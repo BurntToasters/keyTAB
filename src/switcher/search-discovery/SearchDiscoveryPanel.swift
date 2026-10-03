@@ -129,7 +129,7 @@ final class SearchDiscoveryCloseButton: NSButton {
     override func updateTrackingAreas() {
         super.updateTrackingAreas()
         if let hoverArea { removeTrackingArea(hoverArea) }
-        // AltTab is usually not the active app while the switcher shows
+        // KeyTab is usually not the active app while the switcher shows
         let area = NSTrackingArea(rect: bounds, options: [.mouseEnteredAndExited, .activeAlways], owner: self, userInfo: nil)
         addTrackingArea(area)
         hoverArea = area

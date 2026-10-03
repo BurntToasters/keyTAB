@@ -147,9 +147,9 @@ class CliServer {
         // — and what they look like when main comes back is the thing under test.
         //
         // The machine does this on its own, rarely: on 2026-09-15 a 450ms gap under load made two alt-tab
-        // pairs arrive back to back and AltTab committed the wrong window. Waiting for that to happen again
+        // pairs arrive back to back and KeyTab committed the wrong window. Waiting for that to happen again
         // is not a test, so the gap is posed here instead. Nothing else can pose it: every other path into
-        // main is work AltTab would also have to do, which changes what the events land on.
+        // main is work KeyTab would also have to do, which changes what the events land on.
         if rawValue.hasPrefix("--qa-stall-main=") {
             let ms = Int(rawValue.dropFirst("--qa-stall-main=".count)) ?? 0
             Logger.info { "QA: stalling main for \(ms)ms" }
@@ -450,7 +450,7 @@ class CliServer {
         var index: Int
     }
 
-    /// The screen⇄Space map the `screensToShow: showing AltTab` filter is judged against
+    /// The screen⇄Space map the `screensToShow: showing KeyTab` filter is judged against
     /// (`Spaces.screenSpacesMap`), plus which screen that filter currently prefers. A window whose
     /// `spaceIds` name no Space of the preferred screen is hidden by that filter, and the two halves
     /// of that verdict were previously invisible here (#6021).

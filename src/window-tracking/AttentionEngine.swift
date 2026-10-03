@@ -5,7 +5,7 @@ import Cocoa
 ///
 /// Three channels reach it, and they are the only three:
 /// - **the reducer's input stream** (`dispatched`), for an app activation and the `kAXFocusedWindow` reads
-///   (the per-app seed, the bounded read on activation, and the read after AltTab's own switch);
+///   (the per-app seed, the bounded read on activation, and the read after KeyTab's own switch);
 /// - **the app's own accessibility observer** (`axSemanticFocus`), settled per process;
 /// - **the click channel** (`directedAttention`), the type-13 tap in `WindowAttentionEvents`.
 ///
@@ -93,7 +93,7 @@ class AttentionEngine {
     }
 
     /// The generation the tracking pipeline currently associates with this pid. Lazily assigned, so an app
-    /// that was already running when AltTab started has an identity too.
+    /// that was already running when KeyTab started has an identity too.
     static func generation(of pid: pid_t) -> UInt64 {
         let generation = generations[pid] ?? 1
         generations[pid] = generation

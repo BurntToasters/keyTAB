@@ -235,7 +235,7 @@ extension String {
     }
 }
 
-/// Whether AltTab's non-switcher windows may take key focus. They are only ever flipped together,
+/// Whether KeyTab's non-switcher windows may take key focus. They are only ever flipped together,
 /// while the switcher's panel is ordered out: a window taking key focus there would steal it from the
 /// app the user is switching to (`App.hideTilesPanelWithoutChangingKeyWindow`).
 enum SecondaryWindows {
@@ -260,10 +260,10 @@ extension NSTextView {
 }
 
 extension NSPanel {
-    /// The chrome AltTab's two floating panels (the switcher and the window preview) share.
-    /// `.canJoinAllSpaces` matters because triggering AltTab before or during a Space transition
+    /// The chrome KeyTab's two floating panels (the switcher and the window preview) share.
+    /// `.canJoinAllSpaces` matters because triggering KeyTab before or during a Space transition
     /// otherwise only brings the panel over once the transition ends. The `.unknown` accessibility
-    /// subrole is what keeps these panels out of AltTab's own thumbnails.
+    /// subrole is what keeps these panels out of KeyTab's own thumbnails.
     func applyFloatingPanelChrome() {
         isFloatingPanel = true
         animationBehavior = .none

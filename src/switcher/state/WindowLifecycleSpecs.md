@@ -24,7 +24,7 @@ Process exit clears pending AX facts and surface retirements immediately.
 ## Observability ceiling
 
 If a custom app retains both its AX element and WindowServer surface, posts no meaningful transition, and the
-user action was not observed, AltTab cannot know that the user considers the window closed. No provider
+user action was not observed, KeyTab cannot know that the user considers the window closed. No provider
 priority or extra same-subsystem query can manufacture that fact.
 
 ## Tests

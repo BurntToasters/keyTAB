@@ -13,7 +13,7 @@ wrote down what CORRECT behavior is. The model layer is the shift to **model + p
   / `switchToSpace` / `show`). A **`TestScenario`** is a `[TestUserAction]`; a test IS that sequence.
 - **`TestInteractionModel`** — THE model of OS behavior: `[TestUserAction ⇒ OS events]`. Holds GROUND TRUTH
   (real windows, their tabs, which is active, per-tab frame/Space/fullscreen) and, per action, emits the
-  WindowServer/AX event sequence AltTab would observe as `TestReducerRunner.Step`s. Performs nothing itself,
+  WindowServer/AX event sequence KeyTab would observe as `TestReducerRunner.Step`s. Performs nothing itself,
   so the same action can be replayed under different event ORDERINGS. Four OS-behaviour switches, each
   observed live: `duplicateTitles` (Finder names every window after its folder), `reusesTabWindows` (a switch
   reuses the tab's own window, `added tracked#` — rec19 — instead of minting a fresh wid with no create
@@ -72,7 +72,7 @@ A tabbed window shows ONE tile; its active tab holds the window's Space, backgro
 switching tabs either MINTS a fresh wid for the incoming tab — its prior wid LINGERS alive + AX-reachable
 (rec25 accumulation — stale wids are NOT dead, they stay tracked and reconcile folds them) — or REUSES the
 tab's own window (`reusesTabWindows`); a fullscreen window's tabs share ONE fullscreen Space, and only its
-ACTIVE tab is resized, the rest staying frozen at their old frames; an inactive tab AltTab never tracked is
+ACTIVE tab is resized, the rest staying frozen at their old frames; an inactive tab KeyTab never tracked is
 brute-force adopted Space-less; a `show` runs the pre-show reconcile (discover the untracked incoming active,
 adopt inactive tabs, AX-title read for windowed groups, authoritative Space re-query, phantom pass), and all
 of its reads are ISSUED before any of them land. When a fuzz failure looks like a bug, first rule out a model
@@ -195,11 +195,11 @@ to the fullscreen frame, and folds into the cluster permanently. It shows only i
 tab"; the default grouped mode is correct throughout. Pinned by
 `testPreexistingUnswitchedFullscreenTabsStillShowOneTile`.
 
-## Cold start — AltTab launched into a desktop that already existed
+## Cold start — KeyTab launched into a desktop that already existed
 
 Every scenario above starts from nothing and watches every window from birth. That is the one condition
 under which a history-based detector cannot fail, because history covers everything — and it is not the
-condition AltTab launches in. `TestScenarioSimulator(preexisting:)` seeds a world and emits **no event for
+condition KeyTab launches in. `TestScenarioSimulator(preexisting:)` seeds a world and emits **no event for
 it**: the first `show` is the launch discovery, and the only facts available are the ones readable NOW (the
 AXTabGroup, the frames). This is the initial condition, and it is what separates the two sources tab
 detection can draw on: events are a *derivative* (they report CHANGES in Space occupancy), and a derivative
@@ -487,10 +487,10 @@ over the interleaving axes (ordering / handover order / late read), so one entry
 - **testSecondFullscreenWindowNeverSwallowsTheFirstsGroup** — rec26 (14 members across two real windows): the
   newcomer is UNSETTLED, so it contributes no Space, and an unsettled visible may fold nothing.
 
-### D. Cold start (AltTab launched into a desktop that already existed)
+### D. Cold start (KeyTab launched into a desktop that already existed)
 
 Every other scenario watches each window from birth, which is the one condition under which a history-based
-detector cannot fail — and it is not the condition AltTab launches in. These seed a world with `preexisting`.
+detector cannot fail — and it is not the condition KeyTab launches in. These seed a world with `preexisting`.
 
 - **testPreexistingStandaloneWindowsEachShowOneTile** — the baseline with no history at all.
 - **testPreexistingTabbedWindowIsGroupedAtLaunch** — a pre-existing group is found by the launch-time read.

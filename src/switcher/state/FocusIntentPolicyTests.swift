@@ -126,7 +126,7 @@ final class FocusIntentPolicyTests: XCTestCase {
                        "the raise landed after the repair that was supposed to cover it, and nothing re-asserted")
     }
 
-    /// AltTab's own window and a windowless app: `Window.focus()` gets there with no target wid, so pending
+    /// KeyTab's own window and a windowless app: `Window.focus()` gets there with no target wid, so pending
     /// operations must stop even though there is nothing to re-assert them to.
     func testSupersedingWithoutATargetStopsPendingOpsAndOwesNoRepair() {
         var policy = FocusIntentPolicy()

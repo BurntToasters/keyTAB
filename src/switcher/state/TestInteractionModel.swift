@@ -174,7 +174,7 @@ struct TestInteractionModel {
     let windowedSpace: UInt64 = 1
     private var currentVisibleSpace: UInt64 = 1
 
-    private let sharedTitle = "lwouis"
+    private let sharedTitle = "keytab"
     /// The window (by identity) whose Space transition is in flight. CGS does NOT list a transitioning
     /// window on its Space — that is WHY it reads as Space-less — so the authoritative re-query and the
     /// phantom pass must both omit it, or the model heals the transient it is supposed to expose.
@@ -550,7 +550,7 @@ struct TestInteractionModel {
         // event list is built instead let the Space re-query name a wid the show itself was still
         // discovering — the group would never look lost, which is precisely the rec24 gap.
         let trackedActives = Set(world.filter { $0.tabs[$0.activeTab].tracked }.map { $0.activeWid })
-        // The wids `syncSpacesState` captures for its per-window backfill: every window AltTab tracks AT THIS
+        // The wids `syncSpacesState` captures for its per-window backfill: every window KeyTab tracks AT THIS
         // MOMENT — background tabs and stale wids included, since the app asks about its whole list. Snapshot
         // it here with `trackedActives`, for the same reason: a window this show is still discovering was
         // never asked about, so the answer must say nothing about it (`.spacesSynced`'s `queried`).

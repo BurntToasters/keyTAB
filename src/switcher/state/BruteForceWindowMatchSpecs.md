@@ -41,7 +41,7 @@ that wid from the set, and the traversal stops only when every requested root is
 The same file also gates the OTHER brute-force scan — `Applications.discoverInactiveTabs`, which hunts an
 app's inactive tabs, since no CGS list holds them. That scan is run for ONE window's missing tab titles and
 matches candidates on TITLE alone, which cannot tell two windows apart at all: two Finder windows browsing
-the same folders each have a tab called "lwouis" (#5785: tab titles are not window titles, and no reliable
+the same folders each have a tab called "keytab" (#5785: tab titles are not window titles, and no reliable
 tab→window mapping exists).
 
 Captured live (2026-08-01): the scan run for window A adopted a tab of window B. Nothing broke

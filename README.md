@@ -21,7 +21,7 @@ npm run build:debug
 
 ## Release safety
 
-Release commands validate the canonical repository, branch, clean and pushed commit, source/version synchronization, 24-hour preparation proof, signing identities, universal architecture, notarization, Sparkle EdDSA signatures, SHA-256 checksums, and detached GPG signatures. Publishing remains blocked until original KeyTab artwork and KeyTab-specific Sparkle and GPG keys are supplied.
+Release commands validate the canonical repository, branch, clean and pushed commit, source/version synchronization, 24-hour preparation proof, signing identities, universal architecture, notarization, Sparkle EdDSA signatures, SHA-256 checksums, and detached GPG signatures. Publishing remains blocked until KeyTab-specific Sparkle and GPG keys are supplied.
 
 Copy `.env.example` to `.env` for local signing credentials. See [docs/RELEASING.md](docs/RELEASING.md) for the release commands, credential options, channel behavior, and manual native checks.
 

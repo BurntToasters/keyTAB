@@ -247,7 +247,7 @@ class Applications {
                 // and spends the surface budget on every window on the machine. That budget is keyed to the
                 // app's window set, which a quiescent background app never moves, so verdicts reached in the
                 // dark outlive the lock and the windows stay icon placeholders once the screen is back
-                // (#6031). Measured 2026-09-13 with the screen locked: every app whose window AltTab had to
+                // (#6031). Measured 2026-09-13 with the screen locked: every app whose window KeyTab had to
                 // acquire was a placeholder, while the two it already held elements for were untouched.
                 // Read once, so the whole pass judges against one verdict rather than a flag that can flip
                 // mid-enumeration.
@@ -758,7 +758,7 @@ class Applications {
     ///
     /// **Only for a window with no element**, deliberately. Adopting on every focus change would rebind a
     /// perfectly good element on the hot path and pay the role read below every time, for nothing: a window
-    /// AltTab already resolved keeps its element when it moves to another Space. Staleness has its own repair
+    /// KeyTab already resolved keeps its element when it moves to another Space. Staleness has its own repair
     /// (`Window.refreshedAxElement`).
     ///
     /// **The role read is not optional.** `_AXUIElementGetWindow` answers with the CONTAINING window's id for
@@ -971,7 +971,7 @@ class Applications {
                     // screen. A candidate it does have on screen is a window in its own right that merely
                     // shares a title with one of this app's tabs — which is not rare at all, because the
                     // titles we match on are tab titles, and two Finder windows browsing the same folder
-                    // both have a tab called "lwouis". Adopting one swallowed a real, visible, FOCUSED
+                    // both have a tab called "keytab". Adopting one swallowed a real, visible, FOCUSED
                     // window into another window's group: it stopped being drawn (a non-representative
                     // member is hidden), so the switcher silently lost a window and the default pick
                     // landed one tile past where the user was aiming.
@@ -1092,7 +1092,7 @@ class Applications {
     /// same path a read would take. Before this, `kAXTitleChanged` had no equivalent anywhere in the app and
     /// the title was only as fresh as the last order event or switcher show — the staleness `matchSiblings`
     /// sees when it compares fresh AX tab titles against model window titles.
-    /// Throttled separately because its rate is chosen by the observed app, not by AltTab's own reads.
+    /// Throttled separately because its rate is chosen by the observed app, not by KeyTab's own reads.
     static func applyObservedTitle(wid: CGWindowID, title: String?) {
         titleThrottler.throttleOrProceed(key: "\(wid)-title") {
             guard let window = Windows.byWindowId[wid] else { return }

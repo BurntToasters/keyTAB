@@ -54,7 +54,7 @@
 - A resume command may reuse only an unexpired 24-hour session matching version, build, commit, source and project hashes, architecture, toolchain, clean pushed branch, and successful `test:all` proof.
 - Releases require Developer ID signing for team `FYJZP8B2KG`, universal `arm64 x86_64` output, hardened runtime, notarization, stapling, Gatekeeper assessment, Sparkle EdDSA signatures, SHA-256 checksums, and detached GPG signatures.
 - Never publish or mutate a GitHub release unless the user explicitly requests that external action.
-- Keep public release blocked until original KeyTab artwork, a KeyTab Sparkle key, a GPG key, the canonical public repository, matching public source tag, and signed native verification are all available.
+- Keep public release blocked until a KeyTab Sparkle key, a GPG key, the canonical public repository, matching public source tag, and signed native verification are all available.
 
 ## Testing
 

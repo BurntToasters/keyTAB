@@ -147,7 +147,7 @@ class WindowAttentionEvents {
         }
     }
 
-    /// AltTab's own panels take no attention: the switcher appearing is not the user going somewhere.
+    /// KeyTab's own panels take no attention: the switcher appearing is not the user going somewhere.
     private static func isOurOwnPanel(_ pid: pid_t) -> Bool {
         pid == AXUIElement.currentProcessPid
     }

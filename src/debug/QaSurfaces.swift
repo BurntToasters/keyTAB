@@ -1,10 +1,10 @@
 #if DEBUG
 import Cocoa
 
-// Every window, sheet, popover, alert and menu AltTab can put on screen, opened by id for the QA suite's
+// Every window, sheet, popover, alert and menu KeyTab can put on screen, opened by id for the QA suite's
 // visual non-regression test (VR-01). The suite photographs each one and compares it with the
 // picture the maintainer last accepted, so what matters here is that the same id shows the same pixels on
-// every run, unless AltTab itself changed.
+// every run, unless KeyTab itself changed.
 //
 // The suite drives it through the CLI port (`CliServer`):
 //   --qa-surfaces        the ids, and the license states each one is worth photographing in
@@ -16,7 +16,7 @@ import Cocoa
 //   --qa-close           put everything away
 //
 // Whatever would change between two runs is held still, so a difference in the pictures is a difference in
-// AltTab: the usage numbers are pinned, the update check answers "up to date" without the network, the Pro
+// KeyTab: the usage numbers are pinned, the update check answers "up to date" without the network, the Pro
 // prompts are marked seen so none schedules itself mid-run, windows open at their default size rather than
 // the one they were last left at, and no text field keeps a blinking caret.
 enum QaSurfaces {
@@ -292,7 +292,7 @@ enum QaSurfaces {
                 return Target()
             },
             // Pro only: once the license lapses, the Pro styles give way to thumbnails, and the suite relaunches
-            // AltTab once per style to photograph them.
+            // KeyTab once per style to photograph them.
             Surface(id: "switcher", licenses: nil, inSettings: false) {
                 App.showUi(0)
                 return target(TilesPanel.shared)

@@ -7,11 +7,11 @@ import Foundation
 /// runtime side of toggling them.
 ///
 /// Only the two the Dock consumes are here. The Dock matches ⌘⇥ / ⌘⇧⇥ inside the WindowServer's
-/// symbolic-hotkey layer, ahead of any app's Carbon hotkey, so AltTab must switch them off to be heard.
+/// symbolic-hotkey layer, ahead of any app's Carbon hotkey, so KeyTab must switch them off to be heard.
 /// ⌘` ("Move focus to next window", id 27) is not consumed by any system process: the keystroke is delivered
-/// to the frontmost app and AppKit cycles there. AltTab's Carbon hotkey is matched before that delivery, so
+/// to the frontmost app and AppKit cycles there. KeyTab's Carbon hotkey is matched before that delivery, so
 /// the app never sees the key and there is nothing to disable. Disabling it would only remove the OS fallback
-/// while AltTab's shortcuts are off (an app in Exceptions, a crash). Pinned by
+/// while KeyTab's shortcuts are off (an app in Exceptions, a crash). Pinned by
 /// `testCommandKeyAboveTabAloneDisablesNothing`. Ids read live from `CGSGetSymbolicHotKeyValue`; id 6, which
 /// looked like a candidate, is ⌘⌥⇧⎋ (force quit the front app).
 enum CGSSymbolicHotKey: Int, CaseIterable {

@@ -4,10 +4,10 @@
 
 ## Summary
 
-The menubar shows a callout — "AltTab is running without Screen Recording permissions. _X_ won't
+The menubar shows a callout — "KeyTab is running without Screen Recording permissions. _X_ won't
 show." — with a "Grant permission" button. It used to appear for **every** user missing the
 permission, including users who deliberately skipped it and don't use any feature that needs it
-(reported in [#5623](https://github.com/lwouis/alt-tab-macos/issues/5623)), and it always blamed
+(reported in [#5623](https://github.com/keytab/alt-tab-macos/issues/5623)), and it always blamed
 "Thumbnails" even when the user relied on window previews instead.
 
 Screen Recording is consumed by exactly two features: the **Thumbnails** appearance style (window

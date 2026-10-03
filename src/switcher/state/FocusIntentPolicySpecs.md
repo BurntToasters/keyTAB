@@ -40,7 +40,7 @@ interleave; nothing else in `focus()` moves them apart.
   touch already covers it
 - a repair runs under the intent it repairs and allocates no generation, so it cannot supersede that intent
   or provoke a further repair
-- a focus this policy cannot re-assert — AltTab's own window, or a windowless app, which `Window.focus()`
+- a focus this policy cannot re-assert — KeyTab's own window, or a windowless app, which `Window.focus()`
   reaches without a target wid — still supersedes what is pending, with nothing to repair to
 
 The window order does not follow the intent: it follows what the OS reports once an operation or a repair
@@ -50,7 +50,7 @@ order that claims the switch succeeded (#6055).
 
 ## What is still awaited
 
-A request also records that AltTab is now waiting to hear where focus landed, until the read answers for that
+A request also records that KeyTab is now waiting to hear where focus landed, until the read answers for that
 app (`heardBack`) or `repairHorizon` passes — an operation that bailed before its read never answers at all.
 It has one reader, and that reader does not write the order from the request either. Attention leaves the
 app's cached answer out of the activation this focus provokes: the cached answer is about the window being
@@ -58,9 +58,9 @@ LEFT, so fronting it walks that window to the top of the order until the real an
 181ms at the 75th percentile, measured over a full pass) and then leaves it sitting one tile from the next
 summon's default pick.
 
-Nothing else in AltTab may act on a switch it has not heard back about. A second alt-tab that beats the
+Nothing else in KeyTab may act on a switch it has not heard back about. A second alt-tab that beats the
 answer finds the order unmoved and picks the same window again, which is what the user sees on screen
-anyway: two switches into the same window rather than a toggle AltTab cannot yet know it owes.
+anyway: two switches into the same window rather than a toggle KeyTab cannot yet know it owes.
 
 Un-minimizing (step 0) is the one step that runs before the operation has touched the screen, and a supersede
 caught there owes nothing. Counting the restore as a z-order move and repairing on that exit was tried and
@@ -82,7 +82,7 @@ current — bailing out of it would leak the clobber it exists to undo.
 - **testASupersededOpThatAlreadyReorderedAsksForARepair** — the case a bail alone misses: the older
   operation's raise already landed, so the newest intent has to be re-asserted.
 - **testASupersededOpThatNeverReorderedAsksForNoRepair** — it stopped before touching the screen, so there is
-  nothing to undo and AltTab does not re-front for free.
+  nothing to undo and KeyTab does not re-front for free.
 - **testTheCurrentOpAsksForNoRepair** — the ordinary single switch emits nothing.
 - **testARepairIsRefusedOnceTheIntentIsStale** — past `repairHorizon` the user has moved on, and a repair
   would take the front away from them.

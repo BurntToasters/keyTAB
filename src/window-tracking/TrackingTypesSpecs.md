@@ -4,7 +4,7 @@ The identity types every rule in the attention pipeline keys on. There is no beh
 window numbers uniquely for the current login session, while pids are eventually reused; the combined type
 also records which process generation owned a WindowServer surface.
 
-- **`ProcessGeneration`** — a pid plus the generation AltTab assigned it. macOS reuses pids, so a callback
+- **`ProcessGeneration`** — a pid plus the generation KeyTab assigned it. macOS reuses pids, so a callback
   from a process that has already died would otherwise read as current. Every per-app fact, every AX observer
   entry and every attention record is keyed on this.
 - **`WindowIdentity`** — a session-unique wid plus the process generation observed owning that surface. The

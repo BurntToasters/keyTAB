@@ -3,7 +3,7 @@
 What the tracking pipeline reports about itself: provider health, the click channel's own lifecycle, and the
 attention decisions that were committed and refused. It is written after decisions, never before, by a
 recorder that owns nothing — the deciding is `AttentionEngine`'s (`AttentionOrderSpecs.md`). Switching
-telemetry off cannot change what AltTab does.
+telemetry off cannot change what KeyTab does.
 
 Both consumers are CLI: `--qa-state` reads `summary`, `--qa-telemetry` drains the ring.
 

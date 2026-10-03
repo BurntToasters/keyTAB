@@ -50,8 +50,7 @@ class App: NSApplication {
     }
 
     /// we put application code here which should be executed on init() and Preferences change
-    /// The switcher UI only exists once permissions are granted. Activating a license through the
-    /// `alt-tab://activate` url launches the app and can land its callback before that, so we bail
+    /// The switcher UI only exists once permissions are granted. A callback can land before that, so we bail
     /// instead of resetting a UI that isn't built yet (`TilesView.reset` traps on `TilesPanel.shared`).
     static func resetPreferencesDependentComponents() {
         guard TilesPanel.shared != nil else { return }
@@ -339,7 +338,7 @@ class App: NSApplication {
             }
             if !Windows.updatesBeforeShowing() { hideUi(); return }
             Windows.setInitialSelectedAndHoveredWindowIndex()
-            // The very first summon of a launch can beat the launch inventory: AltTab has been alive for a
+            // The very first summon of a launch can beat the launch inventory: KeyTab has been alive for a
             // few hundred milliseconds, nothing has been discovered yet, and the panel opens EMPTY and fills
             // itself under the user's eyes a beat later. Nobody is served by that frame. Ask for the scan
             // now and let the panel wait for it — capped, because a desktop that genuinely has no window

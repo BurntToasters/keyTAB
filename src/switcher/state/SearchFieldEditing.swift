@@ -12,7 +12,7 @@ enum SearchCaretIntent: Equatable {
 /// The caret-ownership rule for the in-switcher search field, split out of `TilesView` as a pure kernel
 /// (same pattern as `SearchModeResolver`). `TilesView` performs the AppKit side of it: first responder,
 /// `NSText.selectedRange`. Everything a keystroke then does to the text (insert, delete, replace a
-/// selection) is AppKit's own editing, which AltTab does not reimplement.
+/// selection) is AppKit's own editing, which KeyTab does not reimplement.
 enum SearchFieldEditing {
     static func caretIntent(mode: SearchMode, fieldOwnsCaret: Bool) -> SearchCaretIntent {
         guard mode == .editing, !fieldOwnsCaret else { return .leaveSelectionAlone }

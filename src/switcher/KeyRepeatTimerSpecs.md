@@ -7,13 +7,13 @@ key-repeat (hold-to-cycle for modifier-only shortcuts). `KeyRepeatTimer` owns th
 timer; on each tick it asks this kernel whether the tick should actually advance the selection.
 
 The artificial repeat exists because a modifier-only shortcut (e.g. ⌥⇥ where ⇥ has no keycode of its
-own once ⌥ is the hold) gets no OS key-repeat, so AltTab synthesizes one. The timer is armed at
+own once ⌥ is the hold) gets no OS key-repeat, so KeyTab synthesizes one. The timer is armed at
 show-invoke time with the user's `InitialKeyRepeat` delay + `KeyRepeat` rate.
 
 ## The problem it guards (why gate on visibility)
 
 When the user summons the switcher right after a fullscreen/Space transition, the WindowServer is busy
-settling the transition and can't paint AltTab's `.canJoinAllSpaces` panel until it finishes — the
+settling the transition and can't paint KeyTab's `.canJoinAllSpaces` panel until it finishes — the
 panel's pixels can land ~500ms after the timer was armed. The timer's background `DispatchSource`
 keeps ticking through that gap; the queued ticks then all fire the instant the panel appears and jump
 the selection several tiles, with no input from the user (they'd pressed once and were waiting for the

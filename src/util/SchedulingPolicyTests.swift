@@ -159,7 +159,7 @@ final class SchedulingPolicyTests: XCTestCase {
     /// at launch) permanently gave up — measured live as 82 tab reads naming untracked tabs and zero
     /// adoptions, against 57 in a run whose first attempt happened to land.
     func testFruitlessScanIsRetriedOnTheSameSituation() {
-        let situation = "lwouis\u{1}lwouis|1"
+        let situation = "keytab\u{1}keytab|1"
         var attempts = 0
         var recorded: String? = nil
         for _ in 0..<InactiveTabScanPolicy.maxAttemptsPerSituation {
@@ -175,7 +175,7 @@ final class SchedulingPolicyTests: XCTestCase {
     /// backgrounded tab's window, so its AXTabGroup routinely names tabs with no window to find and no number
     /// of walks will resolve them. Past the cap the app's tree is left alone until something changes.
     func testFruitlessScansStopAtTheCap() {
-        let situation = "lwouis|1"
+        let situation = "keytab|1"
         XCTAssertFalse(InactiveTabScanPolicy.shouldScan(recordedSituation: situation,
             attempts: InactiveTabScanPolicy.maxAttemptsPerSituation, situation: situation))
     }
@@ -183,8 +183,8 @@ final class SchedulingPolicyTests: XCTestCase {
     /// Any change to the app's window set — a tab adopted, opened or closed — moves the titles or the count and
     /// makes the app eligible again, however exhausted the previous situation was.
     func testANewSituationIsAlwaysEligible() {
-        XCTAssertTrue(InactiveTabScanPolicy.shouldScan(recordedSituation: "lwouis|1", attempts: 99,
-                                                       situation: "lwouis\u{1}lwouis|2"))
+        XCTAssertTrue(InactiveTabScanPolicy.shouldScan(recordedSituation: "keytab|1", attempts: 99,
+                                                       situation: "keytab\u{1}keytab|2"))
         XCTAssertTrue(InactiveTabScanPolicy.shouldScan(recordedSituation: nil, attempts: 0, situation: "~|4"))
     }
 

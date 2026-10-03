@@ -109,16 +109,16 @@ final class RealWorldScenariosTests: XCTestCase {
     /// Three members against the bottom window's declared 3, nothing linked yet: the count "accounts for"
     /// the cluster by coincidence and waives the position split that is the only thing keeping the two
     /// windows apart. Live, `group form g1 rep=#166416 members=[166416, 166420, 166413] reason=geometry`,
-    /// after which the title path (every Finder window is titled "lwouis") bridged the rest and ONE tile
+    /// after which the title path (every Finder window is titled "keytab") bridged the rest and ONE tile
     /// stood for both windows.
     static let finderTabSwitchInASecondSameSizeWindow: [CapturedWindow] = {
         let sz = CGSize(width: 1000, height: 440)
         return [
-            CapturedWindow(pid: 11119, wid: 166416, title: "lwouis", subrole: "AXStandardWindow", size: sz,
-                position: CGPoint(x: 80, y: 600), spaceIds: [3], axTabTitles: ["lwouis", "lwouis", "lwouis"]),
-            CapturedWindow(pid: 11119, wid: 166420, title: "lwouis", subrole: "AXStandardWindow", size: sz,
-                position: CGPoint(x: 80, y: 80), spaceIds: [], axTabTitles: ["lwouis", "lwouis", "lwouis"]),
-            CapturedWindow(pid: 11119, wid: 166413, title: "lwouis", subrole: "AXStandardWindow", size: sz,
+            CapturedWindow(pid: 11119, wid: 166416, title: "keytab", subrole: "AXStandardWindow", size: sz,
+                position: CGPoint(x: 80, y: 600), spaceIds: [3], axTabTitles: ["keytab", "keytab", "keytab"]),
+            CapturedWindow(pid: 11119, wid: 166420, title: "keytab", subrole: "AXStandardWindow", size: sz,
+                position: CGPoint(x: 80, y: 80), spaceIds: [], axTabTitles: ["keytab", "keytab", "keytab"]),
+            CapturedWindow(pid: 11119, wid: 166413, title: "keytab", subrole: "AXStandardWindow", size: sz,
                 position: CGPoint(x: 80, y: 600), spaceIds: []),
         ]
     }()
@@ -139,11 +139,11 @@ final class RealWorldScenariosTests: XCTestCase {
     static let finderTabDraggedOutStillClaimsThreeTabs: [CapturedWindow] = {
         let sz = CGSize(width: 920, height: 436)
         return [
-            CapturedWindow(pid: 779, wid: 72914, title: "lwouis", subrole: "AXStandardWindow", size: sz,
+            CapturedWindow(pid: 779, wid: 72914, title: "keytab", subrole: "AXStandardWindow", size: sz,
                 position: CGPoint(x: 1116, y: 683), spaceIds: [3]),
-            CapturedWindow(pid: 779, wid: 72915, title: "lwouis", subrole: "AXStandardWindow", size: sz,
-                position: CGPoint(x: 290, y: 712), spaceIds: [3], axTabTitles: ["lwouis", "lwouis", "lwouis"]),
-            CapturedWindow(pid: 779, wid: 72910, title: "lwouis", subrole: "AXStandardWindow", size: sz,
+            CapturedWindow(pid: 779, wid: 72915, title: "keytab", subrole: "AXStandardWindow", size: sz,
+                position: CGPoint(x: 290, y: 712), spaceIds: [3], axTabTitles: ["keytab", "keytab", "keytab"]),
+            CapturedWindow(pid: 779, wid: 72910, title: "keytab", subrole: "AXStandardWindow", size: sz,
                 position: CGPoint(x: 1116, y: 683), spaceIds: [3]),
         ]
     }()
@@ -156,7 +156,7 @@ final class RealWorldScenariosTests: XCTestCase {
     /// Every Finder window is 1000x440, so all three land in one size cluster, and 129425's tab count (3)
     /// happens to equal the cluster's size — the coincidence that waives the position split.
     /// **rec28 (2026-08-26): a background tab reporting the frame of the WRONG window.** Two Finder
-    /// windows, three tabs each, parked 520pt apart, every window 1000x440 and titled "lwouis" — so one size
+    /// windows, three tabs each, parked 520pt apart, every window 1000x440 and titled "keytab" — so one size
     /// cluster, and POSITION is the only fact separating the two windows.
     ///
     /// Window A is parked at (80,80), window B at (80,600). Two kinds of wrong frame appear, and only one is
@@ -169,36 +169,36 @@ final class RealWorldScenariosTests: XCTestCase {
     /// Reproduced 4 runs in 8, always this shape. The two ACTIVES are what make it decidable: each declares
     /// its own 3-tab `AXTabGroup`, so the group that swallowed both is arithmetically impossible.
     static let finderTabLyingAboutItsWindowActiveA = CapturedWindow(
-        pid: 1357, wid: 70958, title: "lwouis", subrole: "AXStandardWindow",
+        pid: 1357, wid: 70958, title: "keytab", subrole: "AXStandardWindow",
         size: CGSize(width: 1000, height: 440), position: CGPoint(x: 80, y: 80), spaceIds: [3],
-        axTabTitles: ["lwouis", "lwouis", "lwouis"])
+        axTabTitles: ["keytab", "keytab", "keytab"])
     /// A's own tabs, frozen at the pre-park cascade offset. Wrong, but consistent with A.
     static let finderTabLyingAboutItsWindowTabsA: [CapturedWindow] = [
-        CapturedWindow(pid: 1357, wid: 70953, title: "lwouis", subrole: "AXStandardWindow",
+        CapturedWindow(pid: 1357, wid: 70953, title: "keytab", subrole: "AXStandardWindow",
             size: CGSize(width: 1000, height: 440), position: CGPoint(x: 109, y: 109), spaceIds: []),
-        CapturedWindow(pid: 1357, wid: 70956, title: "lwouis", subrole: "AXStandardWindow",
+        CapturedWindow(pid: 1357, wid: 70956, title: "keytab", subrole: "AXStandardWindow",
             size: CGSize(width: 1000, height: 440), position: CGPoint(x: 109, y: 109), spaceIds: []),
     ]
     static let finderTabLyingAboutItsWindowActiveB = CapturedWindow(
-        pid: 1357, wid: 70951, title: "lwouis", subrole: "AXStandardWindow",
+        pid: 1357, wid: 70951, title: "keytab", subrole: "AXStandardWindow",
         size: CGSize(width: 1000, height: 440), position: CGPoint(x: 80, y: 600), spaceIds: [3],
-        axTabTitles: ["lwouis", "lwouis", "lwouis"])
+        axTabTitles: ["keytab", "keytab", "keytab"])
     /// **The lie.** B's background tabs, reporting A's origin — a position that was never theirs.
     static let finderTabLyingAboutItsWindowTabsB: [CapturedWindow] = [
-        CapturedWindow(pid: 1357, wid: 70944, title: "lwouis", subrole: "AXStandardWindow",
+        CapturedWindow(pid: 1357, wid: 70944, title: "keytab", subrole: "AXStandardWindow",
             size: CGSize(width: 1000, height: 440), position: CGPoint(x: 80, y: 80), spaceIds: []),
-        CapturedWindow(pid: 1357, wid: 70949, title: "lwouis", subrole: "AXStandardWindow",
+        CapturedWindow(pid: 1357, wid: 70949, title: "keytab", subrole: "AXStandardWindow",
             size: CGSize(width: 1000, height: 440), position: CGPoint(x: 80, y: 80), spaceIds: []),
     ]
 
     static let finderTabSwitchBesideAnotherWindow: [CapturedWindow] = {
         let sz = CGSize(width: 1000, height: 440)
         return [
-            CapturedWindow(pid: 1333, wid: 129425, title: "lwouis", subrole: "AXStandardWindow", size: sz,
-                position: CGPoint(x: 157, y: 609), spaceIds: [3], axTabTitles: ["git", "lwouis", "Desktop"]),
-            CapturedWindow(pid: 1333, wid: 129409, title: "lwouis", subrole: "AXStandardWindow", size: sz,
+            CapturedWindow(pid: 1333, wid: 129425, title: "keytab", subrole: "AXStandardWindow", size: sz,
+                position: CGPoint(x: 157, y: 609), spaceIds: [3], axTabTitles: ["git", "keytab", "Desktop"]),
+            CapturedWindow(pid: 1333, wid: 129409, title: "keytab", subrole: "AXStandardWindow", size: sz,
                 position: CGPoint(x: 138, y: 138), spaceIds: [3]),
-            CapturedWindow(pid: 1333, wid: 129421, title: "lwouis", subrole: "AXStandardWindow", size: sz,
+            CapturedWindow(pid: 1333, wid: 129421, title: "keytab", subrole: "AXStandardWindow", size: sz,
                 position: CGPoint(x: 167, y: 167), spaceIds: []),
         ]
     }()
@@ -214,12 +214,12 @@ final class RealWorldScenariosTests: XCTestCase {
             size: CGSize(width: 757, height: 583), position: CGPoint(x: 683, y: 101), spaceIds: [])
     }
 
-    /// Finder, a 4-tab window (2026-07-06). AXTabGroup titles = ["QRHYWK4QHQ", "lwouis", "lwouis", "lwouis"]
+    /// Finder, a 4-tab window (2026-07-06). AXTabGroup titles = ["QRHYWK4QHQ", "keytab", "keytab", "keytab"]
     /// (duplicates). Finder's inactive tabs are NOT separate windows (no CGWindowID), so only the active tab
     /// (29304) is ever tracked — the other three titles never resolve to a window.
-    static let finderActive4Tabs = CapturedWindow(pid: 779, wid: 29304, title: "lwouis",
+    static let finderActive4Tabs = CapturedWindow(pid: 779, wid: 29304, title: "keytab",
         subrole: "AXStandardWindow", size: CGSize(width: 920, height: 436), position: CGPoint(x: 100, y: 100),
-        spaceIds: [1], axTabTitles: ["QRHYWK4QHQ", "lwouis", "lwouis", "lwouis"])
+        spaceIds: [1], axTabTitles: ["QRHYWK4QHQ", "keytab", "keytab", "keytab"])
 
     /// Terminal with DEFAULT tabbing: 4 genuinely separate windows, each titled "Terminal"/"~", identical
     /// size 757×547 stacked at (683,101). Every window holds Space 1 and NONE exposes an AXTabGroup
@@ -282,14 +282,14 @@ final class RealWorldScenariosTests: XCTestCase {
     /// "transition ended" hook (see reference_windowserver_notification_ids).
     static let missionControlAxCycle: [String] = ["AXExposeShowAllWindows", "AXExposeExit"]
 
-    /// Finder with tabs "lwouis" (inactive, AXValue 0) + "git" (active, AXValue 1) and a separate non-tabbed
+    /// Finder with tabs "keytab" (inactive, AXValue 0) + "git" (active, AXValue 1) and a separate non-tabbed
     /// window "Movies". Recorded by the maintainer during the tab-detection investigation: the active tab's
-    /// AXTabGroup lists ["lwouis", "git"];
+    /// AXTabGroup lists ["keytab", "git"];
     /// "Movies" has no AXTabGroup. Distinct titles here (unlike Terminal's `~`), so matching is unambiguous.
     static let finderGitActive = CapturedWindow(pid: 779, wid: 4001, title: "git", subrole: "AXStandardWindow",
         size: CGSize(width: 900, height: 600), position: CGPoint(x: 200, y: 200), spaceIds: [1],
-        axTabTitles: ["lwouis", "git"])
-    static let finderLwouisInactiveTab = CapturedWindow(pid: 779, wid: 4002, title: "lwouis",
+        axTabTitles: ["keytab", "git"])
+    static let finderKeytabInactiveTab = CapturedWindow(pid: 779, wid: 4002, title: "keytab",
         subrole: "AXStandardWindow", size: CGSize(width: 900, height: 600), position: CGPoint(x: 200, y: 200), spaceIds: [])
     static let finderMoviesStandalone = CapturedWindow(pid: 779, wid: 4003, title: "Movies",
         subrole: "AXStandardWindow", size: CGSize(width: 500, height: 400), position: CGPoint(x: 50, y: 50), spaceIds: [1])
@@ -305,7 +305,7 @@ final class RealWorldScenariosTests: XCTestCase {
     static let fullscreenFinderDragOutWindows: [CapturedWindow] = {
         let sz = CGSize(width: 1440, height: 900), pos = CGPoint(x: 0, y: 0)
         return zip([72477, 72050, 72101] as [CGWindowID], [4204, 4179, 4200] as [UInt64]).map { wid, space in
-            CapturedWindow(pid: 779, wid: wid, title: "lwouis", subrole: "AXStandardWindow", size: sz,
+            CapturedWindow(pid: 779, wid: wid, title: "keytab", subrole: "AXStandardWindow", size: sz,
                 position: pos, spaceIds: [space], isFullscreen: true, axTabTitles: nil)
         }
     }()
@@ -673,7 +673,7 @@ final class RealWorldScenariosTests: XCTestCase {
         let m = TabGroupResolver.matchSiblings(active: active.tabWindow(), axTitles: active.axTabTitles!,
             sameAppWindows: [active.tabWindow()])
         XCTAssertEqual(m, SiblingMatch(siblingWids: [29304], matchedWids: [],
-            untrackedTitles: ["QRHYWK4QHQ", "lwouis", "lwouis"], toUntabWids: []))
+            untrackedTitles: ["QRHYWK4QHQ", "keytab", "keytab"], toUntabWids: []))
     }
 
     // MARK: - Phantom exemption for inactive tabs (PhantomWindowDetector)
@@ -739,13 +739,13 @@ final class RealWorldScenariosTests: XCTestCase {
     /// heuristics (hold + Space borrow) fed a false input to a third (visible-pick). The frames prove they are
     /// one group: both 2048×1152@0,0 fullscreen on Space 4267. `72045` is a sibling still frozen at the
     /// pre-fullscreen size (920×436), which is why size-clustering leaves it out entirely.
-    static let fullscreenFinderAddTabNewTab = CapturedWindow(pid: 779, wid: 73147, title: "lwouis",
+    static let fullscreenFinderAddTabNewTab = CapturedWindow(pid: 779, wid: 73147, title: "keytab",
         subrole: "AXStandardWindow", size: CGSize(width: 2048, height: 1152), position: CGPoint(x: 0, y: 0),
         spaceIds: [], isFullscreen: true, axTabTitles: nil)          // brand-new: no link, momentarily Space-less
-    static let fullscreenFinderAddTabHeldOldActive = CapturedWindow(pid: 779, wid: 72050, title: "lwouis",
+    static let fullscreenFinderAddTabHeldOldActive = CapturedWindow(pid: 779, wid: 72050, title: "keytab",
         subrole: "AXStandardWindow", size: CGSize(width: 2048, height: 1152), position: CGPoint(x: 0, y: 0),
         spaceIds: [4267], isFullscreen: true, axTabTitles: nil)      // backgrounded, held, Space borrowed back
-    static let fullscreenFinderAddTabFrozenSibling = CapturedWindow(pid: 779, wid: 72045, title: "lwouis",
+    static let fullscreenFinderAddTabFrozenSibling = CapturedWindow(pid: 779, wid: 72045, title: "keytab",
         subrole: "AXStandardWindow", size: CGSize(width: 920, height: 436), position: CGPoint(x: 249, y: 205),
         spaceIds: [], isFullscreen: true, axTabTitles: nil)          // frozen at the pre-fullscreen size
 
@@ -759,11 +759,11 @@ final class RealWorldScenariosTests: XCTestCase {
     /// held), while its background tabs still carry the backfilled Space. Any rule phrased as "holds a Space
     /// the visible doesn't" degenerates here — against an EMPTY visible Space every member looks disjoint, so
     /// all of them get treated as having left, are UNLINKED, and the group can never re-form.
-    static let fullscreenFinderSwitchHeldVisible = CapturedWindow(pid: 779, wid: 72050, title: "lwouis",
+    static let fullscreenFinderSwitchHeldVisible = CapturedWindow(pid: 779, wid: 72050, title: "keytab",
         subrole: "AXStandardWindow", size: CGSize(width: 2048, height: 1152), position: CGPoint(x: 0, y: 0),
         spaceIds: [], isFullscreen: true, axTabTitles: nil)   // just backgrounded + held ⇒ no Space of its own
     static let fullscreenFinderSwitchBackgroundTabs: [CapturedWindow] = [73147, 73201].map {
-        CapturedWindow(pid: 779, wid: $0, title: "lwouis", subrole: "AXStandardWindow",
+        CapturedWindow(pid: 779, wid: $0, title: "keytab", subrole: "AXStandardWindow",
             size: CGSize(width: 2048, height: 1152), position: CGPoint(x: 0, y: 0), spaceIds: [4267],
             isFullscreen: true)
     }
@@ -779,7 +779,7 @@ final class RealWorldScenariosTests: XCTestCase {
     static let twoFullscreenFinderWindowsWithTabs: [CapturedWindow] = {
         let sz = CGSize(width: 2048, height: 1152), pos = CGPoint(x: 0, y: 0)
         return [(CGWindowID(72050), UInt64(4267)), (72045, 4267), (73377, 4282), (73381, 4282)].map { wid, space in
-            CapturedWindow(pid: 779, wid: wid, title: "lwouis", subrole: "AXStandardWindow", size: sz,
+            CapturedWindow(pid: 779, wid: wid, title: "keytab", subrole: "AXStandardWindow", size: sz,
                 position: pos, spaceIds: [space], isFullscreen: true, axTabTitles: nil)
         }
     }()
@@ -796,16 +796,16 @@ final class RealWorldScenariosTests: XCTestCase {
     static let twoFullscreenFinderWindowsMidSpaceSwitch: [CapturedWindow] = {
         let sz = CGSize(width: 2048, height: 1152), pos = CGPoint(x: 0, y: 0)
         return [CGWindowID(73888), 73841, 73977, 73940].map {
-            CapturedWindow(pid: 779, wid: $0, title: "lwouis", subrole: "AXStandardWindow", size: sz,
+            CapturedWindow(pid: 779, wid: $0, title: "keytab", subrole: "AXStandardWindow", size: sz,
                 position: pos, spaceIds: [4310, 4305], isFullscreen: true, axTabTitles: nil)
         }
     }()
 
     /// TWO separate Finder windows that SHARE a tab title, both discovered at launch (2026-07-15 `--tab-diag`).
-    /// `73888` is a 2-tab window (`["lwouis", "Applications"]`); `73977` is a DIFFERENT window that is the
-    /// active tab of its OWN 3-tab group (`["Movies", "lwouis", "lwouis"]`, read moments later) and is titled
-    /// "lwouis". Logged:
-    ///   `updateState active#73888 NEW titles=["lwouis", "Applications"] matched=[73977]`
+    /// `73888` is a 2-tab window (`["keytab", "Applications"]`); `73977` is a DIFFERENT window that is the
+    /// active tab of its OWN 3-tab group (`["Movies", "keytab", "keytab"]`, read moments later) and is titled
+    /// "keytab". Logged:
+    ///   `updateState active#73888 NEW titles=["keytab", "Applications"] matched=[73977]`
     ///   `show ... -1:Finder#73977(t)920x436@220,176sp[3] ...`   ← a REAL window, tabbed and hidden
     /// GROUND TRUTH: `73977` is its own window and must never be claimed by `73888`.
     ///
@@ -815,10 +815,10 @@ final class RealWorldScenariosTests: XCTestCase {
     /// every window is newly TRACKED, and letting the claim fire there had windows swallow each other.
     static let finderTwoWindowsSharingATabTitleActive = CapturedWindow(pid: 779, wid: 73888, title: "Applications",
         subrole: "AXStandardWindow", size: CGSize(width: 920, height: 436), position: CGPoint(x: 220, y: 176),
-        spaceIds: [3], axTabTitles: ["lwouis", "Applications"])
-    static let finderTwoWindowsSharingATabTitleOther = CapturedWindow(pid: 779, wid: 73977, title: "lwouis",
+        spaceIds: [3], axTabTitles: ["keytab", "Applications"])
+    static let finderTwoWindowsSharingATabTitleOther = CapturedWindow(pid: 779, wid: 73977, title: "keytab",
         subrole: "AXStandardWindow", size: CGSize(width: 920, height: 436), position: CGPoint(x: 220, y: 176),
-        spaceIds: [3], axTabTitles: ["Movies", "lwouis", "lwouis"])
+        spaceIds: [3], axTabTitles: ["Movies", "keytab", "keytab"])
 
     /// Switching back and forth between Finder windows (2026-07-15 `--tab-diag`, rec9). The MRU log shows
     /// `mru bump #74626` — it is the most recently focused window — yet the tile dump shows it TABBED:
@@ -837,9 +837,9 @@ final class RealWorldScenariosTests: XCTestCase {
     ]
 
     /// Several Finder windows whose tab groups SHARE tab titles (2026-07-15 `--tab-diag`, rec10). Two windows
-    /// are each the active tab of their own group, and both groups contain a tab titled "lwouis":
-    ///   `updateState active#74624 titles=["Movies","lwouis","lwouis"]  matched=[] untracked=["lwouis","lwouis"]`
-    ///   `updateState active#74626 titles=["lwouis","Downloads","lwouis"] matched=[74820] untab=[74628]`
+    /// are each the active tab of their own group, and both groups contain a tab titled "keytab":
+    ///   `updateState active#74624 titles=["Movies","keytab","keytab"]  matched=[] untracked=["keytab","keytab"]`
+    ///   `updateState active#74626 titles=["keytab","Downloads","keytab"] matched=[74820] untab=[74628]`
     /// and the resulting links CONTRADICT each other — 74820 is claimed by two groups at once:
     ///   `updateState active#74625 nilTitles keptGroup siblings=[74625, 74820]`
     ///   `updateState active#74820 nilTitles keptGroup siblings=[74628, 74820, 74626]`
@@ -854,17 +854,17 @@ final class RealWorldScenariosTests: XCTestCase {
     /// groups can claim the same window behind each other's backs and no single call can see the conflict.
     static let finderDuplicateTabTitlesActiveA = CapturedWindow(pid: 779, wid: 74624, title: "Movies",
         subrole: "AXStandardWindow", size: CGSize(width: 920, height: 436), position: CGPoint(x: 324, y: 480),
-        spaceIds: [3], axTabTitles: ["Movies", "lwouis", "lwouis"])
+        spaceIds: [3], axTabTitles: ["Movies", "keytab", "keytab"])
     static let finderDuplicateTabTitlesActiveB = CapturedWindow(pid: 779, wid: 74626, title: "Downloads",
         subrole: "AXStandardWindow", size: CGSize(width: 920, height: 436), position: CGPoint(x: 191, y: 147),
-        spaceIds: [3628], axTabTitles: ["lwouis", "Downloads", "lwouis"])
+        spaceIds: [3628], axTabTitles: ["keytab", "Downloads", "keytab"])
     /// B's real tabs, at B's frame (191,147).
     static let finderDuplicateTabTitlesTabsOfB: [CapturedWindow] = [74820, 74628].map {
-        CapturedWindow(pid: 779, wid: $0, title: "lwouis", subrole: "AXStandardWindow",
+        CapturedWindow(pid: 779, wid: $0, title: "keytab", subrole: "AXStandardWindow",
             size: CGSize(width: 920, height: 436), position: CGPoint(x: 191, y: 147), spaceIds: [])
     }
     /// A SEPARATE Finder window that merely shares the title — at its own frame (523,501). Must join nothing.
-    static let finderDuplicateTabTitlesStandalone = CapturedWindow(pid: 779, wid: 74625, title: "lwouis",
+    static let finderDuplicateTabTitlesStandalone = CapturedWindow(pid: 779, wid: 74625, title: "keytab",
         subrole: "AXStandardWindow", size: CGSize(width: 920, height: 436), position: CGPoint(x: 523, y: 501),
         spaceIds: [3628])
 
@@ -970,7 +970,7 @@ final class RealWorldScenariosTests: XCTestCase {
     /// tab showed C as TWO tiles for ~9s (3 tiles for 2 windows).
     ///
     ///     21:06:15.406 added tracked#75468 space=3628 isTabbed=false sp[]   ← Movies tab becomes active
-    ///     21:06:15.457 updateState active#75468 titles=["lwouis","Movies", …]
+    ///     21:06:15.457 updateState active#75468 titles=["keytab","Movies", …]
     ///     21:06:15.62  tiles … +3:Finder#75825@286,400 … +18:Finder#75468@286,400   ← both of C shown
     ///
     /// Why both claim paths miss it:
@@ -984,54 +984,54 @@ final class RealWorldScenariosTests: XCTestCase {
     /// frame test at that instant compares a stale position against a live one. Any fix must handle that.
     static let finderTabSwitchIncomingStale = CapturedWindow(pid: 779, wid: 75468, title: "Movies",
         subrole: "AXStandardWindow", size: CGSize(width: 920, height: 436), position: CGPoint(x: 133, y: 89),
-        spaceIds: [3628], axTabTitles: ["lwouis", "Movies", "lwouis", "lwouis"])
+        spaceIds: [3628], axTabTitles: ["keytab", "Movies", "keytab", "keytab"])
     /// Same tab 215ms later, once its frame caught up to its parent's.
     static let finderTabSwitchIncomingSettled = CapturedWindow(pid: 779, wid: 75468, title: "Movies",
         subrole: "AXStandardWindow", size: CGSize(width: 920, height: 436), position: CGPoint(x: 286, y: 400),
-        spaceIds: [3628], axTabTitles: ["lwouis", "Movies", "lwouis", "lwouis"])
+        spaceIds: [3628], axTabTitles: ["keytab", "Movies", "keytab", "keytab"])
     /// C's outgoing active: on-screen, STILL holding the Space (its 1326 hasn't landed), not yet re-tabbed.
-    static let finderTabSwitchOutgoing = CapturedWindow(pid: 779, wid: 75825, title: "lwouis",
+    static let finderTabSwitchOutgoing = CapturedWindow(pid: 779, wid: 75825, title: "keytab",
         subrole: "AXStandardWindow", size: CGSize(width: 920, height: 436), position: CGPoint(x: 286, y: 400),
         spaceIds: [3628])
 
     /// rec8, 18:01:21.698 — the FIRST theft of that session, one minute before the rec10 shape and the seed of
-    /// the rest. Window 74626 is a real Finder window whose AXTabGroup reads ["lwouis", "Downloads"], but its
+    /// the rest. Window 74626 is a real Finder window whose AXTabGroup reads ["keytab", "Downloads"], but its
     /// "Downloads" tab isn't tracked yet (`untracked=["Downloads"]`, discovery in flight) — so it was linked to
     /// only ITSELF. The user then opened a new tab in it: `removed tracked#74626 space=3628` made it Space-less
     /// for ~800ms until the new tab 74628 was discovered (`discovered new#74628 ... matched=[74626]`, 18:01:22.533).
     /// In that gap geometry clustered it with the unrelated 74625 (Finder, same default 920×436, its own frame)
     /// and made 74625 its parent: `geometryGroup visible#74625 sp[3628] background=[74626]`.
-    static let finderSelfOnlyLinkNewTabGapVisible = CapturedWindow(pid: 779, wid: 74625, title: "lwouis",
+    static let finderSelfOnlyLinkNewTabGapVisible = CapturedWindow(pid: 779, wid: 74625, title: "keytab",
         subrole: "AXStandardWindow", size: CGSize(width: 920, height: 436), position: CGPoint(x: 947, y: 514),
         spaceIds: [3628])
-    static let finderSelfOnlyLinkNewTabGapBackgrounding = CapturedWindow(pid: 779, wid: 74626, title: "lwouis",
+    static let finderSelfOnlyLinkNewTabGapBackgrounding = CapturedWindow(pid: 779, wid: 74626, title: "keytab",
         subrole: "AXStandardWindow", size: CGSize(width: 920, height: 436), position: CGPoint(x: 191, y: 147),
-        spaceIds: [], axTabTitles: ["lwouis", "Downloads"])
+        spaceIds: [], axTabTitles: ["keytab", "Downloads"])
 
     /// rec11, 19:29:53 — TWO fullscreen Finder windows, tabs burst into both, and the switcher showed ONE tile.
     /// The windows sit at (162,118) and (133,89): 29px apart, the macOS window-CASCADE offset, and both at the
-    /// default 920×436. Every tab of both is titled "lwouis" (Finder names tabs after the folder), so titles
+    /// default 920×436. Every tab of both is titled "keytab" (Finder names tabs after the folder), so titles
     /// cannot tell the two apart, and `positionsCompatible`'s 50px tolerance waved the 29px gap through — so
     /// window A's active tab claimed window B's tabs and B lost every member:
     ///
-    ///     updateState active#75633 titles=["lwouis" ×11] matched=[75617, 75607, …]
+    ///     updateState active#75633 titles=["keytab" ×11] matched=[75617, 75607, …]
     ///     siblings=[75642, 75633, 75626, 75620, 75617, 75607, 75605, 75492, 75489, 75446]  ← both windows
     ///
     /// Note the AX title COUNT (11, and 5/10/16/17/19/22 elsewhere in the same burst) exceeds the tracked
     /// windows: Finder destroys a backgrounded tab's window, so titles routinely outnumber wids and the count
     /// bounds nothing. Position is the only fact that separates these two windows.
     static let finderTwoCascadedWindowsTabsA: [CapturedWindow] = [75633, 75626, 75620].map {
-        CapturedWindow(pid: 779, wid: $0, title: "lwouis", subrole: "AXStandardWindow",
+        CapturedWindow(pid: 779, wid: $0, title: "keytab", subrole: "AXStandardWindow",
             size: CGSize(width: 920, height: 436), position: CGPoint(x: 162, y: 118), spaceIds: [])
     }
     static let finderTwoCascadedWindowsTabsB: [CapturedWindow] = [75617, 75607, 75605, 75492].map {
-        CapturedWindow(pid: 779, wid: $0, title: "lwouis", subrole: "AXStandardWindow",
+        CapturedWindow(pid: 779, wid: $0, title: "keytab", subrole: "AXStandardWindow",
             size: CGSize(width: 920, height: 436), position: CGPoint(x: 133, y: 89), spaceIds: [])
     }
     /// A's active tab, on-screen at A's frame, reporting 11 same-titled tabs.
-    static let finderTwoCascadedWindowsActiveA = CapturedWindow(pid: 779, wid: 75642, title: "lwouis",
+    static let finderTwoCascadedWindowsActiveA = CapturedWindow(pid: 779, wid: 75642, title: "keytab",
         subrole: "AXStandardWindow", size: CGSize(width: 920, height: 436), position: CGPoint(x: 162, y: 118),
-        spaceIds: [3628], axTabTitles: Array(repeating: "lwouis", count: 11))
+        spaceIds: [3628], axTabTitles: Array(repeating: "keytab", count: 11))
 
     /// rec14 (2026-07-16, `--tab-diag`, the "Terminal same-frame burst" recording): 3 SEPARATE Terminal
     /// windows all stacked at ONE position (Terminal doesn't cascade), tabs burst into one of them, then the
@@ -1108,14 +1108,14 @@ final class RealWorldScenariosTests: XCTestCase {
     /// never healed. GROUND TRUTH: focus is authoritative for which member is the group's active tab; a read
     /// that lands from a LESS recently focused member is stale and must neither eject nor displace the
     /// fresher one. All at the window's frame (162,118); focus orders from the recorded MRU bumps.
-    static let finderStaleReadReader = CapturedWindow(pid: 5050, wid: 78103, title: "lwouis",
+    static let finderStaleReadReader = CapturedWindow(pid: 5050, wid: 78103, title: "keytab",
         subrole: "AXStandardWindow", size: CGSize(width: 920, height: 436), position: CGPoint(x: 162, y: 118),
-        spaceIds: [3628], axTabTitles: Array(repeating: "lwouis", count: 16) + ["Movies"] + Array(repeating: "lwouis", count: 13))
-    static let finderStaleReadCurrentActive = CapturedWindow(pid: 5050, wid: 78111, title: "lwouis",
+        spaceIds: [3628], axTabTitles: Array(repeating: "keytab", count: 16) + ["Movies"] + Array(repeating: "keytab", count: 13))
+    static let finderStaleReadCurrentActive = CapturedWindow(pid: 5050, wid: 78111, title: "keytab",
         subrole: "AXStandardWindow", size: CGSize(width: 920, height: 436), position: CGPoint(x: 162, y: 118),
         spaceIds: [3628])
     static let finderStaleReadSettledTabs: [CapturedWindow] = [75937, 75620].map {
-        CapturedWindow(pid: 5050, wid: $0, title: "lwouis", subrole: "AXStandardWindow",
+        CapturedWindow(pid: 5050, wid: $0, title: "keytab", subrole: "AXStandardWindow",
             size: CGSize(width: 920, height: 436), position: CGPoint(x: 162, y: 118), spaceIds: [3628])
     }
 
@@ -1150,10 +1150,10 @@ final class RealWorldScenariosTests: XCTestCase {
     ///
     /// GROUND TRUTH: a borrowed Space is OUR annotation, not evidence — the claim must see it (like the
     /// hold), and the borrow must die with the membership that justified it.
-    static let finderOrphanedExRepReader = CapturedWindow(pid: 5050, wid: 78461, title: "lwouis",
+    static let finderOrphanedExRepReader = CapturedWindow(pid: 5050, wid: 78461, title: "keytab",
         subrole: "AXStandardWindow", size: CGSize(width: 920, height: 436), position: CGPoint(x: 162, y: 118),
-        spaceIds: [3628], axTabTitles: Array(repeating: "lwouis", count: 16) + ["Movies"] + Array(repeating: "lwouis", count: 18))
-    static let finderOrphanedExRep = CapturedWindow(pid: 5050, wid: 75637, title: "lwouis",
+        spaceIds: [3628], axTabTitles: Array(repeating: "keytab", count: 16) + ["Movies"] + Array(repeating: "keytab", count: 18))
+    static let finderOrphanedExRep = CapturedWindow(pid: 5050, wid: 75637, title: "keytab",
         subrole: "AXStandardWindow", size: CGSize(width: 920, height: 436), position: CGPoint(x: 162, y: 118),
         spaceIds: [3628])  // the BORROWED Space
 
@@ -1186,16 +1186,16 @@ final class RealWorldScenariosTests: XCTestCase {
     /// exact-position test): one read merged 25 windows across three frames and hid a real window. The model
     /// now projects only GENUINE fullscreen into `TabWindow`; these captures are the RAW facts (frozen tabs
     /// not fullscreen), so the cross-frame invariants police the shape.
-    static let finderFullscreenedWindowActive = CapturedWindow(pid: 5050, wid: 78459, title: "lwouis",
+    static let finderFullscreenedWindowActive = CapturedWindow(pid: 5050, wid: 78459, title: "keytab",
         subrole: "AXStandardWindow", size: CGSize(width: 2048, height: 1152), position: CGPoint(x: 0, y: 0),
         spaceIds: [4594], isFullscreen: true)
     static let finderFullscreenedWindowFrozenTabs: [CapturedWindow] = [75620, 75626].map {
-        CapturedWindow(pid: 5050, wid: $0, title: "lwouis", subrole: "AXStandardWindow",
+        CapturedWindow(pid: 5050, wid: $0, title: "keytab", subrole: "AXStandardWindow",
             size: CGSize(width: 920, height: 436), position: CGPoint(x: 162, y: 118), spaceIds: [])
     }
-    static let finderOtherWindowActiveAfterFullscreen = CapturedWindow(pid: 5050, wid: 75824, title: "lwouis",
+    static let finderOtherWindowActiveAfterFullscreen = CapturedWindow(pid: 5050, wid: 75824, title: "keytab",
         subrole: "AXStandardWindow", size: CGSize(width: 920, height: 436), position: CGPoint(x: 286, y: 400),
-        spaceIds: [3628], axTabTitles: Array(repeating: "lwouis", count: 6))
+        spaceIds: [3628], axTabTitles: Array(repeating: "keytab", count: 6))
 
     func testAnotherWindowNeverClaimsAFullscreenedGroupsFrozenTabs() {
         // Window B's read must not claim window A's frozen tabs: they sit at A's frame, and with only
@@ -1276,7 +1276,7 @@ final class RealWorldScenariosTests: XCTestCase {
     // MARK: - The new-tab creation race (non-fullscreen)
 
     /// The title half of the rec10 capture: the SEPARATE Finder window (74625, its own frame at 523,501)
-    /// merely shares the title "lwouis" with tabs of another window's group, and must never be claimed.
+    /// merely shares the title "keytab" with tabs of another window's group, and must never be claimed.
     /// `matchSiblings` was always CORRECT here — the theft came from geometry, see the test below.
     func testSeparateWindowSharingATabTitleIsNeverClaimed() {
         let tabsOfB = Self.finderDuplicateTabTitlesTabsOfB.map { $0.tabWindow() }
@@ -1393,7 +1393,7 @@ final class RealWorldScenariosTests: XCTestCase {
     }
 
     func testWindowDiscoveredAtLaunchNeverClaimsAnotherRealWindow() {
-        // THE VOID, captured: two separate Finder windows share the tab title "lwouis". At launch both are
+        // THE VOID, captured: two separate Finder windows share the tab title "keytab". At launch both are
         // merely newly TRACKED — nothing was created — so the on-screen claim must not fire and 73977 must
         // stay its own window. It getting tabbed here is what hid a real window and derailed the selection.
         let active = Self.finderTwoWindowsSharingATabTitleActive.tabWindow()
@@ -1402,7 +1402,7 @@ final class RealWorldScenariosTests: XCTestCase {
             axTitles: Self.finderTwoWindowsSharingATabTitleActive.axTabTitles!,
             sameAppWindows: [active, other], activeIsNewlyDiscovered: false)
         XCTAssertEqual(m.matchedWids, [], "a separate on-screen window is never claimed at launch")
-        XCTAssertEqual(m.untrackedTitles, ["lwouis"], "the real inactive tab has no window yet → discover it")
+        XCTAssertEqual(m.untrackedTitles, ["keytab"], "the real inactive tab has no window yet → discover it")
     }
 
     func testNewTabClaimsStaleOldActive() {
@@ -1570,7 +1570,7 @@ final class RealWorldScenariosTests: XCTestCase {
         let settled: [(CGWindowID, UInt64, Bool)] = [(73888, 4305, false), (73841, 4305, true),
                                                      (73977, 4310, false), (73940, 4305, true)]
         let windows = settled.map { wid, space, tabbed in
-            CapturedWindow(pid: 779, wid: wid, title: "lwouis", subrole: "AXStandardWindow", size: sz,
+            CapturedWindow(pid: 779, wid: wid, title: "keytab", subrole: "AXStandardWindow", size: sz,
                 position: pos, spaceIds: [space], isFullscreen: true).tabWindow(isTabbed: tabbed)
         }
         let groups = TabGroupResolver.geometryGroups(windows)
@@ -1710,40 +1710,40 @@ final class RealWorldScenariosTests: XCTestCase {
     // MARK: - Finder: distinct-title tabs + a same-app standalone window
 
     func testFinderStandaloneWindowNotSweptIntoGroup() {
-        // "Movies" is a separate non-tabbed window of the same app; it must NOT be pulled into the git/lwouis
-        // tab group. Only "lwouis" matches the AXTabGroup titles; "Movies" is left alone (no stale tab state).
+        // "Movies" is a separate non-tabbed window of the same app; it must NOT be pulled into the git/keytab
+        // tab group. Only "keytab" matches the AXTabGroup titles; "Movies" is left alone (no stale tab state).
         let m = TabGroupResolver.matchSiblings(active: Self.finderGitActive.tabWindow(),
             axTitles: Self.finderGitActive.axTabTitles!,
-            sameAppWindows: [Self.finderGitActive.tabWindow(), Self.finderLwouisInactiveTab.tabWindow(),
+            sameAppWindows: [Self.finderGitActive.tabWindow(), Self.finderKeytabInactiveTab.tabWindow(),
                 Self.finderMoviesStandalone.tabWindow()])
         XCTAssertEqual(m, SiblingMatch(siblingWids: [4001, 4002], matchedWids: [4002],
             untrackedTitles: [], toUntabWids: []))
     }
 
     func testFinderNewWindowNotSwallowedByTabGroup() {
-        // Recorded live 2026-07-09: Finder with a 2-tab group (both "lwouis") + cmd-N opens a NEW window,
-        // also "lwouis", at Finder's cascaded position (~28px offset, within the 50px tolerance). Finder
+        // Recorded live 2026-07-09: Finder with a 2-tab group (both "keytab") + cmd-N opens a NEW window,
+        // also "keytab", at Finder's cascaded position (~28px offset, within the 50px tolerance). Finder
         // DESTROYS a backgrounded tab's window (only the active tab is a real window), so the group's second
         // AXTabGroup title has no window — and the matcher claimed the NEW on-Space window to fill it, hiding
         // it from the switcher ("appeared then disappeared"). An on-Space, non-tabbed window must never be
         // claimed as an inactive tab; the title goes untracked (brute-force finds nothing → group shows as 1).
-        let activeTab = CapturedWindow(pid: 779, wid: 42233, title: "lwouis", subrole: "AXStandardWindow",
+        let activeTab = CapturedWindow(pid: 779, wid: 42233, title: "keytab", subrole: "AXStandardWindow",
             size: CGSize(width: 920, height: 436), position: CGPoint(x: 100, y: 100), spaceIds: [3],
-            axTabTitles: ["lwouis", "lwouis"])
-        let newWindow = CapturedWindow(pid: 779, wid: 42243, title: "lwouis", subrole: "AXStandardWindow",
+            axTabTitles: ["keytab", "keytab"])
+        let newWindow = CapturedWindow(pid: 779, wid: 42243, title: "keytab", subrole: "AXStandardWindow",
             size: CGSize(width: 920, height: 436), position: CGPoint(x: 128, y: 128), spaceIds: [3])
         let m = TabGroupResolver.matchSiblings(active: activeTab.tabWindow(), axTitles: activeTab.axTabTitles!,
             sameAppWindows: [activeTab.tabWindow(), newWindow.tabWindow()])
         XCTAssertEqual(m, SiblingMatch(siblingWids: [42233], matchedWids: [],
-            untrackedTitles: ["lwouis"], toUntabWids: []))
+            untrackedTitles: ["keytab"], toUntabWids: []))
     }
 
     func testFinderInactiveTabIsPhantomUntilTabbed() {
-        // "lwouis" is Space-less (inactive tab) → phantom before detection, exempt once `isTabbed`.
+        // "keytab" is Space-less (inactive tab) → phantom before detection, exempt once `isTabbed`.
         let app = ApplicationState(pid: 779, bundleIdentifier: "com.apple.finder", localizedName: "Finder", isHidden: false)
-        XCTAssertTrue(PhantomWindowDetector.syncVerdict(Self.finderLwouisInactiveTab.windowState(isTabbed: false),
+        XCTAssertTrue(PhantomWindowDetector.syncVerdict(Self.finderKeytabInactiveTab.windowState(isTabbed: false),
             app, isOrderedIn: false, alpha: 1))
-        XCTAssertFalse(PhantomWindowDetector.syncVerdict(Self.finderLwouisInactiveTab.windowState(isTabbed: true),
+        XCTAssertFalse(PhantomWindowDetector.syncVerdict(Self.finderKeytabInactiveTab.windowState(isTabbed: true),
             app, isOrderedIn: false, alpha: 1))
     }
 
