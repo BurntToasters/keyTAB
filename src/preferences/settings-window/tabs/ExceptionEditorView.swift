@@ -312,9 +312,9 @@ class ExceptionEditorView: NSView {
     }
 
     private func resolveHeaderAsync(for bundleId: String) {
-        DispatchQueue.global(qos: .userInitiated).async {
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             let info = AppDisplayInfo.resolve(bundleId: bundleId)
-            DispatchQueue.main.async { [weak self] in
+            DispatchQueue.main.async {
                 guard let self, self.entry.bundleIdentifier == bundleId else { return }
                 self.headerIconView.image = info.icon
                 self.headerNameLabel.stringValue = info.name

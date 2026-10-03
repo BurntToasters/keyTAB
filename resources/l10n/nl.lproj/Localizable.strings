@@ -56,6 +56,7 @@
 "Disabled" = "Uitgeschakeld";
 "Do Not Move" = "Niet verplaatsen";
 "Don't hide" = "Niet verbergen";
+"Don't show this search hint again" = "Deze zoektip niet meer tonen";
 "Done" = "Klaar";
 "Don’t check for updates periodically" = "Niet regelmatig op updates controleren";
 "e.g. com.example.app" = "bijv. com.example.app";
@@ -113,6 +114,7 @@
 "Ordering & Grouping" = "Volgorde en groepering";
 "Overridden in Shortcut:" = "Overschreven in Sneltoets:";
 "Please drag KeyTab into the Applications folder manually." = "Sleep KeyTab handmatig naar de map Programma's.";
+"Press %@ to search your windows." = "Druk op %@ om je vensters te doorzoeken.";
 "Preview selected window" = "Voorvertoning van geselecteerd venster";
 "Quit %@" = "%@ stoppen";
 "Quit app" = "App stoppen";
@@ -144,11 +146,12 @@
 "Show at the end" = "Toon aan het einde";
 "Show fullscreen windows" = "Toon vensters in volledig scherm";
 "Show hidden windows" = "Toon verborgen vensters";
-"Show main window" = "Toon hoofdvenster";
 "Show minimized windows" = "Toon geminimaliseerde vensters";
 "Show on" = "Toon op";
+"Show one window per app" = "Toon één venster per app";
 "Show separate window for each tab" = "Toon apart venster voor elk tabblad";
 "Show single window for all tabs" = "Toon één venster voor alle tabbladen";
+"Show the search hint" = "Zoektip tonen";
 "Show titles" = "Toon titels";
 "Show windows from applications" = "Toon vensters van apps";
 "Show windows from screens" = "Toon vensters van schermen";

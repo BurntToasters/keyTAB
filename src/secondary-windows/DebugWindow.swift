@@ -2,8 +2,7 @@ import Cocoa
 
 class DebugWindow: NSPanel {
     static var shared: DebugWindow?
-    static var canBecomeKey_ = true
-    override var canBecomeKey: Bool { Self.canBecomeKey_ }
+    override var canBecomeKey: Bool { SecondaryWindows.canBecomeKey }
     private var scrollView: NSScrollView!
     private var textView: NSTextView!
     private var copyLogsButton: NSButton!
@@ -14,8 +13,8 @@ class DebugWindow: NSPanel {
     private var isPerformingAutoScroll = false
     private var entries = [(LogLevel, String)]()
     private var isListening = false
-    private var windowDiscriminatorCheckbox: NSButton!
-    private var filterWindowDiscriminator = false
+    private var windowAdmissionCheckbox: NSButton!
+    private var filterWindowAdmission = false
     private var inspectButton: NSButton!
     private var inspectColumns: NSStackView!
     private var inspectAppField: NSTextField!
@@ -40,9 +39,7 @@ class DebugWindow: NSPanel {
     }
 
     private func setupWindow() {
-        title = NSLocalizedString("Debug tools", comment: "")
-        hidesOnDeactivate = false
-        isReleasedWhenClosed = false
+        applySecondaryWindowChrome(NSLocalizedString("Debug tools", comment: ""), hiddenTitlebar: false)
         minSize = NSSize(width: 400, height: 300)
     }
 
@@ -86,17 +83,16 @@ class DebugWindow: NSPanel {
         filterControl = NSSegmentedControl(labels: ["Debug", "Info", "Warning", "Error"],
                                            trackingMode: .selectOne, target: nil, action: nil)
         filterControl.translatesAutoresizingMaskIntoConstraints = false
-        LabelAndControl.applySystemSelectedSegmentStyle(filterControl)
         filterControl.selectedSegment = 0
         filterControl.onAction = { [weak self] _ in self?.filterChanged() }
         for i in 0..<Self.levels.count {
             filterControl.setImage(Self.colorDot(Self.colorForLevel(Self.levels[i])), forSegment: i)
             filterControl.setImageScaling(.scaleProportionallyDown, forSegment: i)
         }
-        windowDiscriminatorCheckbox = NSButton(checkboxWithTitle: "Accepted/Rejected windows", target: nil, action: nil)
-        windowDiscriminatorCheckbox.translatesAutoresizingMaskIntoConstraints = false
-        windowDiscriminatorCheckbox.onAction = { [weak self] _ in self?.windowDiscriminatorFilterChanged() }
-        let filterRow = NSStackView(views: [filterLabel, filterControl, windowDiscriminatorCheckbox])
+        windowAdmissionCheckbox = NSButton(checkboxWithTitle: "Accepted/Rejected windows", target: nil, action: nil)
+        windowAdmissionCheckbox.translatesAutoresizingMaskIntoConstraints = false
+        windowAdmissionCheckbox.onAction = { [weak self] _ in self?.windowAdmissionFilterChanged() }
+        let filterRow = NSStackView(views: [filterLabel, filterControl, windowAdmissionCheckbox])
         filterRow.translatesAutoresizingMaskIntoConstraints = false
         filterRow.orientation = .horizontal
         filterRow.spacing = 8
@@ -211,14 +207,14 @@ class DebugWindow: NSPanel {
         rebuildText()
     }
 
-    private func windowDiscriminatorFilterChanged() {
-        filterWindowDiscriminator = windowDiscriminatorCheckbox.state == .on
+    private func windowAdmissionFilterChanged() {
+        filterWindowAdmission = windowAdmissionCheckbox.state == .on
         rebuildText()
     }
 
     private func shouldShowEntry(_ level: LogLevel, _ message: String) -> Bool {
         level.rawValue >= selectedMinLevel.rawValue &&
-            (!filterWindowDiscriminator || message.contains("WindowDiscriminator.swift"))
+            (!filterWindowAdmission || message.contains("surface accepted") || message.contains("surface not admitted"))
     }
 
     private func attributedLine(_ text: String, _ level: LogLevel) -> NSAttributedString {
@@ -281,6 +277,7 @@ class DebugWindow: NSPanel {
         isPerformingAutoScroll = false
     }
 
+    // periphery:ignore:parameters notification - NotificationCenter selector signature
     @objc private func scrollViewDidScroll(_ notification: Notification) {
         guard !isPerformingAutoScroll,
               let documentView = scrollView.documentView else { return }
@@ -308,8 +305,8 @@ class DebugWindow: NSPanel {
         selectedMinLevel = .debug
         filterControl.selectedSegment = 0
         isAutoScrolling = true
-        filterWindowDiscriminator = false
-        windowDiscriminatorCheckbox.state = .off
+        filterWindowAdmission = false
+        windowAdmissionCheckbox.state = .off
         hideAppIfLastWindowIsClosed()
         super.close()
     }

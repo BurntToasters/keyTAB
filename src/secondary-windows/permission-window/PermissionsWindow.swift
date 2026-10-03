@@ -3,8 +3,7 @@ import Cocoa
 class PermissionsWindow: NSWindow {
     static var accessibilityView: PermissionView!
     static var screenRecordingView: PermissionView!
-    static var canBecomeKey_ = true
-    override var canBecomeKey: Bool { Self.canBecomeKey_ }
+    override var canBecomeKey: Bool { SecondaryWindows.canBecomeKey }
     static var shared: PermissionsWindow!
 
     convenience init() {
@@ -16,7 +15,20 @@ class PermissionsWindow: NSWindow {
         Self.shared = self
     }
 
+    #if DEBUG
+    /// Set by `QaSurfaces` to photograph the window as someone who has not granted anything sees it. The
+    /// permission timer calls `updatePermissionViews` every few seconds, so setting the views once would not hold.
+    static var qaForcedStatus: PermissionStatus?
+    #endif
+
     static func updatePermissionViews() {
+        #if DEBUG
+        if let forced = qaForcedStatus {
+            accessibilityView.updatePermissionStatus(forced)
+            screenRecordingView.updatePermissionStatus(forced)
+            return
+        }
+        #endif
         accessibilityView.updatePermissionStatus(AccessibilityPermission.status)
         screenRecordingView.updatePermissionStatus(ScreenRecordingPermission.status)
     }
@@ -31,11 +43,7 @@ class PermissionsWindow: NSWindow {
     }
 
     private func setupWindow() {
-        title = NSLocalizedString("KeyTab needs some permissions", comment: "")
-        titleVisibility = .hidden
-        titlebarAppearsTransparent = true
-        hidesOnDeactivate = false
-        isReleasedWhenClosed = false
+        applySecondaryWindowChrome(NSLocalizedString("KeyTab needs some permissions", comment: ""))
         styleMask.insert([.closable])
     }
 

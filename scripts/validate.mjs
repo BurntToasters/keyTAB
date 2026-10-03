@@ -81,7 +81,7 @@ export function validateWorkspace({ release = false, bundle = null } = {}) {
   for (const file of filesUnder(path.join(root, "src")).filter((entry) => entry.endsWith(".swift"))) {
     const lines = fs.readFileSync(file, "utf8").split("\n");
     lines.forEach((line, index) => {
-      if (/"[^"\n]*AltTab/.test(line) && !line.includes("modified fork of AltTab v11.4.4")) failures.push(`AltTab runtime branding: ${path.relative(root, file)}:${index + 1}`);
+      if (/"[^"\n]*AltTab/.test(line) && !line.includes("modified fork of AltTab v11.8.0")) failures.push(`AltTab runtime branding: ${path.relative(root, file)}:${index + 1}`);
     });
   }
   for (const required of [".env.example", "LICENCE.md", "NOTICE.md", "THIRD_PARTY_NOTICES.md", "resources/licenses/Sparkle-LICENSE.txt", "resources/licenses/ShortcutRecorder-LICENSE.txt", "docs/ASSET_LICENSES.md"]) {

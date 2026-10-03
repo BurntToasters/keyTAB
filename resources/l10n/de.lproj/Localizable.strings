@@ -56,6 +56,7 @@
 "Disabled" = "Deaktiviert";
 "Do Not Move" = "Nicht verschieben";
 "Don't hide" = "Nicht ausblenden";
+"Don't show this search hint again" = "Diesen Suchhinweis nicht mehr anzeigen";
 "Done" = "Fertig";
 "Don’t check for updates periodically" = "Nicht regelmäßig nach Updates suchen";
 "e.g. com.example.app" = "z. B. com.example.app";
@@ -113,6 +114,7 @@
 "Ordering & Grouping" = "Sortierung & Gruppierung";
 "Overridden in Shortcut:" = "Überschrieben in Tastenkürzel:";
 "Please drag KeyTab into the Applications folder manually." = "Bitte ziehen Sie KeyTab manuell in den Programme-Ordner.";
+"Press %@ to search your windows." = "Drücke %@, um deine Fenster zu durchsuchen.";
 "Preview selected window" = "Ausgewähltes Fenster in der Vorschau anzeigen";
 "Quit %@" = "%@ beenden";
 "Quit app" = "App beenden";
@@ -144,11 +146,12 @@
 "Show at the end" = "Am Ende anzeigen";
 "Show fullscreen windows" = "Vollbildfenster anzeigen";
 "Show hidden windows" = "Ausgeblendete Fenster anzeigen";
-"Show main window" = "Hauptfenster anzeigen";
 "Show minimized windows" = "Minimierte Fenster anzeigen";
 "Show on" = "Anzeigen auf";
+"Show one window per app" = "Ein Fenster pro App anzeigen";
 "Show separate window for each tab" = "Separates Fenster für jeden Tab anzeigen";
 "Show single window for all tabs" = "Ein Fenster für alle Tabs anzeigen";
+"Show the search hint" = "Suchhinweis anzeigen";
 "Show titles" = "Titel anzeigen";
 "Show windows from applications" = "Fenster von Apps anzeigen";
 "Show windows from screens" = "Fenster von Bildschirmen anzeigen";
