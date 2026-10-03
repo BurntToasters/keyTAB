@@ -25,7 +25,7 @@ class Appearance {
     // theme
     static var fontColor = NSColor.red
     static var imagesShadowColor = NSColor.red // for icon, thumbnail and windowless images
-    static var material = NSVisualEffectView.Material.hudWindow
+    static var material = LegacyMaterial.ultraDark
     static var highlightBorderWidth = CGFloat(3)
 
     // theme: constants
@@ -41,7 +41,7 @@ class Appearance {
     private static var currentSize: AppearanceSizePreference { Preferences.effectiveAppearanceSize(SwitcherSession.activeShortcutIndex) }
     static var currentTheme: AppearanceThemePreference {
         let theme = Preferences.effectiveAppearanceTheme(SwitcherSession.activeShortcutIndex)
-        return theme == .system ? NSApp.effectiveAppearance.getThemeName() : theme
+        return theme == .system ? NSAppearance.currentDrawing().getThemeName() : theme
     }
 
     static func update() {
@@ -69,7 +69,7 @@ class Appearance {
         if currentStyle == .appIcons {
             appIconsSize(size)
         } else if currentStyle == .titles {
-            titlesSize(isHorizontalScreen, size)
+            titlesSize(size)
         } else {
             thumbnailsSize(isHorizontalScreen, size)
         }
@@ -157,7 +157,7 @@ class Appearance {
         }
     }
 
-    private static func titlesSize(_ isHorizontalScreen: Bool, _ size: AppearanceSizePreference) {
+    private static func titlesSize(_ size: AppearanceSizePreference) {
         hideThumbnails = true
         windowPadding = 18
         windowCornerRadius = 23
@@ -190,12 +190,22 @@ class Appearance {
     private static func lightTheme() {
         fontColor = .black.withAlphaComponent(0.8)
         imagesShadowColor = .gray.withAlphaComponent(0.8)
-        material = .contentBackground
+        material = LegacyMaterial.mediumLight
     }
 
     private static func darkTheme() {
         fontColor = .white.withAlphaComponent(0.85)
         imagesShadowColor = .gray.withAlphaComponent(0.8)
-        material = .hudWindow
+        material = LegacyMaterial.dark
     }
+}
+
+/// The only `NSVisualEffectView.Material` values that pin light or dark explicitly. Deprecated in
+/// 10.14 in favour of semantic materials, which we can't use: those follow the view's
+/// `NSAppearance`, whereas our theme comes from the user's own preference (see `updateTheme`).
+/// Referenced by rawValue because naming the cases trips `SWIFT_TREAT_WARNINGS_AS_ERRORS`.
+enum LegacyMaterial {
+    static let dark = NSVisualEffectView.Material(rawValue: 2)!
+    static let mediumLight = NSVisualEffectView.Material(rawValue: 8)!
+    static let ultraDark = NSVisualEffectView.Material(rawValue: 9)!
 }

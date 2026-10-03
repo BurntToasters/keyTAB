@@ -56,6 +56,7 @@
 "Disabled" = "Отключено";
 "Do Not Move" = "Не перемещать";
 "Don't hide" = "Не скрывать";
+"Don't show this search hint again" = "Больше не показывать эту подсказку о поиске";
 "Done" = "Готово";
 "Don’t check for updates periodically" = "Не проверять обновления автоматически";
 "e.g. com.example.app" = "напр. com.example.app";
@@ -113,6 +114,7 @@
 "Ordering & Grouping" = "Сортировка и группировка";
 "Overridden in Shortcut:" = "Переопределено в сочетании клавиш:";
 "Please drag KeyTab into the Applications folder manually." = "Перетащите KeyTab в папку «Программы» вручную.";
+"Press %@ to search your windows." = "Нажмите %@, чтобы искать среди окон.";
 "Preview selected window" = "Предпросмотр выбранного окна";
 "Quit %@" = "Завершить %@";
 "Quit app" = "Завершить приложение";
@@ -144,11 +146,12 @@
 "Show at the end" = "Показывать в конце";
 "Show fullscreen windows" = "Показывать полноэкранные окна";
 "Show hidden windows" = "Показывать скрытые окна";
-"Show main window" = "Показать главное окно";
 "Show minimized windows" = "Показывать свёрнутые окна";
 "Show on" = "Показывать на";
+"Show one window per app" = "Показать одно окно на приложение";
 "Show separate window for each tab" = "Отдельное окно для каждой вкладки";
 "Show single window for all tabs" = "Одно окно для всех вкладок";
+"Show the search hint" = "Показывать подсказку о поиске";
 "Show titles" = "Показывать заголовки";
 "Show windows from applications" = "Показывать окна приложений";
 "Show windows from screens" = "Показывать окна с экранов";

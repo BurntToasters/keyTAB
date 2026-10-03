@@ -56,6 +56,7 @@
 "Disabled" = "無効";
 "Do Not Move" = "移動しない";
 "Don't hide" = "非表示にしない";
+"Don't show this search hint again" = "この検索のヒントを今後表示しない";
 "Done" = "完了";
 "Don’t check for updates periodically" = "アップデートを定期的に確認しない";
 "e.g. com.example.app" = "例: com.example.app";
@@ -113,6 +114,7 @@
 "Ordering & Grouping" = "並び順とグループ化";
 "Overridden in Shortcut:" = "上書きされているショートカット:";
 "Please drag KeyTab into the Applications folder manually." = "KeyTab を手動でアプリケーションフォルダにドラッグしてください。";
+"Press %@ to search your windows." = "%@を押すとウインドウを検索できます。";
 "Preview selected window" = "選択したウインドウをプレビュー";
 "Quit %@" = "%@ を終了";
 "Quit app" = "App を終了";
@@ -144,11 +146,12 @@
 "Show at the end" = "末尾に表示";
 "Show fullscreen windows" = "フルスクリーンのウインドウを表示";
 "Show hidden windows" = "非表示のウインドウを表示";
-"Show main window" = "メインウインドウを表示";
 "Show minimized windows" = "最小化されたウインドウを表示";
 "Show on" = "表示する画面";
+"Show one window per app" = "App ごとに 1 つのウインドウを表示";
 "Show separate window for each tab" = "タブごとに別のウインドウを表示";
 "Show single window for all tabs" = "すべてのタブを 1 つのウインドウで表示";
+"Show the search hint" = "検索のヒントを表示";
 "Show titles" = "タイトルを表示";
 "Show windows from applications" = "対象のアプリケーション";
 "Show windows from screens" = "対象の画面";

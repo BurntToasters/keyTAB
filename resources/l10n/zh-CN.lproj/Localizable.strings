@@ -56,6 +56,7 @@
 "Disabled" = "已停用";
 "Do Not Move" = "不移动";
 "Don't hide" = "不隐藏";
+"Don't show this search hint again" = "不再显示此搜索提示";
 "Done" = "完成";
 "Don’t check for updates periodically" = "不定期检查更新";
 "e.g. com.example.app" = "例如 com.example.app";
@@ -113,6 +114,7 @@
 "Ordering & Grouping" = "排序与分组";
 "Overridden in Shortcut:" = "在快捷键中被覆盖：";
 "Please drag KeyTab into the Applications folder manually." = "请手动将 KeyTab 拖动到应用程序文件夹。";
+"Press %@ to search your windows." = "按 %@ 搜索窗口。";
 "Preview selected window" = "预览所选窗口";
 "Quit %@" = "退出 %@";
 "Quit app" = "退出应用";
@@ -144,11 +146,12 @@
 "Show at the end" = "在末尾显示";
 "Show fullscreen windows" = "显示全屏窗口";
 "Show hidden windows" = "显示隐藏窗口";
-"Show main window" = "显示主窗口";
 "Show minimized windows" = "显示最小化窗口";
 "Show on" = "显示于";
+"Show one window per app" = "每个应用显示一个窗口";
 "Show separate window for each tab" = "每个标签显示单独的窗口";
 "Show single window for all tabs" = "所有标签显示单个窗口";
+"Show the search hint" = "显示搜索提示";
 "Show titles" = "显示标题";
 "Show windows from applications" = "显示来自应用的窗口";
 "Show windows from screens" = "显示来自屏幕的窗口";

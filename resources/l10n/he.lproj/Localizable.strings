@@ -56,6 +56,7 @@
 "Disabled" = "מושבת";
 "Do Not Move" = "אל תעביר";
 "Don't hide" = "אל תסתיר";
+"Don't show this search hint again" = "לא להציג שוב את עצת החיפוש הזו";
 "Done" = "בוצע";
 "Don’t check for updates periodically" = "אל תחפש עדכונים מעת לעת";
 "e.g. com.example.app" = "לדוגמה: com.example.app";
@@ -113,6 +114,7 @@
 "Ordering & Grouping" = "מיון וקיבוץ";
 "Overridden in Shortcut:" = "נדרס בקיצור דרך:";
 "Please drag KeyTab into the Applications folder manually." = "גרור את KeyTab לתיקיית היישומים באופן ידני.";
+"Press %@ to search your windows." = "יש ללחוץ על %@ כדי לחפש בחלונות.";
 "Preview selected window" = "תצוגה מקדימה של החלון הנבחר";
 "Quit %@" = "צא מ-%@";
 "Quit app" = "צא מהיישום";
@@ -144,11 +146,12 @@
 "Show at the end" = "הצג בסוף";
 "Show fullscreen windows" = "הצג חלונות במסך מלא";
 "Show hidden windows" = "הצג חלונות מוסתרים";
-"Show main window" = "הצג חלון ראשי";
 "Show minimized windows" = "הצג חלונות ממוזערים";
 "Show on" = "הצג ב";
+"Show one window per app" = "הצג חלון אחד לכל יישום";
 "Show separate window for each tab" = "הצג חלון נפרד עבור כל לשונית";
 "Show single window for all tabs" = "הצג חלון אחד עבור כל הלשוניות";
+"Show the search hint" = "הצגת עצת החיפוש";
 "Show titles" = "הצג כותרות";
 "Show windows from applications" = "הצג חלונות מיישומים";
 "Show windows from screens" = "הצג חלונות ממסכים";

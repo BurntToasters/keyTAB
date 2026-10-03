@@ -56,6 +56,7 @@
 "Disabled" = "Đã tắt";
 "Do Not Move" = "Không di chuyển";
 "Don't hide" = "Không ẩn";
+"Don't show this search hint again" = "Không hiển thị lại gợi ý tìm kiếm này";
 "Done" = "Xong";
 "Don’t check for updates periodically" = "Không kiểm tra cập nhật định kỳ";
 "e.g. com.example.app" = "ví dụ: com.example.app";
@@ -113,6 +114,7 @@
 "Ordering & Grouping" = "Sắp xếp & Nhóm";
 "Overridden in Shortcut:" = "Bị ghi đè trong Phím tắt:";
 "Please drag KeyTab into the Applications folder manually." = "Vui lòng kéo KeyTab vào thư mục Ứng dụng theo cách thủ công.";
+"Press %@ to search your windows." = "Nhấn %@ để tìm kiếm cửa sổ.";
 "Preview selected window" = "Xem trước cửa sổ đã chọn";
 "Quit %@" = "Thoát %@";
 "Quit app" = "Thoát ứng dụng";
@@ -144,11 +146,12 @@
 "Show at the end" = "Hiển thị ở cuối";
 "Show fullscreen windows" = "Hiển thị cửa sổ toàn màn hình";
 "Show hidden windows" = "Hiển thị cửa sổ đã ẩn";
-"Show main window" = "Hiển thị cửa sổ chính";
 "Show minimized windows" = "Hiển thị cửa sổ đã thu nhỏ";
 "Show on" = "Hiển thị trên";
+"Show one window per app" = "Hiển thị một cửa sổ cho mỗi ứng dụng";
 "Show separate window for each tab" = "Hiển thị cửa sổ riêng cho mỗi tab";
 "Show single window for all tabs" = "Hiển thị một cửa sổ cho tất cả tab";
+"Show the search hint" = "Hiển thị gợi ý tìm kiếm";
 "Show titles" = "Hiển thị tiêu đề";
 "Show windows from applications" = "Hiển thị cửa sổ từ các ứng dụng";
 "Show windows from screens" = "Hiển thị cửa sổ từ các màn hình";

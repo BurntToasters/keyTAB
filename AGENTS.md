@@ -2,7 +2,7 @@
 
 ## Project identity
 
-- KeyTab is a free, GPL-3.0-only fork of AltTab v11.4.4. The product name is `KeyTab`, the bundle identifier is `run.rosie.keytab`, and the canonical repository is `BurntToasters/KeyTab`.
+- KeyTab is a free, GPL-3.0-only fork of AltTab v11.8.0. KeyTab modifications began August 2026 from AltTab v11.4.4. The product name is `KeyTab`, the bundle identifier is `run.rosie.keytab`, and the canonical repository is `BurntToasters/KeyTab`.
 - Keep KeyTab preferences, login-item registration, TCC permissions, and Sparkle state separate from AltTab. Never read or migrate AltTab defaults.
 - Keep all formerly paid AltTab functionality free and persistent. Do not add license keys, trials, tiers, purchase UI, feature gates, downgrade behavior, telemetry, AppCenter, feedback APIs, or sponsor branding.
 - Runtime networking is limited to Sparkle update checks. Help, feedback, source, issue, and release links must point to the KeyTab GitHub repository.
@@ -55,3 +55,9 @@
 - Releases require Developer ID signing for team `FYJZP8B2KG`, universal `arm64 x86_64` output, hardened runtime, notarization, stapling, Gatekeeper assessment, Sparkle EdDSA signatures, SHA-256 checksums, and detached GPG signatures.
 - Never publish or mutate a GitHub release unless the user explicitly requests that external action.
 - Keep public release blocked until original KeyTab artwork, a KeyTab Sparkle key, a GPG key, the canonical public repository, matching public source tag, and signed native verification are all available.
+
+## Testing
+
+- NEVER write unit tests after you write code.
+- Highly prefer E2E tests as the sole testing mechanism. Use them to verify complex features work. At the end of E2E tests, produce a verifiable and repeatable artifact.
+- If you must test a system in isolation, FIRST write all the ways it could fail, THEN write the code.

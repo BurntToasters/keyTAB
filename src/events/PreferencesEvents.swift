@@ -41,10 +41,21 @@ class PreferencesEvents {
     static func initialize() {
         guard !initialized else { return }
         initialized = true
-        ControlsTab.initializePreferencesDependentState()
-        applyUpdatePolicyPreference()
+        #if DEBUG
+        if !Preferences.qaPristine { UserDefaultsEvents.observe() }
+        #else
         UserDefaultsEvents.observe()
+        #endif
+        ControlsTab.initializePreferencesDependentState()
+        #if DEBUG
+        if !Preferences.qaPristine { applyUpdatePolicyPreference() }
+        #else
+        applyUpdatePolicyPreference()
+        #endif
         TrackpadEvents.toggle(Preferences.nextWindowGesture != .disabled)
+        #if DEBUG
+        guard !Preferences.qaPristine else { return }
+        #endif
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             LoginItem.applyCurrentPreference()
         }
@@ -59,14 +70,15 @@ class PreferencesEvents {
             }
             return
         }
+        SearchDiscoveryHint.shared.cancel()
         ControlsTab.preferenceChanged(key)
         switch key {
         case "menubarIcon", "menubarIconShown": applyMenubarPreferencesIfReady()
         case "nextWindowGesture": TrackpadEvents.toggle(Preferences.nextWindowGesture != .disabled)
         case "startAtLogin": LoginItem.applyCurrentPreference()
         case "updatePolicy": applyUpdatePolicyPreference()
-        case let k where preferencesRequiringUiReset.contains(k) && TilesPanel.shared != nil: App.resetPreferencesDependentComponents()
-        case let k where (isOverrideKey(k) || isPerShortcutGroupingKey(k)) && TilesPanel.shared != nil: App.resetPreferencesDependentComponents()
+        case let k where preferencesRequiringUiReset.contains(k): App.resetPreferencesDependentComponents()
+        case let k where isOverrideKey(k) || isPerShortcutGroupingKey(k): App.resetPreferencesDependentComponents()
         default: break
         }
     }

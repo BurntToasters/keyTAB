@@ -41,8 +41,11 @@ class TileFontIconView: NSView {
     }
 
     struct SymbolCacheKey: Hashable {
+        // periphery:ignore - read by the synthesized Hashable
         var symbol: String
+        // periphery:ignore - read by the synthesized Hashable
         var size: CGFloat
+        // periphery:ignore - read by the synthesized Hashable
         var colorKey: String
     }
 
@@ -140,21 +143,12 @@ class TileFontIconView: NSView {
         replaceTextIfNeeded(text)
     }
 
-    func setStar() {
-        setStarLike(false)
-    }
-
     func setFilledStar() {
-        setStarLike(true)
+        replaceTextIfNeeded(rendering == .badge ? "" : Symbols.filledCircledStar.rawValue)
     }
 
     override func draw(_ dirtyRect: NSRect) {
         rendering == .badge ? drawBadge() : drawSymbol()
-    }
-
-    private func setStarLike(_ filled: Bool) {
-        let star = rendering == .badge ? "" : (filled ? Symbols.filledCircledStar.rawValue : Symbols.circledStar.rawValue)
-        replaceTextIfNeeded(star)
     }
 
     private func replaceTextIfNeeded(_ newText: String) {

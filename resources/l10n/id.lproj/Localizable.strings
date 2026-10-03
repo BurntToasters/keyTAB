@@ -56,6 +56,7 @@
 "Disabled" = "Dinonaktifkan";
 "Do Not Move" = "Jangan Pindahkan";
 "Don't hide" = "Jangan sembunyikan";
+"Don't show this search hint again" = "Jangan tampilkan petunjuk pencarian ini lagi";
 "Done" = "Selesai";
 "Don’t check for updates periodically" = "Jangan periksa pembaruan secara berkala";
 "e.g. com.example.app" = "mis. com.example.app";
@@ -113,6 +114,7 @@
 "Ordering & Grouping" = "Pengurutan & Pengelompokan";
 "Overridden in Shortcut:" = "Diganti dalam Pintasan:";
 "Please drag KeyTab into the Applications folder manually." = "Seret KeyTab ke folder Aplikasi secara manual.";
+"Press %@ to search your windows." = "Tekan %@ untuk mencari jendela Anda.";
 "Preview selected window" = "Pratinjau jendela terpilih";
 "Quit %@" = "Keluar dari %@";
 "Quit app" = "Keluar dari aplikasi";
@@ -144,11 +146,12 @@
 "Show at the end" = "Tampilkan di akhir";
 "Show fullscreen windows" = "Tampilkan jendela layar penuh";
 "Show hidden windows" = "Tampilkan jendela tersembunyi";
-"Show main window" = "Tampilkan jendela utama";
 "Show minimized windows" = "Tampilkan jendela yang diminimalkan";
 "Show on" = "Tampilkan pada";
+"Show one window per app" = "Tampilkan satu jendela per aplikasi";
 "Show separate window for each tab" = "Tampilkan jendela terpisah untuk setiap tab";
 "Show single window for all tabs" = "Tampilkan satu jendela untuk semua tab";
+"Show the search hint" = "Tampilkan petunjuk pencarian";
 "Show titles" = "Tampilkan judul";
 "Show windows from applications" = "Tampilkan jendela dari aplikasi";
 "Show windows from screens" = "Tampilkan jendela dari layar";
