@@ -14,6 +14,15 @@ jobs:
     runs-on: macos-15
     steps:
       - uses: actions/checkout@v6
+      - name: Select Xcode 26 (macOS 26 SDK)
+        run: |
+          xcode="$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)"
+          if [ -z "$xcode" ]; then
+            echo "::error::KeyTab needs Xcode 26 or newer (macOS 26 SDK). Installed: $(ls -d /Applications/Xcode*.app | tr '\n' ' ')"
+            exit 1
+          fi
+          sudo xcode-select -s "$xcode"
+          xcodebuild -version
       - uses: actions/setup-node@v6
         with:
           node-version: 22.12

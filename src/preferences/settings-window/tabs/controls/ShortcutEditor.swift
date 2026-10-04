@@ -559,15 +559,12 @@ class ShortcutOverrideBinding {
 }
 
 /// A segmented control wired to a per-shortcut "override" preference (e.g. `appearanceSizeOverride2`).
-/// Displays the override value when one is set, otherwise the global. Owns its own unlink button.
-final class ShortcutOverrideSegmented {
+/// Displays the override value when one is set, otherwise the global.
+final class ShortcutOverrideSegmented: ShortcutOverrideBinding {
     let segmented: NSSegmentedControl
-    let unlink: NSButton
 
     private let cases: [MacroPreference]
     private let globalIndex: () -> Int
-    private let onChange: (() -> Void)?
-    private var currentShortcutIndex: Int = 0
 
     init(baseName: String,
          cases: [MacroPreference],
@@ -576,12 +573,9 @@ final class ShortcutOverrideSegmented {
          onChange: (() -> Void)?) {
         self.cases = cases
         self.globalIndex = globalIndex
-        self.onChange = onChange
-
         segmented = LabelAndControl.makeSegmentedControl(
             Preferences.indexToName(baseName, 0), cases, segmentWidth: segmentWidth, extraAction: nil)
-        unlink = ShortcutEditor.makeUnlinkButton()
-
+        super.init(baseName: baseName, onChange: onChange)
         let weakSelf = WeakRef(self)
         segmented.onAction = { control in
             weakSelf.value?.handleClick(control as! NSSegmentedControl)
@@ -597,37 +591,21 @@ final class ShortcutOverrideSegmented {
         select(globalIndex())
     }
 
-    override func didRender() {
-        if let overlay = badgeOverlay, let refreshBadge {
-            refreshBadge(segmented, overlay)
-        }
-        let clamped = max(0, min(displayedIndex, cases.count - 1))
-        segmented.selectedSegment = clamped
-        unlink.isHidden = !Preferences.hasOverride(baseName, index)
+    private func select(_ index: Int) {
+        segmented.selectedSegment = max(0, min(index, cases.count - 1))
     }
 
     private func handleClick(_ control: NSSegmentedControl) {
-        let newIndex = control.selectedSegment
-        let key = Preferences.indexToName(baseName, currentShortcutIndex)
         let decision = OverrideClickResolver.decide(
-            newIndex: newIndex,
+            newIndex: control.selectedSegment,
             hasOverride: hasOverride,
             storedOverrideValue: storedValue,
             globalIndex: globalIndex(),
             valueAtIndex: { String($0) })
-        if case .write(let value) = decision {
-            Preferences.set(key, value)
-            unlink.isHidden = false
-            onChange?()
-        }
-    }
-
-    private func unlinkOverride() {
-        Preferences.removeOverride(baseName, currentShortcutIndex)
-        // Resnap to global.
-        segmented.selectedSegment = max(0, min(globalIndex(), cases.count - 1))
-        unlink.isHidden = true
-        onChange?()
+        guard case .write(let value) = decision else { return }
+        Preferences.set(key, value)
+        unlink.isHidden = false
+        notifyChanged()
     }
 }
 
@@ -638,8 +616,6 @@ final class ShortcutOverrideRadios: ShortcutOverrideBinding {
 
     private let cases: [MacroPreference]
     private let globalIndex: () -> Int
-    private let onChange: (() -> Void)?
-    private var currentShortcutIndex: Int = 0
 
     init(baseName: String,
          cases: [MacroPreference],
@@ -647,19 +623,15 @@ final class ShortcutOverrideRadios: ShortcutOverrideBinding {
          onChange: (() -> Void)?) {
         self.cases = cases
         self.globalIndex = globalIndex
-        self.onChange = onChange
-
         stack = LabelAndControl.makeImageRadioButtons(
             Preferences.indexToName(baseName, 0),
             cases as! [ImageMacroPreference],
             extraAction: nil,
             buttonSpacing: 10)
-        unlink = ShortcutEditor.makeUnlinkButton()
-
+        super.init(baseName: baseName, onChange: onChange)
         let weakSelf = WeakRef(self)
         for (i, buttonView) in buttonViews.enumerated() {
-            buttonView.onClick = { [weak stack] _ in
-                guard let _ = stack else { return }
+            buttonView.onClick = { _ in
                 weakSelf.value?.handleClick(buttonIndex: i)
             }
         }
@@ -688,8 +660,6 @@ final class ShortcutOverrideRadios: ShortcutOverrideBinding {
     }
 
     private func handleClick(buttonIndex i: Int) {
-        let buttonViews = stack.arrangedSubviews.compactMap { $0 as? ImageTextButtonView }
-        let key = Preferences.indexToName(baseName, currentShortcutIndex)
         let decision = OverrideClickResolver.decide(
             newIndex: i,
             hasOverride: hasOverride,
