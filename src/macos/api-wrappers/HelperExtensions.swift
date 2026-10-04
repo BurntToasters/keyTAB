@@ -198,6 +198,15 @@ extension NSImage {
         image.isTemplate = true
         return image
     }
+
+    func tinted(_ color: NSColor) -> NSImage {
+        NSImage(size: size, flipped: false) { rect in
+            color.set()
+            rect.fill()
+            self.draw(in: rect, from: NSRect(origin: .zero, size: self.size), operation: .destinationIn, fraction: 1.0)
+            return true
+        }
+    }
 }
 
 extension CGImage {
