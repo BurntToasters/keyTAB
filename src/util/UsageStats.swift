@@ -10,6 +10,7 @@ struct UsageStats {
     private static let defaults = UserDefaults(suiteName: "\(App.bundleIdentifier).usage")!
     private static let writeQueue = DispatchQueue(label: "UsageStats.writeQueue", qos: .utility)
     private static let maxAge: TimeInterval = 365 * 24 * 3600
+    private static let flushDelay: TimeInterval = 5
     private static let allKeys = ["triggers", "searches"]
     private(set) static var searchRecordedThisSession = false
 

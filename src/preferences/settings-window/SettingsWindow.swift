@@ -1013,7 +1013,6 @@ class SettingsWindow: NSWindow {
 
 #if DEBUG
     func qaCloseWithoutHidingApp() {
-        hasPlayedShine = false
         super.close()
     }
 #endif
