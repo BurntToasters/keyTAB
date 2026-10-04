@@ -78,7 +78,7 @@ class TileFontIconView: NSView {
     private let badgeFont: NSFont
     private let badgeContainerHeight: CGFloat
     private let badgeHorizontalPadding: CGFloat
-    private var text = ""
+    private(set) var text = ""
     private var cachedSymbolImage: NSImage?
     private var cachedBadgeAttributedString: NSAttributedString?
     private var cachedBadgeTextSize = NSSize.zero
