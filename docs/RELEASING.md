@@ -2,6 +2,31 @@
 
 `package.json` owns the semantic `version` and numeric `buildNumber`. Run `npm run sync-version` and commit `config/version.xcconfig` after changing either value. Stable versions use `main`; versions ending in `-beta.n` use `beta`.
 
+## One-time Sparkle setup
+
+Sparkle is the open-source (MIT-licensed) update framework KeyTab ships with. It costs nothing and needs no
+account or service. Updates are an `appcast.xml` feed plus a zip, both hosted on this repository's GitHub
+Releases. Its security rests on one EdDSA key pair: the public key is built into every copy of KeyTab, and an
+update is installed only if the private key signed it. The only paid prerequisite in the release process is
+Apple's Developer Program (the Developer ID certificate and notarization), not Sparkle.
+
+1. On the Mac that will sign releases, download the Sparkle release matching `vendor/Sparkle/UPSTREAM` (currently
+   2.9.1) from <https://github.com/sparkle-project/Sparkle/releases> and unpack it. The vendored copy omits
+   `generate_keys`.
+2. Run `./bin/generate_keys`. It creates the private key in your login keychain (account `ed25519`) and prints
+   the public key. Run it again later with `-p` to print the public key.
+3. **Back up the private key.** Run `./bin/generate_keys -x keytab-sparkle-private-key.txt`, store the file in a
+   password manager, and delete it. If the key is lost, installed copies of KeyTab can never verify another update.
+   If it leaks, anyone can sign updates your users will install.
+4. Put the public key in `config/base.xcconfig` as `SPARKLE_PUBLIC_KEY = <key>` and commit it. It is public by
+   design.
+5. Set `KEYTAB_SPARKLE_ACCOUNT=ed25519` in `.env`. On another release Mac, import the backup with
+   `./bin/generate_keys -f keytab-sparkle-private-key.txt` first.
+6. Check with `node scripts/validate.mjs --release`. Once the key is in place, the Sparkle check passes.
+
+The release commands then sign the zip and the appcast with `vendor/Sparkle/bin/sign_update` and upload both.
+Users choose their update policy in General settings: manual, periodic checks, or automatic install.
+
 ## Preparation
 
 A release host needs Node.js 22.12 or newer, the Developer ID Application identity for team `FYJZP8B2KG`, GitHub CLI authentication, a KeyTab Sparkle key, a GPG signing key, and a notarization keychain profile. Copy `.env.example` to the gitignored `.env`, or export the same variables in the shell. Shell variables take precedence over `.env` values.

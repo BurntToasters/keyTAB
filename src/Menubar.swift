@@ -151,8 +151,6 @@ class Menubar {
         }
     }
 
-    private static var badgeDotLayer: CALayer?
-
     /// `NSStatusBar.system.thickness`: the status item working area, 22pt on every macOS so far
     /// (the visible menubar is taller since Tahoe, but items stay in a centred 22pt band).
     /// The artwork is authored at 44pt. Handed over at that size it makes the button 44pt tall,
@@ -171,11 +169,6 @@ class Menubar {
         statusItem.button!.image = image
         statusItem.isVisible = true
         statusItem.button!.imageScaling = .scaleProportionallyUpOrDown
-    }
-
-    static func showPopoverFromMenubar(_ popover: NSPopover) {
-        guard let button = statusItem?.button else { return }
-        popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
     }
 }
 

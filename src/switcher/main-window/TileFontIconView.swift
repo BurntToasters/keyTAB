@@ -17,8 +17,6 @@ enum Symbols: String {
     case arrowTriangleBranch = "arrow.triangle.branch"
     case accessibility
     case display
-    case ladybug
-    case lightbulb
     case plus
     case minus
     case minusCircleFill = "minus.circle.fill"

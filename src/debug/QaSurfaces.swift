@@ -270,7 +270,7 @@ enum QaSurfaces {
                 later(show)
                 return Target()
             }
-        }]
+        }
     }
 
     /// Not the icon itself: whether it can be seen at all depends on how crowded the menubar is, and on a
