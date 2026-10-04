@@ -12,6 +12,23 @@ enum KeyRepeatTimerTestable {
     /// between repeats") cannot turn the late-tick rule into "refuse every tick".
     static let minimumLateBudget: TimeInterval = 0.02
 
+    /// `KeyRepeat` in 1/60 s ticks. Missing, malformed, non-finite or non-positive values fall back to macOS's
+    /// default of 6, so a bad global default cannot drive the timer at zero or negative intervals.
+    static func repeatInterval(_ rawTicks: String?) -> TimeInterval {
+        seconds(rawTicks, fallbackTicks: 6, acceptsZero: false)
+    }
+
+    /// `InitialKeyRepeat` in 1/60 s ticks. Zero is a legal "no delay"; anything unusable falls back to 25.
+    static func initialDelay(_ rawTicks: String?) -> TimeInterval {
+        seconds(rawTicks, fallbackTicks: 25, acceptsZero: true)
+    }
+
+    private static func seconds(_ rawTicks: String?, fallbackTicks: Double, acceptsZero: Bool) -> TimeInterval {
+        guard let rawTicks, let ticks = Double(rawTicks), ticks.isFinite,
+              acceptsZero ? ticks >= 0 : ticks > 0 else { return fallbackTicks / 60 }
+        return ticks / 60
+    }
+
     /// How late a tick may reach the main thread and still count. One repeat interval: past that, the tick
     /// the timer fired next has already superseded it.
     static func lateBudget(_ repeatRate: TimeInterval) -> TimeInterval {
