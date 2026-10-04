@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import test from "node:test";
-import { debugBuildArguments, releaseCodesignArguments, releaseSigningTargets } from "../build.mjs";
+import { debugBuildArguments, releaseCodesignArguments, releaseSigningTargets, releaseSmokeArguments } from "../build.mjs";
 import { root } from "../lib/core.mjs";
 import { isMachO, signingTeamMismatches } from "../validate.mjs";
 
@@ -56,4 +56,13 @@ test("release bundles reject nested code signed by another team or ad hoc", () =
     "Sparkle.framework/Versions/A/Updater.app/Contents/MacOS/Updater is signed by no team",
   ]);
   assert.deepEqual(signingTeamMismatches(entries.slice(0, 1), "FYJZP8B2KG"), []);
+});
+
+test("release compile smoke builds the Release configuration unsigned and without an identity", () => {
+  const args = releaseSmokeArguments();
+  assert.deepEqual(args.slice(args.indexOf("-configuration"), args.indexOf("-configuration") + 2), ["-configuration", "Release"]);
+  assert.ok(args.includes("CODE_SIGNING_ALLOWED=NO"));
+  assert.ok(args.at(-1) === "build" || args.includes("build"));
+  assert.ok(!args.some((argument) => argument.startsWith("CODE_SIGN_IDENTITY=")));
+  assert.ok(!args.includes("ARCHS=arm64 x86_64"), "the smoke compile stays single-architecture");
 });

@@ -32,3 +32,4 @@ jobs:
       - run: npm run validate
       - run: npm run test:all
       - run: KEYTAB_UNSIGNED_BUILD=1 npm run build:debug
+      - run: npm run build:release-smoke

@@ -12,6 +12,7 @@
     "sync-version": "node scripts/sync-version.mjs",
     "validate": "node scripts/validate.mjs",
     "build:debug": "node scripts/build.mjs debug",
+    "build:release-smoke": "node scripts/build.mjs release-smoke",
     "test:node": "node --test scripts/tests/*.test.mjs",
     "test:all": "node scripts/test-all.mjs",
     "workspace:bootstrap": "npm ci --ignore-scripts && npm run sync-version",

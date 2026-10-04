@@ -14,6 +14,17 @@ export function debugBuildArguments({ unsigned = false, derivedData = "DerivedDa
   return args;
 }
 
+export function releaseSmokeArguments({ derivedData = "DerivedData/ReleaseSmoke" } = {}) {
+  const arch = os.arch() === "x64" ? "x86_64" : "arm64";
+  return ["-project", project, "-scheme", "Release", "-configuration", "Release", "-derivedDataPath", derivedData, "-destination", `platform=macOS,arch=${arch}`, "CODE_SIGNING_ALLOWED=NO", "build"];
+}
+
+export function buildReleaseSmoke() {
+  validate();
+  run("xcodebuild", releaseSmokeArguments(), { env: { KEYTAB_SKIP_EMBED_SIGNING: "1" } });
+  console.log("build:release-smoke: ok (unsigned Release compile)");
+}
+
 export function releaseSigningTargets(app) {
   const sparkle = path.join(app, "Contents/Frameworks/Sparkle.framework");
   return [path.join(sparkle, "Versions/A/Autoupdate"), path.join(sparkle, "Versions/A/Updater.app"), sparkle, app];
@@ -86,5 +97,6 @@ if (process.argv[1] && pathToFileURL(path.resolve(process.argv[1])).href === imp
   const action = process.argv[2] ?? "debug";
   if (action === "debug") buildDebug();
   else if (action === "release") buildRelease();
+  else if (action === "release-smoke") buildReleaseSmoke();
   else throw new Error(`Unknown build action: ${action}`);
 }
