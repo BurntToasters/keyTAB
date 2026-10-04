@@ -30,6 +30,10 @@ export function betaMirrorTarget(channel, latestStableTag) {
   return latestStableTag;
 }
 
+export function feedFilenames(channel) {
+  return channel === "beta" ? [appcastFilename("beta")] : [appcastFilename("stable"), appcastFilename("beta")];
+}
+
 function ensureDraft(info, commit) {
   const result = ghResult(["release", "view", info.tag, "--repo", repository, "--json", "isDraft,targetCommitish"]);
   if (result.status === 0) {
@@ -117,8 +121,10 @@ function continueRelease() {
   const signature = signSparkle(zip, true);
   const appcast = writeAppcast(path.dirname(zip), { ...info, signature, length: fs.statSync(zip).size });
   signSparkle(appcast);
+  const feeds = feedFilenames(info.channel).map((name) => path.join(path.dirname(zip), name));
+  for (const feed of feeds.filter((feed) => feed !== appcast)) fs.copyFileSync(appcast, feed);
   const checksums = writeChecksums([zip, appcast], path.join(path.dirname(zip), "SHA256SUMS"));
-  const assets = [zip, appcast, checksums];
+  const assets = [zip, ...feeds, checksums];
   assets.push(...assets.map(signGpg));
   ghRun(["release", "upload", info.tag, "--repo", repository, "--clobber", ...assets]);
   console.log(`release:mac:continue: draft uploaded (${assets.map(path.basename).join(", ")})`);
@@ -131,6 +137,7 @@ function publish() {
   if (info.channel === "beta") {
     const feed = path.join(root, "dist", appcastFilename("beta"));
     if (!fs.existsSync(feed)) throw new Error("beta appcast is missing from the prepared release assets.");
+    if (!fs.readFileSync(feed, "utf8").includes(`KeyTab-${info.version}.zip`)) throw new Error(`prepared beta appcast does not describe ${info.tag}.`);
     const stableTag = betaMirrorTarget(info.channel, ghOutput(["release", "view", "--repo", repository, "--json", "tagName", "--jq", ".tagName"]));
     ghRun(["release", "upload", stableTag, "--repo", repository, "--clobber", feed, signGpg(feed)]);
   }

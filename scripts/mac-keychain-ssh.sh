@@ -16,7 +16,7 @@ if [[ -z "$keytab_password" ]]; then
   exit 1
 fi
 keytab_keychain="${KEYTAB_KEYCHAIN_PATH:-$(env_value KEYTAB_KEYCHAIN_PATH)}"
-if [[ -z "$keytab_keychain" ]]; then keytab_keychain="$USER/Library/Keychains/login.keychain-db"; fi
+if [[ -z "$keytab_keychain" ]]; then keytab_keychain="$HOME/Library/Keychains/login.keychain-db"; fi
 unset KEYTAB_KEYCHAIN_PASSWORD SSH_USER_PWD
 security unlock-keychain -p "$keytab_password" "$keytab_keychain"
 security set-keychain-settings -lut 21600 "$keytab_keychain"

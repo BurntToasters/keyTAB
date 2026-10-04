@@ -4,12 +4,17 @@ import { pathToFileURL } from "node:url";
 import { expectedBranch, output, repository, repositoryUrl, root, run, teamId, versionInfo } from "./lib/core.mjs";
 import { validateWorkspace } from "./validate.mjs";
 
-export const canonicalOrigins = new Set([`${repositoryUrl}.git`, `git@github.com:${repository}.git`, repositoryUrl]);
+const escapedRepository = repository.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const canonicalOrigin = new RegExp(`^(?:https://github\\.com/|git@github\\.com:)${escapedRepository}(?:\\.git)?/?$`, "i");
+
+export function isCanonicalOrigin(origin) {
+  return canonicalOrigin.test(origin ?? "");
+}
 
 export function validateRepositoryState({ version, branch, origin, status, head, remoteHead, upstream, tagHead = null, draftTarget = null }) {
   const failures = [];
   const requiredBranch = expectedBranch(version);
-  if (!canonicalOrigins.has(origin)) failures.push(`origin must be ${repositoryUrl}`);
+  if (!isCanonicalOrigin(origin)) failures.push(`origin must be ${repositoryUrl}`);
   if (branch !== requiredBranch) failures.push(`${version} releases must run from ${requiredBranch}`);
   if (status) failures.push("release worktree must be clean");
   if (upstream !== `origin/${branch}`) failures.push(`branch must track origin/${branch}`);

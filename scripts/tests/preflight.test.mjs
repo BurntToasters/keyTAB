@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { childEnvironment } from "../lib/core.mjs";
 import { betaReleaseAllowed, sparkleCredentialSources, validateRepositoryState } from "../release-preflight.mjs";
-import { betaMirrorTarget, expectedDraftTarget, gpgSigningInvocation, sparkleSigningInvocation } from "../release.mjs";
+import { betaMirrorTarget, expectedDraftTarget, feedFilenames, gpgSigningInvocation, sparkleSigningInvocation } from "../release.mjs";
 
 const clean = { version: "1.0.0", branch: "main", origin: "https://github.com/BurntToasters/KeyTab.git", status: "", head: "abc", remoteHead: "abc", upstream: "origin/main" };
 
@@ -11,6 +11,20 @@ test("release repository policy binds origin branch push tag and draft", () => {
   assert.match(validateRepositoryState({ ...clean, origin: "https://github.com/BurntToasters/keyTAB-prepub.git" }).join("\n"), /origin/);
   assert.match(validateRepositoryState({ ...clean, branch: "beta", upstream: "origin/beta" }).join("\n"), /main/);
   assert.match(validateRepositoryState({ ...clean, tagHead: "other", draftTarget: "other" }).join("\n"), /tag targets another commit/);
+});
+
+test("origin matches the canonical repository the way GitHub resolves names", () => {
+  for (const origin of ["https://github.com/BurntToasters/keyTAB", "https://github.com/burnttoasters/keytab.git", "git@github.com:BurntToasters/KEYTAB.git", "https://github.com/BurntToasters/KeyTab/"]) {
+    assert.deepEqual(validateRepositoryState({ ...clean, origin }), [], origin);
+  }
+  for (const origin of ["https://github.com/BurntToasters/KeyTab-fork.git", "https://github.com/Someone/KeyTab.git", "https://gitlab.com/BurntToasters/KeyTab.git", "https://github.com/BurntToasters/KeyTab.git.evil", "", "https://github.com/BurntToasters/KeyTab/extra"]) {
+    assert.match(validateRepositoryState({ ...clean, origin }).join("\n"), /origin/, origin);
+  }
+});
+
+test("a stable release keeps the beta feed resolvable from the latest release", () => {
+  assert.deepEqual(feedFilenames("stable"), ["appcast.xml", "appcast-beta.xml"]);
+  assert.deepEqual(feedFilenames("beta"), ["appcast-beta.xml"]);
 });
 
 test("beta requires public 1.0.0 and draft target is exact", () => {
