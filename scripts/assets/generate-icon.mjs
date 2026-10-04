@@ -34,34 +34,58 @@ function over(dst, color, alpha) {
   return [...rgb, a];
 }
 
+const palette = {
+  amber: hex(0xffb547),
+  ember: hex(0xe8562a),
+  cream: hex(0xfff4e4),
+  shadow: hex(0x2a0f05),
+  lip: hex(0x1a1528),
+  faceTop: hex(0x3d3359),
+  faceBottom: hex(0x29223f),
+  glyph: hex(0xffc266),
+};
+
 function shade(px, py, unit) {
   const x = px / unit;
   const y = py / unit;
   const pixel = 1 / unit;
-  let out = [0, 0, 0, 0];
-  const body = roundedRect(x, y, 512, 512, 412, 412, 186);
-  out = over(out, mix(hex(0x6c63ff), hex(0x17163f), clamp((y - 100) / 824)), coverage(body, pixel));
-  const glow = clamp(1 - Math.hypot(x - 512, y - 330) / 560);
-  out = over(out, hex(0x9d8cff), coverage(body, pixel) * glow * glow * 0.45);
-  const shadow = roundedRect(x, y, 512, 600, 290, 252, 76);
-  out = over(out, hex(0x0a0924), coverage(body, pixel) * clamp(0.5 - shadow / 90) * 0.55);
-  const side = roundedRect(x, y, 512, 560, 290, 262, 78);
-  out = over(out, hex(0xb4b9f2), coverage(side, pixel));
-  const face = roundedRect(x, y, 512, 530, 270, 242, 66);
-  out = over(out, mix(hex(0xffffff), hex(0xdfe2ff), clamp((y - 290) / 480)), coverage(face, pixel));
+  const body = coverage(roundedRect(x, y, 512, 512, 412, 412, 186), pixel);
+  let out = over([0, 0, 0, 0], mix(palette.amber, palette.ember, clamp((y - 100) / 824)), body);
+  const glow = clamp(1 - Math.hypot(x - 360, y - 230) / 620);
+  out = over(out, palette.cream, body * glow * glow * 0.35);
+  out = sideTiles(out, x, y, pixel, body);
+  out = keycap(out, x, y, pixel, body);
   return glyph(out, x, y, pixel);
 }
 
+function sideTiles(out, x, y, pixel, body) {
+  for (const cx of [204, 820]) {
+    const tile = roundedRect(x, y, cx, 540, 76, 138, 28);
+    out = over(out, palette.shadow, body * clamp(0.5 - (tile - 14) / 36) * 0.2);
+    out = over(out, palette.cream, body * coverage(tile, pixel) * 0.66);
+    out = over(out, palette.ember, body * coverage(roundedRect(x, y, cx, 430, 46, 8, 8), pixel) * 0.6);
+  }
+  return out;
+}
+
+function keycap(out, x, y, pixel, body) {
+  out = over(out, palette.shadow, body * clamp(0.5 - roundedRect(x, y, 512, 600, 180, 180, 76) / 80) * 0.5);
+  out = over(out, palette.cream, coverage(Math.abs(roundedRect(x, y, 512, 540, 206, 212, 84)) - 10, pixel));
+  out = over(out, palette.lip, coverage(roundedRect(x, y, 512, 554, 176, 176, 64), pixel));
+  return over(out, mix(palette.faceTop, palette.faceBottom, clamp((y - 370) / 320)), coverage(roundedRect(x, y, 512, 528, 158, 156, 52), pixel));
+}
+
 function glyph(out, x, y, pixel) {
-  const ink = hex(0x2a2878);
-  const thickness = 26;
+  const scale = 0.85;
+  const at = (gx, gy) => [512 + (gx - 525) * scale, 528 + (gy - 526) * scale];
+  const stroke = (a, b) => segment(x, y, ...at(...a), ...at(...b), 22 * scale);
   const marks = [
-    segment(x, y, 330, 530, 640, 530, thickness),
-    segment(x, y, 560, 450, 640, 530, thickness),
-    segment(x, y, 560, 610, 640, 530, thickness),
-    segment(x, y, 716, 440, 716, 620, thickness),
+    stroke([404, 526], [600, 526]),
+    stroke([540, 466], [600, 526]),
+    stroke([540, 586], [600, 526]),
+    stroke([646, 456], [646, 596]),
   ];
-  return over(out, ink, coverage(Math.min(...marks), pixel));
+  return over(out, palette.glyph, coverage(Math.min(...marks), pixel));
 }
 
 function render(size) {

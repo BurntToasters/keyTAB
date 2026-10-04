@@ -9,7 +9,7 @@ KeyTab is a free, open-source macOS window switcher. It brings Windows-style win
 
 ## Build and test
 
-Install Node.js 22.12 or newer, then run:
+Install Xcode 26 or newer (KeyTab builds against the macOS 26 SDK while still running on macOS 14) and Node.js 22.12 or newer, then run:
 
 ```sh
 npm run workspace:bootstrap
@@ -24,6 +24,10 @@ npm run build:debug
 Release commands validate the canonical repository, branch, clean and pushed commit, source/version synchronization, 24-hour preparation proof, signing identities, universal architecture, notarization, Sparkle EdDSA signatures, SHA-256 checksums, and detached GPG signatures. Publishing remains blocked until KeyTab-specific Sparkle and GPG keys are supplied.
 
 Copy `.env.example` to `.env` for local signing credentials. See [docs/RELEASING.md](docs/RELEASING.md) for the release commands, credential options, channel behavior, and manual native checks.
+
+## Brand
+
+The icon, menubar glyphs and palette are described in [docs/BRAND.md](docs/BRAND.md) and generated from code in `scripts/assets/`.
 
 ## License and provenance
 
