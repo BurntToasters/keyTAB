@@ -3,7 +3,7 @@
 ## Summary
 
 `PreferencesPersistenceProbe` is the pure decision layer behind the launch-time warning that fires when
-macOS isn't persisting KeyTab's preferences to disk (issue #5790). It takes a list of `SuiteFacts` (the
+macOS isn't persisting KeyTab's preferences to disk (issue AltTab #5790). It takes a list of `SuiteFacts` (the
 filesystem state of each `UserDefaults` suite's backing plist, gathered by the `PreferencesPersistenceCheck`
 shell) and returns a `Verdict`: `.ok`, or `.broken` naming the offending plist paths. It holds no state and
 touches no filesystem — same split as `WsEventRouting` / `DragAndDropResolver`.
@@ -22,7 +22,7 @@ plist itself.
 - **Two definitive break conditions.** A suite is broken when its plist (a) is a symlink, or (b) exists and
   is not writable by us. (a) is the dotfile-sync case (Mackup et al.): cfprefsd won't persist through a
   symlinked preferences file. (b) is the classic `root`-owned plist after a `sudo` launch. Both are directly
-  observable, hold across every supported macOS, and are what the user actually hit in #5790.
+  observable, hold across every supported macOS, and are what the user actually hit in AltTab #5790.
 - **Fail-safe by construction.** The kernel only ever flags those two conditions. An absent plist (normal on
   a fresh install, or transient before cfprefsd first writes), a writable regular file, or any stat failure
   the shell couldn't resolve all map to `.ok`. The bias is deliberately toward NOT warning: a false negative

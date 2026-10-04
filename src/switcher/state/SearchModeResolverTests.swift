@@ -4,7 +4,7 @@ import XCTest
 /// `SearchModeResolver` kernel. Pure data in, `Equatable` decision out — no AppKit, no globals.
 /// `TilesView` / `ShortcutAction` execute these decisions; this suite is the spec for what they do.
 ///
-/// Groups: A entry · B toggle route · C enter-editing (+Pro gate) · D disable ·
+/// Groups: A entry · B toggle route · C enter-editing · D disable ·
 /// E escape-depends-on-entry · F nav/tab · G shortcut pass-through · H text pass-through
 /// (cmd+A/C/V/X) · I IME/menu early return · J field editability · K printable-key
 /// disambiguation (bare typed key vs hold+key shortcut).
@@ -148,7 +148,7 @@ final class SearchModeResolverTests: XCTestCase {
     }
 
     func testEditingPrintableBareIsTypedTextNotShortcut() {
-        // `cancel = Q`, hold released to type: bare `q` is text, not cancel (#5781).
+        // `cancel = Q`, hold released to type: bare `q` is text, not cancel (AltTab #5781).
         XCTAssertFalse(SearchModeResolver.editingShortcutMatch(
             eventModifiers: 0, shortcutModifiers: 0, holdModifiers: Self.option,
             isPrintable: true, shortcutHasCommandModifier: false))
@@ -188,7 +188,7 @@ final class SearchModeResolverTests: XCTestCase {
 
     func testEditingWindowActionTypesBareButTriggersWithHold() {
         // A default window action like `closeWindow = W`: bare `w` types into the field; hold+W closes.
-        // This is the generalization of #5781 to the full when-active shortcut set.
+        // This is the generalization of AltTab #5781 to the full when-active shortcut set.
         XCTAssertFalse(SearchModeResolver.editingShortcutMatch(
             eventModifiers: 0, shortcutModifiers: 0, holdModifiers: Self.option,
             isPrintable: true, shortcutHasCommandModifier: false))

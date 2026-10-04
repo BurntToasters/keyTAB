@@ -12,7 +12,7 @@ import ShortcutRecorder
 /// The passive event tap therefore records just enough source order to answer the exact question Carbon
 /// cannot: did the hold modifier go up after THIS shortcut key-down and before the NEXT switch shortcut?
 /// It observes keyDown but never handles or suppresses one; the active HID keyDown tap remains disabled
-/// outside a switcher session, preserving the input-method isolation required by #5766.
+/// outside a switcher session, preserving the input-method isolation required by AltTab #5766.
 ///
 /// Invariant: the log holds exactly the key-downs Carbon will report, one per physical press. A claim takes
 /// the OLDEST unclaimed key-down, so one entry Carbon never reports shifts every later pairing onto a stale

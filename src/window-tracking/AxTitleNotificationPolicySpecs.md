@@ -10,10 +10,10 @@ asked for its wid, and `_AXUIElementGetWindow` answers with the **containing win
 
 So a wid says *which window the element sits in*. It never says *the element is that window*. Two other
 places in KeyTab already pay a role read against exactly this fact, before a brute-force scan accepts a
-candidate (`BruteForceWindowMatch.isTargetWindowRoot`, #5849) and before a pushed element is adopted as a
+candidate (`BruteForceWindowMatch.isTargetWindowRoot`, AltTab #5849) and before a pushed element is adopted as a
 window's own (`Applications.applyObservedElement`). The title path is the third.
 
-## What went wrong without it (#6011)
+## What went wrong without it (AltTab #6011)
 
 Chromium posts `AXTitleChanged` for nodes inside its window. Their `kAXTitle` is empty, and an empty title
 is what `Window.bestEffortTitle` resolves to the **app name**, once the WindowServer has no title either —
@@ -58,7 +58,7 @@ lean on `TabReadPolicy`'s rolling cursor, and the `axTitle … ignored` debug li
 
 ### B. Deliveries that say nothing about the window's title
 - **testMissingTitleIsIgnored** — the window element answered no `kAXTitle` at all.
-- **testEmptyDescendantTitleIsIgnored** — the #6011 shape: a static text inside the window with an empty
+- **testEmptyDescendantTitleIsIgnored** — the AltTab #6011 shape: a static text inside the window with an empty
   title, which would otherwise relabel the window with the app name.
 - **testDescendantWithATitleIsIgnored** — the role decides before the string: a descendant carrying a
   perfectly good title is still not the window.

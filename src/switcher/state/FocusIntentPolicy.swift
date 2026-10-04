@@ -17,7 +17,7 @@ struct FocusGeneration: RawRepresentable, Hashable, Comparable {
 /// window sits on top.
 ///
 /// Checking here before each step stops an operation blocked in the 1s AX messaging timeout from spending its
-/// #5586 retry budget on a target the user has left. But a z-order call is a post to another process and
+/// AltTab #5586 retry budget on a target the user has left. But a z-order call is a post to another process and
 /// cannot be recalled, so a bail alone still leaves the screen wrong for an operation that already acted —
 /// hence the repair, which re-asserts the current intent. This is that rule as a pure function; `FocusIntents`
 /// holds it behind a lock and `Window.focus()` does the actual calls.
@@ -156,7 +156,7 @@ class FocusIntents {
     private var refusalArmedForQa = false
 
     /// **Fault injection (`--qa-refuse-next-focus`): the next focus operation makes none of its OS calls**, as
-    /// if macOS had refused the switch. That is the state #6055 is about, a switch KeyTab asked for and the OS
+    /// if macOS had refused the switch. That is the state AltTab #6055 is about, a switch KeyTab asked for and the OS
     /// never carried out, and no app can be made to refuse one on demand.
     func refuseNextForQa() {
         lock.lock()

@@ -67,7 +67,7 @@ final class WindowEventReducerPhantomTests: XCTestCase {
         XCTAssertTrue(effects.isEmpty)
     }
 
-    // MARK: - A. Un-phantoming drops the app's stale windowless placeholder (#5849)
+    // MARK: - A. Un-phantoming drops the app's stale windowless placeholder (AltTab #5849)
 
     /// The captured bug: Slack's window is latched phantom, so its app also carries a windowless
     /// placeholder tile. The CGS pass then sees the window in both lists and clears the verdict. Without
@@ -84,7 +84,7 @@ final class WindowEventReducerPhantomTests: XCTestCase {
 
     /// The same flip, on the input that now carries it. The window coming back on screen is a WindowServer
     /// order-in, which lands ~250ms before the CGS pass would have run — so the placeholder must be dropped
-    /// from THERE, or Slack keeps a real tile and a windowless one at the same time (#5849).
+    /// from THERE, or Slack keeps a real tile and a windowless one at the same time (AltTab #5849).
     func testOrderInUnphantomsAndDropsThePlaceholder() {
         var s = state([slackWindow(latchedPhantom: true)])
         XCTAssertTrue(s.isPhantom(s.windows[0]), "precondition: latched and off screen")
@@ -126,7 +126,7 @@ final class WindowEventReducerPhantomTests: XCTestCase {
         XCTAssertFalse(dropsPlaceholder(effects))
     }
 
-    // MARK: - B. An on-screen window is never a phantom (#5849)
+    // MARK: - B. An on-screen window is never a phantom (AltTab #5849)
 
     /// Slack reopened from the Dock: CGS still tags the window invisible and reports no Space for it, while
     /// the WindowServer has it ordered in. It must not be flagged phantom — otherwise it is hidden while
@@ -135,7 +135,7 @@ final class WindowEventReducerPhantomTests: XCTestCase {
     ///
     /// This used to be a FOCUS exemption, which meant threading "front of the MRU and its app is frontmost"
     /// into a pure kernel and made the verdict depend on window order — the coupling that made three
-    /// separate attempts at #5954 regress. The ordered-in bit answers it as a fact about the window.
+    /// separate attempts at AltTab #5954 regress. The ordered-in bit answers it as a fact about the window.
     func testOnScreenWindowSurvivesTheOrderedOutSignal() {
         var s = state([slackWindow(latchedPhantom: false, lastFocusOrder: 0, isOrderedIn: true)],
                       appIsActive: true)
@@ -162,7 +162,7 @@ final class WindowEventReducerPhantomTests: XCTestCase {
         XCTAssertTrue(s.isPhantom(s.windows[0]))
     }
 
-    // MARK: - C. Attention clears a stale phantom immediately (#5849)
+    // MARK: - C. Attention clears a stale phantom immediately (AltTab #5849)
 
     /// The gap the CGS pass alone leaves: the verdict is only recomputed on a show, a beat AFTER the
     /// switcher appears. Opening Slack and tapping the shortcut straight away hit the switcher while the
@@ -193,7 +193,7 @@ final class WindowEventReducerPhantomTests: XCTestCase {
         XCTAssertFalse(dropsPlaceholder(effects))
     }
 
-    // MARK: - D. The same, for the window a reopened app comes back to (#5849, second report)
+    // MARK: - D. The same, for the window a reopened app comes back to (AltTab #5849, second report)
 
     /// Reopening Slack from the Dock reaches the front through an activation that names only the process.
     /// The attention model uses Slack's cached answer or requests one bounded focused-window read. That answer
@@ -212,7 +212,7 @@ final class WindowEventReducerPhantomTests: XCTestCase {
         XCTAssertTrue(dropsPlaceholder(effects))
     }
 
-    // MARK: - E. An app whose last window turns phantom gets its placeholder in the SAME pass (#5849)
+    // MARK: - E. An app whose last window turns phantom gets its placeholder in the SAME pass (AltTab #5849)
 
     /// The other half of the placeholder's lifecycle, which had no owner: the app is now windowless, so the
     /// icon tile must appear with this verdict. It used to come from the shell's per-app sweep, which runs

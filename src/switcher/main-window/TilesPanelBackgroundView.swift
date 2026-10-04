@@ -15,7 +15,7 @@ extension NSGlassEffectView: EffectView {
     func updateAppearance(cornerRadius: CGFloat) {
         self.cornerRadius = cornerRadius
         // Left rectangular, the clip set in `makeGlassEffectView` draws a straight outline outside the
-        // glass shape on macOS 27 (#5757). Set here, not there: cached views are reused across style
+        // glass shape on macOS 27 (AltTab #5757). Set here, not there: cached views are reused across style
         // and size changes.
         layer!.cornerRadius = cornerRadius
     }

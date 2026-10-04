@@ -17,7 +17,7 @@ wrote down what CORRECT behavior is. The model layer is the shift to **model + p
   so the same action can be replayed under different event ORDERINGS. Four OS-behaviour switches, each
   observed live: `duplicateTitles` (Finder names every window after its folder), `reusesTabWindows` (a switch
   reuses the tab's own window, `added tracked#` — rec19 — instead of minting a fresh wid with no create
-  event, `added untracked#` — rec24b), and the two that #5785 forced (see "Two facts the model was missing").
+  event, `added untracked#` — rec24b), and the two that AltTab #5785 forced (see "Two facts the model was missing").
 - **`TestReducerRunner`** — feeds `ReducerInput`s to `WindowEventReducer`, applies pure twins of model-side
   effects, and checks the per-frame invariants (one tile/group, no cross-frame group, focused shown, no
   on-Space claimed, spaceless-ungrouped hidden, rep follows focus) PLUS **convergence/idempotence** (a
@@ -138,7 +138,7 @@ as Space-less — and without the omission the re-query heals the transient the 
   it shows, so title collisions are the norm — and a title is what `matchSiblings` claims a tab BY, so
   collisions are where a group steals a window (rec8/10/11/24c).
 
-### Two facts the model was missing (#5785, 2026-07-27)
+### Two facts the model was missing (AltTab #5785, 2026-07-27)
 
 The switcher showed two tiles for one Terminal window every time a user opened its FIRST tab, while 789 tests
 stayed green. The model could not express the situation at all, so no sweep could ever have found it. Both
@@ -155,7 +155,7 @@ asserts on:
 - **`composedWindowTitles`.** The app composes its WINDOW title from more than its TAB title, so the two
   never match. Note this is NOT `duplicateTitles`, which makes every title the SAME string — those still
   MATCH, and the title path still works. Nothing here could express titles that match NOTHING, which is the
-  actual #5785 condition.
+  actual AltTab #5785 condition.
 
 Either fact alone is survivable; together they are the bug (`testFirstTabInAStandaloneWindowIsOneTileDespiteTheTabBarResize`,
 three actions). The same investigation also found the model was omitting the Space JOIN that tab creation
@@ -267,7 +267,7 @@ Every one of these needed a MODEL fix first, and each fix had been quietly maski
 - **Reads are issued before they land.** `show()` marked the incoming active tracked while BUILDING its
   events, so the Space re-query named a wid the same show was still discovering. Tracked-ness is now
   snapshotted when the reads are issued.
-- **The empty map.** A re-query returning nothing is unreachable in the app (#5791 backfills any tracked wid
+- **The empty map.** A re-query returning nothing is unreachable in the app (AltTab #5791 backfills any tracked wid
   the enumeration missed, and that query still reports a backgrounded tab's OLD Space), so the model no
   longer emits one.
 
@@ -505,7 +505,7 @@ detector cannot fail — and it is not the condition KeyTab launches in. These s
   tile count, which is right, not complete groups, which is not): the
   same window never switched since fullscreening, so its tabs are frozen at the windowed frame and NEITHER
   source reaches them.
-- **testFirstTabInAStandaloneWindowIsOneTileDespiteTheTabBarResize** — #5785's residual: the tab bar grows
+- **testFirstTabInAStandaloneWindowIsOneTileDespiteTheTabBarResize** — AltTab #5785's residual: the tab bar grows
   the window, so incoming and outgoing disagree on height while sharing app, position and width.
 - **testFirstTabIsOneTileWhenTitlesStillMatch** — the same shape with matching titles, isolating which of the
   two facts the fix must handle.

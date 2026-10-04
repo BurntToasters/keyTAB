@@ -1,6 +1,6 @@
 import XCTest
 
-/// A durable corpus of REAL data captured live from the actual apps/APIs in #5830 (Terminal + Finder tabs,
+/// A durable corpus of REAL data captured live from the actual apps/APIs in AltTab #5830 (Terminal + Finder tabs,
 /// CGS Spaces, WindowServer events on macOS 26), fed to the pure decision kernels. The point is to capture
 /// the messy real-world facts ONCE — duplicate `~` titles, identical tab geometry, Space-less background
 /// tabs, the removed-from-Space event storm — so we can keep changing the heuristics over time and re-run
@@ -224,7 +224,7 @@ final class RealWorldScenariosTests: XCTestCase {
     /// Terminal with DEFAULT tabbing: 4 genuinely separate windows, each titled "Terminal"/"~", identical
     /// size 757×547 stacked at (683,101). Every window holds Space 1 and NONE exposes an AXTabGroup
     /// (`axTabTitles` nil). The "must never be grouped" ground truth — same app, same size, same position,
-    /// but real separate windows (#5830 false-positive guard).
+    /// but real separate windows (AltTab #5830 false-positive guard).
     static let terminalSeparate4Windows: [CapturedWindow] = {
         let sz = CGSize(width: 757, height: 547), pos = CGPoint(x: 683, y: 101)
         return [29104, 29105, 29110, 29112].map {
@@ -234,7 +234,7 @@ final class RealWorldScenariosTests: XCTestCase {
     }()
 
     /// The WindowServer notification burst captured when Terminal windows left Space 3 all at once (the
-    /// removed-from-Space storm that drove the #5830 reconcile churn). Raw (SkyLight id, wid) pairs in order.
+    /// removed-from-Space storm that drove the AltTab #5830 reconcile churn). Raw (SkyLight id, wid) pairs in order.
     static let removedFromSpaceStorm: [(id: UInt32, wid: CGWindowID)] = [
         (807, 28160), (807, 28159), (807, 28165),   // windowResized
         (816, 28159), (816, 28160), (816, 28165),   // windowOrderedOut
@@ -369,7 +369,7 @@ final class RealWorldScenariosTests: XCTestCase {
             size: CGSize(width: 757, height: 583), position: CGPoint(x: 683, y: 101), spaceIds: [3628])
     }
 
-    /// **#5785 — the tab title is NOT the window title.** Stock Terminal (macOS 26, captured 2026-07-26 by
+    /// **AltTab #5785 — the tab title is NOT the window title.** Stock Terminal (macOS 26, captured 2026-07-26 by
     /// restoring the reporter's profile settings: `ShowDimensionsInTitle` + `ShowActiveProcessInTitle` on,
     /// which is the macOS DEFAULT). The window title carries components the TAB title has no setting for at
     /// all, so the two strings can never be equal:
@@ -392,7 +392,7 @@ final class RealWorldScenariosTests: XCTestCase {
         title: "~/Downloads — -zsh ▸ -zsh — 80×23", subrole: "AXStandardWindow",
         size: CGSize(width: 757, height: 543), position: CGPoint(x: 38, y: 39), spaceIds: [])
 
-    /// The SAME defect on the REPORTER's machine, from their own #5785 logs (2026-07-25, macOS 26.5, their
+    /// The SAME defect on the REPORTER's machine, from their own AltTab #5785 logs (2026-07-25, macOS 26.5, their
     /// Terminal at 140×35). Recorded here is ONLY what their logs actually contain: the wids, the composed
     /// window titles, the size from the accept line, the active's Space from its 1325 and the background
     /// tab's Space-lessness from its 1326. Their AXTabGroup titles were NEVER captured — the `--tab-diag`
@@ -479,7 +479,7 @@ final class RealWorldScenariosTests: XCTestCase {
 
     func testSeparateWindowsNeverGroup() {
         // Same app, same size, same position, but all hold a Space and none was AX-confirmed as a tab group.
-        // Geometry must NOT collapse them (the #5830 false positive). Even if one momentarily read Space-less,
+        // Geometry must NOT collapse them (the AltTab #5830 false positive). Even if one momentarily read Space-less,
         // the visible has no `tabbedSiblingWids` / fullscreen, so the gate rejects it.
         let windows = Self.terminalSeparate4Windows.map { $0.tabWindow() }
         XCTAssertEqual(TabGroupResolver.geometryGroups(windows), [])
@@ -681,7 +681,7 @@ final class RealWorldScenariosTests: XCTestCase {
     func testBackgroundTabPhantomFlipsWithTabDetection() {
         // A Space-less background tab BEFORE tab detection reads as phantom (empty spaceIds); once grouping
         // marks it `isTabbed`, the exemption clears it. This coupling is why a tab-detection regression makes
-        // inactive tabs vanish in #5830.
+        // inactive tabs vanish in AltTab #5830.
         let bg = Self.terminalMerge4Tabs[1]
         XCTAssertTrue(PhantomWindowDetector.syncVerdict(bg.windowState(isTabbed: false), Self.terminalApp,
             isOrderedIn: false, alpha: 1))
@@ -693,7 +693,7 @@ final class RealWorldScenariosTests: XCTestCase {
 
     func testRemovedFromSpaceStormRouting() {
         // Every removed-from-Space (1326) in the storm routes to `.updateSpaceMembership`, which is what
-        // re-triggers tab reconcile per event and churned the group in #5830. Pins the id→action map against
+        // re-triggers tab reconcile per event and churned the group in AltTab #5830. Pins the id→action map against
         // the real burst.
         let actions = Self.removedFromSpaceStorm.map { raw -> WsEventRouting.Action? in
             WsEventRouting.notification(raw.id).map { WsEventRouting.action(for: $0) }
@@ -1460,7 +1460,7 @@ final class RealWorldScenariosTests: XCTestCase {
         XCTAssertEqual(m.untrackedTitles, [])
     }
 
-    // MARK: - #5785 composed window titles
+    // MARK: - AltTab #5785 composed window titles
 
     func testComposedWindowTitleMatchesNoSibling() {
         // The defect itself, reproduced from the capture: the AXTabGroup names three tabs and not one of
@@ -1488,7 +1488,7 @@ final class RealWorldScenariosTests: XCTestCase {
 
     func testComposedTitleGroupStaysUnformedWithoutTheCount() {
         // The counterfactual that makes the test above meaningful: with no AXTabGroup read (`tabCount` 0)
-        // these same two windows are the #5830 case — same app, same size, one briefly Space-less — and must
+        // these same two windows are the AltTab #5830 case — same app, same size, one briefly Space-less — and must
         // NOT be grouped. The count is doing the work, not the geometry.
         let active = Self.composedTitleActiveTab.tabWindow(tabCount: 0)
         let tab = Self.composedTitleBackgroundTab.tabWindow()
@@ -1496,7 +1496,7 @@ final class RealWorldScenariosTests: XCTestCase {
     }
 
     func testReporterComposedTitlesGroupByTheTabCount() {
-        // The reporter's own numbers (#5785 logs) at 1017×610, each tab discovered as a separate window
+        // The reporter's own numbers (AltTab #5785 logs) at 1017×610, each tab discovered as a separate window
         // ~250ms apart during a Cmd-T burst. `tabCount` is supplied by the test, NOT by the capture: their
         // AX tab titles were never recorded, so the only evidence these two wids are tabs of one window is
         // the Space-swap signature in their log (13612 out / 13885 in, same Space, same millisecond). That

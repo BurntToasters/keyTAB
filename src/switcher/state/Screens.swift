@@ -45,7 +45,7 @@ extension NSScreen {
         guard case .window(let identity) = AttentionEngine.currentUserContext,
               let focusedWindow = Windows.byWindowId[identity.wid] else { return NSScreen.withActiveMenubar() }
         // Read the focused window's cached screen rather than refreshing it here: this runs on the show
-        // path (NSScreen.updatePreferred), and updateSpacesAndScreen() does a synchronous CGS call (#5721).
+        // path (NSScreen.updatePreferred), and updateSpacesAndScreen() does a synchronous CGS call (AltTab #5721).
         // The screen is kept fresh off-main on focus events and by Applications.syncSpacesState; the only
         // cost is a possibly-wrong active screen on the very first summon of a never-yet-resolved window.
         guard let screenId = focusedWindow.screenId else { return NSScreen.withActiveMenubar() }

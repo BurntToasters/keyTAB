@@ -19,7 +19,7 @@ struct TestScenarioGenerator {
         var reusesTabWindows: Bool
         /// The tab bar grows the window, so a window's two tabs report different sizes. See
         /// `TestInteractionModel.tabBarResizesWindow` — swept because the ONE bug that survived a green
-        /// sweep for a month was invisible without it (#5785).
+        /// sweep for a month was invisible without it (AltTab #5785).
         var tabBarResizesWindow: Bool
         /// Window titles composed from more than the tab title, so titles match NOTHING (not merely
         /// collide, which is `duplicateTitles`). See `TestInteractionModel.composedWindowTitles`.

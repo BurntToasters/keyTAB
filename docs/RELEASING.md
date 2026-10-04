@@ -23,6 +23,8 @@ Node scripts remove private key material, GPG passphrases, keychain passwords, a
 
 ## Publishing
 
+Release signing is inside-out and never uses `--deep`: Sparkle's `Autoupdate` and `Updater.app`, then `Sparkle.framework`, then `KeyTab.app` (the only target that receives `KeyTab.entitlements`). Release validation rejects any Mach-O in the bundle that is not signed by team `FYJZP8B2KG`, including the vendored helpers, which are committed with upstream's signature.
+
 The draft contains the notarized and stapled `KeyTab-<version>.zip`, its Sparkle-signed appcast (plus the `appcast-beta.xml` copy on stable releases), `SHA256SUMS`, and detached armored GPG signatures for each file. Run `npm run release:publish` only after native smoke tests. Then run `npm run release:verify:published` to download and verify the public artifacts.
 
 Stable updates use `appcast.xml`. Beta updates use `appcast-beta.xml`; publishing a beta mirrors that feed onto the latest stable release so the stable `/latest/download/` URL can serve it. Every stable release also ships a GPG-signed copy of its `appcast.xml` as `appcast-beta.xml`, so beta installs keep resolving a feed (and are offered the stable build) after a new stable release becomes `/latest/`. That copy is not listed in `SHA256SUMS` because a later beta publish replaces it. Beta publishing remains blocked until public stable `v1.0.0` exists.

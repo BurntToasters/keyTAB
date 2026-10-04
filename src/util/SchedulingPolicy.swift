@@ -39,7 +39,7 @@ enum ThrottleDecision: Equatable {
 /// **The tail runs the LATEST work offered, never the one that scheduled it.** Callers hand in closures that
 /// carry values (`Applications.applyObservedTitle` carries the title an app just announced), so a tail that
 /// kept the closure it was scheduled with applied the second title of a burst and dropped the last one. The
-/// window then kept a stale or empty title until something re-read it (#6047).
+/// window then kept a stale or empty title until something re-read it (AltTab #6047).
 struct ThrottleSlot<Work> {
     private(set) var lastFireNs: UInt64?
     private var pending: Work?
@@ -229,7 +229,7 @@ enum InactiveTabScanPolicy {
 /// other moments its verdicts stop meaning anything: the process starts answering accessibility after
 /// answering nothing (`Applications.forgetAcquisitionFailures`), and it never records one reached while the
 /// screen is locked, where every app publishes zero windows and the sweep would write off the whole machine
-/// (#6031).
+/// (AltTab #6031).
 enum SurfaceAcquisitionPolicy {
     static let maxAttemptsPerSituation = 3
 

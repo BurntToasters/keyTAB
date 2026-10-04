@@ -4,7 +4,7 @@ import XCTest
 /// sized from, how a short row is centered, and which appearance size **auto** settles on. Pure numbers in,
 /// numbers out — no AppKit, no screen, no `Appearance`.
 ///
-/// Groups: A one row · B wrapping · C right-to-left · D tile size (the shape of #6010) · E centering ·
+/// Groups: A one row · B wrapping · C right-to-left · D tile size (the shape of AltTab #6010) · E centering ·
 /// F the auto size.
 final class TileGridLayoutTests: XCTestCase {
     private let padding = CGFloat(5)
@@ -80,7 +80,7 @@ final class TileGridLayoutTests: XCTestCase {
         XCTAssertEqual(result.origins, [CGPoint(x: 5, y: 5)])
     }
 
-    // MARK: - D. Tile size (the shape of #6010)
+    // MARK: - D. Tile size (the shape of AltTab #6010)
 
     /// A three-line title added two line heights (38pt at the medium appearance) to `labelHeight`, and
     /// `TileView.height` adds `labelHeight` straight into the tile. Every row below the first moved down by

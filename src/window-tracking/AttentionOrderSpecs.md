@@ -41,7 +41,7 @@ one-window-per-app representation consume this statement. Unknown is never inter
 - **not KeyTab's own switch.** Picking a tile asks the OS to focus a window; the order moves when the OS
   reports that it did (the activation, then the app's answer or the read made after the focus operation).
   A focus that did not take would otherwise leave the order claiming a window the user never reached, and
-  nothing corrects that: the app that kept focus emits nothing (#6055,
+  nothing corrects that: the app that kept focus emits nothing (AltTab #6055,
   `testAFocusThatDidNotTakeLeavesTheFrontAlone`). The activation it provokes is not a way back in either: it
   names an app, and that app's cached answer is about the window being LEFT, so while KeyTab is still
   awaiting the read it made after the operation, the activation moves nothing and the read is what moves it.
@@ -96,12 +96,12 @@ wedged app likewise names only its process; the model preserves its last confirm
 ## Timing bounds
 
 `AttentionSettlePolicy.settle` (60ms) collapses an app's burst of answers to its last one — an app raising
-all its windows answers once per window, each answer true, and the run ends where it started (#5974). It is
+all its windows answers once per window, each answer true, and the run ends where it started (AltTab #5974). It is
 the only arbitration delay in the attention path. The AX answer's process generation and ingress sequence
 are captured before that delay; the timer changes commit time, never evidence order. Thus an exact click
 arriving while AX settles remains newer when the timer fires. Widening the settle is not free: it delays
 every genuine switch by the same amount, against a measured floor of 219ms for the fastest human action ever captured.
-Raises spaced wider than the settle commit separately and #5974's shape returns; the live runs watch that limit
+Raises spaced wider than the settle commit separately and AltTab #5974's shape returns; the live runs watch that limit
 in amber rather than asserting it away.
 
 The factless-activation read has a separate 250ms messaging timeout. It is a blocking-IPC safety bound, not

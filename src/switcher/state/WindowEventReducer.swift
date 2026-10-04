@@ -197,7 +197,7 @@ enum WindowEventReducer {
 
     /// The phantom edge around a write to `isOrderedIn`. The ordered-in bit is now one of the two facts the
     /// verdict is made of (`PhantomWindowDetector`), so flipping it can flip the derived phantom — and a
-    /// flip that emits no placeholder effect is the duplicate-tile / no-tile-at-all bug of #5849, which
+    /// flip that emits no placeholder effect is the duplicate-tile / no-tile-at-all bug of AltTab #5849, which
     /// every OTHER phantom-moving path already guards (`applySpaceMembershipDelta`, `applyWindowSpaces`,
     /// `cgsWindowListsRead`). Call around the write, never instead of it.
     private static func orderedInPhantomEdge(_ state: inout TrackedWindowState, wid: CGWindowID,
@@ -291,7 +291,7 @@ enum WindowEventReducer {
         // closing it (WeChat to the tray) has that window removed from the model, keeps the CGWindow, and on
         // reopen the OS re-shows the SAME wid: no create event, no 808, just this order-in. Discovery then
         // takes ~80ms, and if the user alt-tabs inside that gap the window lands at the very BACK of the
-        // MRU, behind even the windowless placeholders (#5785, Weixin on the last tile). Remember the signal
+        // MRU, behind even the windowless placeholders (AltTab #5785, Weixin on the last tile). Remember the signal
         // with the time it happened so discovery can place it where it belongs. The frontmost pid is carried
         // along because the frontmost-app test above cannot run yet: an untracked wid has no pid, so we keep
         // whoever was frontmost at this instant and let discovery confirm the window is that app's.
@@ -326,7 +326,7 @@ enum WindowEventReducer {
     /// 0 while its app's main window's 808 was swallowed as an activation raise leaves the previous app at the
     /// front forever: every alt-tab then lands back on the window the user is already in, and nothing corrects
     /// it (a re-focus of the already-focused window of the already-frontmost app emits neither an activation
-    /// nor an 808). #5346, REAPER + its "Insert Multiple Media Items" dialog.
+    /// nor an 808). AltTab #5346, REAPER + its "Insert Multiple Media Items" dialog.
     private static func refrontAfterFocusedWindowBecomesUnavailable(_ state: inout TrackedWindowState,
                                                                     wid: CGWindowID) -> [ReducerEffect] {
         guard let window = state.window(wid), window.lastFocusOrder == 0,
@@ -427,7 +427,7 @@ enum WindowEventReducer {
                                           _ source: AttentionWriteSource) -> [ReducerEffect] {
         var effects: [ReducerEffect] = [.applyFocus(wid), .log(state.mruBumpLog(wid, source))]
         // Focusing proves the window is real: clear any stale phantom latch NOW rather than waiting for the
-        // next show's CGS pass, and drop the placeholder its app grew while it looked windowless (#5849).
+        // next show's CGS pass, and drop the placeholder its app grew while it looked windowless (AltTab #5849).
         if state.clearPhantomOnFocus(wid), let pid = state.window(wid)?.pid {
             effects.append(.removeWindowlessPlaceholder(pid: pid))
         }
@@ -519,7 +519,7 @@ enum WindowEventReducer {
                        inSpaceTransition: inSpaceTransition)
         guard let window = state.window(wid) else {
             // Untracked wid → remember a removal so discovery can honor the empty Space (a rapid-burst
-            // background tab whose remove fires before it's tracked, #5830); a later add cancels it. Then
+            // background tab whose remove fires before it's tracked, AltTab #5830); a later add cancels it. Then
             // the missed delta no longer strands the tab shown-as-separate until the next show.
             if !added {
                 state.pendingSpaceRemoval[wid] = spaceId
@@ -798,7 +798,7 @@ enum WindowEventReducer {
     /// The Space-switch reaction's CHEAP half, on the leading edge of the 1329/1401 burst: re-read the Space
     /// topology and re-render an open switcher. It exists because everything below waits for the burst to
     /// settle, and a summon lands inside that wait routinely — a Space switch and the Cmd+Tab that follows it
-    /// are one gesture (#5864: 50ms apart in the reporter's capture, against a 250ms debounce), so the
+    /// are one gesture (AltTab #5864: 50ms apart in the reporter's capture, against a 250ms debounce), so the
     /// switcher filtered and sorted against the Space the user had just LEFT and visibly re-ordered under
     /// them a beat later. The split is what the debounce is FOR — the per-window Space membership and
     /// the WS state re-query below are expensive and would be re-run by every event of the burst, while the
@@ -813,7 +813,7 @@ enum WindowEventReducer {
     }
 
     /// The Space-switch reaction, once the 1329/1401 burst settles: refresh the
-    /// Space topology + per-window membership (cached for the switcher's hot path, #5721), re-read
+    /// Space topology + per-window membership (cached for the switcher's hot path, AltTab #5721), re-read
     /// fullscreen for the current Space (the Safari full-screen-video window emits no resize/move event),
     /// re-check shortcut disabling for the focused window, and reconcile any open switcher.
     private static func spaceChangeSettled(_ state: inout TrackedWindowState) -> [ReducerEffect] {
@@ -827,7 +827,7 @@ enum WindowEventReducer {
     /// The windows a Space switch gives a reason to recapture: the ones on a Space now on screen. Every
     /// capture costs the OS three signature validations in its permission service (~39ms of its CPU per
     /// capture, measured on macOS 27), and recapturing every window on every switch is enough on a busy
-    /// desktop to exhaust that service and make macOS ask for Screen Recording again (#6025, #6067). Windows
+    /// desktop to exhaust that service and make macOS ask for Screen Recording again (AltTab #6025, AltTab #6067). Windows
     /// elsewhere keep their thumbnail until they are focused or the switcher opens, which recaptures them all.
     /// `visibleSpaces` is already current (the leading edge re-read it); membership is read before this pass's
     /// own sync lands, which is fine since a Space switch does not move windows between Spaces.
@@ -863,8 +863,8 @@ enum WindowEventReducer {
         // move/resize. Everything below CONSUMES this wid's pending state, so a latent landing must not spend
         // it on a discovery that never happened.
         //
-        // It is the handover edge that pays. Live #5785 capture, opening the first tab in a Terminal window:
-        // `windowCreated #4131` → the 1325/1326 pair records the edge naming the tab it replaced (#4125) →
+        // It is the handover edge that pays. Live AltTab #5785 capture, opening the first tab in a Terminal window:
+        // `windowCreated AltTab #4131` → the 1325/1326 pair records the edge naming the tab it replaced (AltTab #4125) →
         // a latent landing eats it 8ms later → the real landing 211ms after that inherits nothing. The new tab
         // then forms no group, and neither of the other two paths can fill in: the tab bar grows the window
         // (1017×610 against the outgoing tab's 1017×565) so geometry has no cluster, and Terminal composes
@@ -875,7 +875,7 @@ enum WindowEventReducer {
         // Consume the pending-removal marker up-front, so a surface rejected by admission can't
         // leave it dangling — the set stays self-draining. `pendingSpaceRemoval` remembers a
         // removed-from-Space event that arrived while the window was still untracked (a rapid-burst
-        // background tab, #5830).
+        // background tab, AltTab #5830).
         // Consuming it also decides whether it still MEANS anything: if the window has since been placed on
         // a DIFFERENT Space than the one it left, it didn't background — it moved (fullscreen). Only a
         // removal the query agrees with (nothing, or the same Space it left, which the per-window CGS query
@@ -982,7 +982,7 @@ enum WindowEventReducer {
                 // A background tab. Force it Space-less: the per-window CGS query still reports its OLD
                 // Space (stale right after backgrounding, and for a long-backgrounded tab adopted by
                 // brute-force), so trusting it would keep the tab looking like a separate on-screen window;
-                // the empty is what lets it be claimed/grouped (#5830, rec15's cold-start ghost flood).
+                // the empty is what lets it be claimed/grouped (AltTab #5830, rec15's cold-start ghost flood).
                 let r = state.applyWindowSpaces(wid, spaceIds: [])
                 effects.append(.updateScreenId(wid))
                 if r.unphantomedRealWindow { effects.append(.removeWindowlessPlaceholder(pid: window.pid)) }
@@ -1028,7 +1028,7 @@ enum WindowEventReducer {
         // from EITHER arrival order (`applyPendingHandoverEdge` above filled it in if the join raced ahead of
         // the leave). The hold-branch arm expresses the same handover but is armed only in the LEAVE branch,
         // off "an untracked wid joined a moment ago" — so when the leave lands FIRST there is no joiner to
-        // pair with yet, nothing arms, and the incoming tab forms no group. That is the residual #5785
+        // pair with yet, nothing arms, and the incoming tab forms no group. That is the residual AltTab #5785
         // symptom: opening the first tab in a standalone window showed two tiles, one for the new tab and one
         // for the tab it replaced, because the pair could only be linked in one of the two orders. The edge
         // makes the handover order irrelevant, which is what the `HandoverOrder` fuzz axis keeps honest.
@@ -1268,7 +1268,7 @@ enum WindowEventReducer {
                 changed = true
             }
             // Both writes above feed the phantom verdict, so the derived flag can flip here — and a flip with
-            // no placeholder effect is #5849 in one direction or the other.
+            // no placeholder effect is AltTab #5849 in one direction or the other.
             if state.isPhantom(state.windows[i]) != wasPhantom, !state.windows[i].isWindowlessApp {
                 let pid = state.windows[i].pid
                 if wasPhantom {
@@ -1334,7 +1334,7 @@ enum WindowEventReducer {
             // An empty CGS answer is also what a wid it has never heard of returns, so on its own it cannot
             // carry the weight the strong phantom signal puts on it. Keep the last membership CGS itself
             // reported — stale at worst, and the window stays reachable instead of disappearing with no way
-            // back (#5954). The wids the WindowServer does NOT know fall through and are wiped as before;
+            // back (AltTab #5954). The wids the WindowServer does NOT know fall through and are wiped as before;
             // those are the corpses, and `discardDeadPhantomWindows` removes them outright.
             if ids?.isEmpty == true, placedByWindowServer.contains(wid) {
                 effects.append(.log("spacesSync keepPlaced #\(wid) sp\(w.spaceIds) (WindowServer places it, CGS named none)"))
@@ -1363,7 +1363,7 @@ enum WindowEventReducer {
             guard let wid = state.windows[i].wid, wid != CGWindowID(bitPattern: -1),
                   queried.contains(wid) || all.contains(wid) else { continue }
             // No focus exemption any more. It existed because CGS keeps a reopened Electron window tagged
-            // invisible for seconds after it is on screen and focused (#5849), and the weak signal read that
+            // invisible for seconds after it is on screen and focused (AltTab #5849), and the weak signal read that
             // tag; the ordered-in bit says the window is on screen, so the case resolves on a fact instead
             // of on "but the user is looking at it".
             let verdict = PhantomWindowDetector.cgsVerdict(state.windowState(state.windows[i]),
@@ -1381,7 +1381,7 @@ enum WindowEventReducer {
                 // do (`applySpaceMembershipDelta` / `applyWindowSpaces`). This path was the omission: the
                 // placeholder is added while the app's only window looks phantom, and CGS-list detection is
                 // the path that clears Slack's verdict — so the app kept BOTH a real tile and a windowless
-                // one, permanently ("appears twice and won't change even if I wait", #5849).
+                // one, permanently ("appears twice and won't change even if I wait", AltTab #5849).
                 if before, !state.windows[i].isWindowlessApp {
                     effects.append(.removeWindowlessPlaceholder(pid: state.windows[i].pid))
                 }
@@ -1390,7 +1390,7 @@ enum WindowEventReducer {
                 // runs in the same block but BEFORE these verdicts are applied — so it judged "does this app
                 // still have a real window?" against the previous latch, and the app had no tile whatsoever
                 // until the NEXT sweep. Live: closing Slack's window gave three different switchers in three
-                // consecutive summons (open window / nothing at all / closed-app icon), #5849.
+                // consecutive summons (open window / nothing at all / closed-app icon), AltTab #5849.
                 if !before, !state.windows[i].isWindowlessApp, !appHasRealWindow(state, pid: state.windows[i].pid) {
                     effects.append(.addWindowlessPlaceholder(pid: state.windows[i].pid))
                 }
@@ -1704,7 +1704,7 @@ enum WindowEventReducer {
     /// Returns whether any window's tab state or space changed, plus the effects (inactive-tab discovery,
     /// log lines).
     /// Store the AXTabGroup's button count from a read, the half of it that is never in doubt (the per-tab
-    /// TITLES are what an app can compose differently, #5785). Retiring it needs care for exactly the reason
+    /// TITLES are what an app can compose differently, AltTab #5785). Retiring it needs care for exactly the reason
     /// the nil-titles policy exists: an active tab reports NO AXTabGroup transiently while tabs are created
     /// or switched, so a nil read alone can't mean "no longer tabbed". A nil read of a window that is ALSO in
     /// no group can, though: the group is only ever dissolved by a positive signal, so by then the window
@@ -1760,7 +1760,7 @@ enum WindowEventReducer {
             sameAppWindows: sameApp.map { state.tabWindow($0) }, activeIsNewlyDiscovered: activeIsNewlyDiscovered)
         // AX named two or more tabs and not ONE window could be matched to any of them. That says nothing
         // about this window having left its group; it says the titles aren't comparable to window titles at
-        // all (an app composing the two differently — #5785 — where even the prefix fallback misses), or that
+        // all (an app composing the two differently — AltTab #5785 — where even the prefix fallback misses), or that
         // every sibling is still untracked. Same rule as the nil-titles path above: a group shrinks only on a
         // POSITIVE signal. Without this the read DISSOLVED the group geometry had just formed, geometry
         // re-formed it on the next WindowServer event, and the pair churned between one tile and two for as

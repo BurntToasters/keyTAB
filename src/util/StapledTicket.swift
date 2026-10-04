@@ -11,7 +11,7 @@ import Foundation
 /// window screenshot, with nothing cached. When a ticket is stapled, that validation also extracts it and
 /// registers it with the system again ("Registering stapled ticket with system" in tccd's log). Measured on
 /// macOS 27 (M5): ~10ms of a 30ms check at rest; 45ms vs 19ms per check during a 43-window refresh, which took
-/// 5.5s stapled and 2.9s parked (#6067).
+/// 5.5s stapled and 2.9s parked (AltTab #6067).
 ///
 /// It is parked at `Contents/Resources/en.lproj/locversion.plist` because the signature's own resource rules
 /// omit that path (`^Resources/.*\.lproj/locversion.plist$`), so the bundle stays valid with the ticket there.

@@ -25,7 +25,7 @@ import Cocoa
 /// | `CGEventTapCreateForPid` | yes, but one tap per app |
 ///
 /// **Listen-only, and masked to type 13 alone.** It is not in the HID stream and it absorbs nothing, so it
-/// cannot gate the cursor the way #5911's active tap did. It reads three integer fields and forwards them;
+/// cannot gate the cursor the way AltTab #5911's active tap did. It reads three integer fields and forwards them;
 /// keyboard events carry `field 51 = 0` and were verified to expose no key content through this accessor.
 ///
 /// **A stalled app delays this tap only when it is mid-activation.** Eight trials, one variable at a time:

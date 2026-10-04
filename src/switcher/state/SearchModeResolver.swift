@@ -91,7 +91,7 @@ enum SearchModeResolver {
     ///
     /// The conflict this resolves: in search you release the activation modifiers to type, so a
     /// shortcut bound to a bare printable key (e.g. `closeWindow = W`) would otherwise steal the
-    /// keystroke and you could never type that letter (#5781). The rule mirrors how every macOS text
+    /// keystroke and you could never type that letter (AltTab #5781). The rule mirrors how every macOS text
     /// field behaves: a bare printable keystroke is text. To trigger the shortcut you re-press the
     /// activation (hold) modifiers and the key, exactly as you would outside search.
     ///

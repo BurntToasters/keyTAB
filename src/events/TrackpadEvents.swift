@@ -6,7 +6,7 @@ class TrackpadEvents {
     /// our callback on EVERY gesture event before it processes anything queued behind it — including the
     /// mouse-moves that carry the cursor. Gesture events flow the whole time a finger is on the trackpad,
     /// so with one active tap here the cursor's latency was gated on this process for as long as the user
-    /// was touching the trackpad. That is #5911: unusable cursor over the Dock and the menu bar (where you
+    /// was touching the trackpad. That is AltTab #5911: unusable cursor over the Dock and the menu bar (where you
     /// point slowly and deliberately), no CPU spike anywhere, and "disabling Gestures fixes it" — which the
     /// reporter confirmed. Listening costs the WindowServer nothing: it hands us a copy and moves on.
     private static var detectTap: CFMachPort!
@@ -59,7 +59,7 @@ class TrackpadEvents {
     static func reset() {
         BackgroundWork.keyboardAndMouseAndTrackpadEventsThread?.async {
             // The session is over, so absorbing is over. Without this the active tap would sit in the stream
-            // until the next trackpad touch re-evaluated it — harmless, but it is exactly the state #5911 is
+            // until the next trackpad touch re-evaluated it — harmless, but it is exactly the state AltTab #5911 is
             // about, and a session that ends with no finger down is the common case (focus on release).
             setAbsorbTapEnabled(false)
             ScrollwheelEvents.toggle(false)
@@ -86,7 +86,7 @@ class TrackpadEvents {
         detectTap = CGEvent.tapCreate(
             tap: .cghidEventTap, // we need raw data
             place: .headInsertEventTap,
-            options: .listenOnly, // see `detectTap`: an active tap here gates the cursor on us (#5911)
+            options: .listenOnly, // see `detectTap`: an active tap here gates the cursor on us (AltTab #5911)
             eventsOfInterest: NSEvent.EventTypeMask.gesture.rawValue,
             callback: handleEvent,
             userInfo: nil)
@@ -115,7 +115,7 @@ class TrackpadEvents {
             if absorbGestures { return nil } // focused app won't receive the event
         } else if type == .tapDisabledByUserInput || type == .tapDisabledByTimeout {
             // Named at INFO for the same reason as in `KeyboardEvents`: a dead gesture tap looks exactly
-            // like #5137 from the outside, and nothing in the log used to say a tap had died.
+            // like AltTab #5137 from the outside, and nothing in the log used to say a tap had died.
             Logger.info { "absorb tap disabled \(type == .tapDisabledByTimeout ? "byTimeout" : "byUserInput") wanted:\(absorbTapEnabled)" }
             if absorbTapEnabled { CGEvent.tapEnable(tap: absorbTap!, enable: true) }
         }
@@ -129,7 +129,7 @@ class TrackpadEvents {
             absorbGestures = touchEventHandler(cgEvent)
         } else if type == .tapDisabledByUserInput || type == .tapDisabledByTimeout {
             // This is the tap that detects gestures at all: if it stays down, gestures are simply gone
-            // and the only cure is relaunching KeyTab. Say so in the log (#5137).
+            // and the only cure is relaunching KeyTab. Say so in the log (AltTab #5137).
             Logger.info { "detect tap disabled \(type == .tapDisabledByTimeout ? "byTimeout" : "byUserInput") wanted:\(shouldBeEnabled == true)" }
             if shouldBeEnabled { CGEvent.tapEnable(tap: detectTap!, enable: true) }
         }
@@ -155,7 +155,7 @@ class TrackpadEvents {
         // Arm the absorbing tap only once absorbing is possible at all. The trigger needs `requiredFingers`
         // down AND `minSwipeDistance` travelled after that, so arming on the finger count lands many
         // events before the one that has to be swallowed. One- and two-finger use — pointing, scrolling,
-        // the whole of #5911 — never puts an active tap in the HID stream.
+        // the whole of AltTab #5911 — never puts an active tap in the HID stream.
         setAbsorbTapEnabled(SwitcherSession.isActive || fingersDown >= requiredFingers)
         let touchesDownIds = Set(touchesDown.map { identity($0) })
         // isResting seems to always return false. It's not doing its job to detect resting thumb/palm/finger
@@ -164,7 +164,7 @@ class TrackpadEvents {
         //
         // Skipped for a lone finger with the switcher closed: that is pointer mode, where the kernel only
         // needs to hear the gesture is over, and reading positions would put an exception-guarded
-        // `normalizedPosition` read per touch per event into the plain-pointing hot path (#5911).
+        // `normalizedPosition` read per touch per event into the plain-pointing hot path (AltTab #5911).
         let activeTouches = SwitcherSession.isActive || fingersDown > 1
             ? touches.filter { !$0.isResting && ($0.phase == .began || $0.phase == .moved) }.map { gestureTouch($0) }
             : []
@@ -234,7 +234,7 @@ class TrackpadEvents {
     /// NSInternalInconsistencyException for some valid indirect touches (notably ones Universal Control
     /// forwards from another Mac's trackpad). Swift can't catch NSException, so read it through
     /// ObjCExceptionCatcher and treat a throw as "position unavailable"; the kernel then skips that
-    /// touch, so the gesture simply doesn't trigger over Universal Control instead of crashing (#5499).
+    /// touch, so the gesture simply doesn't trigger over Universal Control instead of crashing (AltTab #5499).
     private static var didWarnUnreadableTouch = false
     private static func safeNormalizedPosition(_ touch: NSTouch) -> NSPoint? {
         var position: NSPoint?
@@ -269,7 +269,7 @@ class TrackpadEvents {
 
 /// Steps the selection while the switcher is open and the fingers are still down. Separate from the
 /// trigger because it re-bases as it goes (each further swipe steps again) and because it is reset on
-/// every `hideUi`, so it never accumulates state across sessions the way the trigger could (#5137).
+/// every `hideUi`, so it never accumulates state across sessions the way the trigger could (AltTab #5137).
 class NavigationSwipeDetector {
     static let MIN_SWIPE_DISTANCE: CGFloat = 0.03 // % of trackpad surface traveled
 

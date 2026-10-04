@@ -554,7 +554,7 @@ class ShortcutOverrideBinding {
     func render() {}
     /// Show the global value, whatever is stored.
     func renderGlobal() {}
-    /// Anything the control needs after its value changed (the segmented control's Pro badge).
+    /// Anything the control needs after its value changed.
     func didRender() {}
 }
 

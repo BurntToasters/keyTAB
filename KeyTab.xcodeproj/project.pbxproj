@@ -339,9 +339,6 @@
 		4988DC8E8C50F04543C4AD3E /* MissionControlOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = C139E49925F8C19180E6B1C3 /* MissionControlOverlay.swift */; };
 		37D6912902F2F5A2C1A46625 /* MissionControlOverlayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 834CFAD32A13283E9C9683C4 /* MissionControlOverlayTests.swift */; };
 		297C4116FDFBB24DC9FBDFEE /* ProcessLivenessTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60415A905823035E182AF414 /* ProcessLivenessTests.swift */; };
-		2E73A92CE33D439988763968 /* EmailLineWrap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 568AC877EBE46C21C101156E /* EmailLineWrap.swift */; };
-		005E429A6B3DFA5ACD864E74 /* EmailLineWrap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 568AC877EBE46C21C101156E /* EmailLineWrap.swift */; };
-		7D8409D8B5295CF2EDA7DBBE /* EmailLineWrapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 373A4F9BDA2A1F2D92F596DC /* EmailLineWrapTests.swift */; };
 		148766A8EA3E4AC6696EDABF /* TileGridLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08308A0548D9F1EA9F595CE1 /* TileGridLayout.swift */; };
 		00B3620918E8408562E0DEE8 /* TileGridLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08308A0548D9F1EA9F595CE1 /* TileGridLayout.swift */; };
 		04B94C16B62B1434B0376A59 /* TileGridLayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C1DBBB4A8AA3C8CE29CE56A /* TileGridLayoutTests.swift */; };
@@ -779,8 +776,6 @@
 		C139E49925F8C19180E6B1C3 /* MissionControlOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissionControlOverlay.swift; sourceTree = "<group>"; };
 		834CFAD32A13283E9C9683C4 /* MissionControlOverlayTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissionControlOverlayTests.swift; sourceTree = "<group>"; };
 		60415A905823035E182AF414 /* ProcessLivenessTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessLivenessTests.swift; sourceTree = "<group>"; };
-		568AC877EBE46C21C101156E /* EmailLineWrap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailLineWrap.swift; sourceTree = "<group>"; };
-		373A4F9BDA2A1F2D92F596DC /* EmailLineWrapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailLineWrapTests.swift; sourceTree = "<group>"; };
 		08308A0548D9F1EA9F595CE1 /* TileGridLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileGridLayout.swift; sourceTree = "<group>"; };
 		0C1DBBB4A8AA3C8CE29CE56A /* TileGridLayoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileGridLayoutTests.swift; sourceTree = "<group>"; };
 		75453EB3309A46DC25A57242 /* TilePool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TilePool.swift; sourceTree = "<group>"; };
@@ -1678,8 +1673,6 @@
 				D04BAE2200000000ED005T12 /* SettingsSectionSearchContentTests.swift */,
 				D04BAFF80A98CF287F85DA23 /* SidebarList.swift */,
 				1C961FB3DCF4906FEEF4A23D /* TableGroupView.swift */,
-				568AC877EBE46C21C101156E /* EmailLineWrap.swift */,
-				373A4F9BDA2A1F2D92F596DC /* EmailLineWrapTests.swift */,
 			);
 			path = "settings-window";
 			sourceTree = "<group>";
@@ -2075,8 +2068,6 @@
 				4988DC8E8C50F04543C4AD3E /* MissionControlOverlay.swift in Sources */,
 				37D6912902F2F5A2C1A46625 /* MissionControlOverlayTests.swift in Sources */,
 				297C4116FDFBB24DC9FBDFEE /* ProcessLivenessTests.swift in Sources */,
-				005E429A6B3DFA5ACD864E74 /* EmailLineWrap.swift in Sources */,
-				7D8409D8B5295CF2EDA7DBBE /* EmailLineWrapTests.swift in Sources */,
 				00B3620918E8408562E0DEE8 /* TileGridLayout.swift in Sources */,
 				04B94C16B62B1434B0376A59 /* TileGridLayoutTests.swift in Sources */,
 				7A1B7EF53E3475D6231132C0 /* TilePool.swift in Sources */,
@@ -2288,7 +2279,6 @@
 				C6A0770A394D8A237F5A8763 /* ModifierReleaseLog.swift in Sources */,
 				A8F4532E175FB590673017DC /* WindowAttentionEvents.swift in Sources */,
 				F08A952895097A1792B528B4 /* MissionControlOverlay.swift in Sources */,
-				2E73A92CE33D439988763968 /* EmailLineWrap.swift in Sources */,
 				148766A8EA3E4AC6696EDABF /* TileGridLayout.swift in Sources */,
 				6F945314DA49EC02C94E39A1 /* TilePool.swift in Sources */,
 				97C9BCBFACF0B04E1316FB93 /* SearchDiscoveryHint.swift in Sources */,

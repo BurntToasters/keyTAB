@@ -137,7 +137,7 @@ final class AttentionDriverTests: XCTestCase {
         XCTAssertEqual(outcome.wid, 9)
     }
 
-    /// #6055: KeyTab's own switch names nothing. When the focus did not take, no activation follows, and the
+    /// AltTab #6055: KeyTab's own switch names nothing. When the focus did not take, no activation follows, and the
     /// read KeyTab makes of the target app afterwards is a fact about that app, so the front stays where the
     /// OS left it.
     func testAFocusThatDidNotTakeLeavesTheFrontAlone() {

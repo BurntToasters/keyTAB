@@ -7,31 +7,15 @@ enum SearchDiscoveryPolicy {
     static let displayDelay: TimeInterval = 1
     static let navigationQuietPeriod: TimeInterval = 0.5
 
-    enum Access {
-        case trial(day: Int)
-        case pro
-        case locked
-
-        var isEligible: Bool {
-            switch self {
-            case .trial(let day): return (1...10).contains(day) && day != 3
-            case .pro: return true
-            case .locked: return false
-            }
-        }
-    }
-
     struct Context {
-        var access: Access = .locked
         var windowCount = 0
         var enabled = true
-        var optedOut = false
         var searchActive = false
         var blockedByOtherUI = false
         var hasShortcut = false
 
         func isEligible(history: History) -> Bool {
-            access.isEligible && windowCount >= minimumWindows && enabled && !optedOut
+            windowCount >= minimumWindows && enabled
                 && !searchActive && !blockedByOtherUI && hasShortcut
                 && history.hasSearched == false
         }

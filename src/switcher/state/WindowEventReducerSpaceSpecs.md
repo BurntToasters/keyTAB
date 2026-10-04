@@ -11,7 +11,7 @@ Driven through `WindowEventReducer.reduce` directly. The replay harness cannot j
 branches' requests into the same `pendingRequests` bucket and swallows `.refreshUi` entirely as display-side,
 so a scenario replay sees no difference between the two.
 
-## Why this exists (#5864)
+## Why this exists (AltTab #5864)
 
 v11.3.1 reacted to a Space switch on the LEADING edge of `NSWorkspace.activeSpaceDidChange`. The WindowServer
 migration replaced that with a trailing-only 250ms debounce, so the active Space stayed stale for ~273ms after
@@ -51,7 +51,7 @@ re-order under them. It looks free and it is not.
 - **testSpaceChangeSettledRecapturesOnlyWindowsOnVisibleSpaces** — the repaint asks to recapture only the
   windows on a Space now on screen. Each capture costs the OS three signature validations in its permission
   service, and recapturing every window on every switch was enough to exhaust it on a busy desktop and make
-  macOS ask for Screen Recording again (#6067). Windows elsewhere keep their thumbnail until focused or until
+  macOS ask for Screen Recording again (AltTab #6067). Windows elsewhere keep their thumbnail until focused or until
   the switcher opens.
 
 ### C. Scope and completion are separate facts
@@ -80,7 +80,7 @@ actually completed. Silence outside the scope and failure inside it both preserv
 `CGSCopySpacesForWindows` answers a non-NULL **empty** array for a wid CGS has no record of at all (measured
 on macOS 26: wid 0, 1, 999999 and UINT32_MAX all answer `[]`). So "this window is on no Space", "there is no
 such window" and a read that found nothing arrive as one value, and the strong phantom signal hid the window
-on all three, permanently, since nothing re-derives membership afterwards (#5954). `syncSpacesState` now
+on all three, permanently, since nothing re-derives membership afterwards (AltTab #5954). `syncSpacesState` now
 corroborates the wids it could not place against the WindowServer, which omits a wid it does not know and
 reports a non-zero `spaceTypeMask` for one it places, and passes the contradictions to the reducer.
 

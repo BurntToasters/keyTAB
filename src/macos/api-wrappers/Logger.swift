@@ -37,7 +37,7 @@ class Logger {
     /// There is exactly ONE log channel, deliberately. A second stream bypassing `minLevel` splits a bug
     /// report in half — a reporter on `--logs=debug` gets everything except what the second channel took —
     /// and `open --args` drops arguments when KeyTab is already running, so "relaunch with the extra flag"
-    /// produces a capture that merely looks complete (#5785). Gate a noisy line instead of forking the
+    /// produces a capture that merely looks complete (AltTab #5785). Gate a noisy line instead of forking the
     /// stream.
     static var debugEnabled: Bool { minLevel <= .debug }
     private static var tap: ((LogLevel, String) -> Void)?

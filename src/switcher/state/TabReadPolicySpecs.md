@@ -69,7 +69,7 @@ has already done. So a skipped window costs either one round trip (title) or zer
 That second skip makes this policy the **title** backstop as well: for an app that pushes titles, the windows
 elected here are the only ones whose title a show re-reads. The push is the mechanism
 (`AxObserverRegistry.refreshTitle`), and it only trusts a `kAXWindowRole` element: a rename announced on an
-inner node is dropped, so the window is never labelled with that node's empty title (#6011).
+inner node is dropped, so the window is never labelled with that node's empty title (AltTab #6011).
 
 ## Test scenarios
 

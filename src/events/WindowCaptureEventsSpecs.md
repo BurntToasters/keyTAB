@@ -13,7 +13,7 @@ Two public one-shot APIs exist, each broken differently:
 
 - `captureSampleBuffer` returns a zero-copy IOSurface, but Apple implements each call by creating and
   destroying a capture stream. On some machines that churn leaks WindowServer memory until macOS
-  force-logs-out the session (#5786). Each call also emits WindowServer `Creating sharing context` events
+  force-logs-out the session (AltTab #5786). Each call also emits WindowServer `Creating sharing context` events
   and `Screenshots via streams are inefficient` warnings.
 - `captureScreenshot` (new in macOS 26) creates no per-call stream (zero of the above events), but:
   - it fails with `SCStreamError -3811` for a fullscreen window whose Space is not frontmost (it succeeds

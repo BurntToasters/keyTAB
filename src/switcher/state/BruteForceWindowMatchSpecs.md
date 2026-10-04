@@ -14,7 +14,7 @@ a scan that stopped at the first wid match returned a descendant (role `AXOutlin
 `AXTabGroup` / `AXMenuButton`, subrole nil). `WindowAdmissionResolver` then rejected it for lacking a window
 subrole, and the window disappeared from the switcher entirely.
 
-That is the #5849 regression: the v11.4 WindowServer migration dropped the old fallback's subrole filter,
+That is the AltTab #5849 regression: the v11.4 WindowServer migration dropped the old fallback's subrole filter,
 so the scan started stopping on descendants. Reporters saw a visible, normal Finder window (owning
 element `AXWindow`, but preceded in the scan by an `AXOutline` sharing its wid) vanish, and Telegram's
 "Main menu" (`AXMenuButton`) stand in for the real Telegram window.
@@ -41,7 +41,7 @@ that wid from the set, and the traversal stops only when every requested root is
 The same file also gates the OTHER brute-force scan — `Applications.discoverInactiveTabs`, which hunts an
 app's inactive tabs, since no CGS list holds them. That scan is run for ONE window's missing tab titles and
 matches candidates on TITLE alone, which cannot tell two windows apart at all: two Finder windows browsing
-the same folders each have a tab called "keytab" (#5785: tab titles are not window titles, and no reliable
+the same folders each have a tab called "keytab" (AltTab #5785: tab titles are not window titles, and no reliable
 tab→window mapping exists).
 
 Captured live (2026-08-01): the scan run for window A adopted a tab of window B. Nothing broke
@@ -85,7 +85,7 @@ Mirrors `BruteForceWindowMatchTests.swift` 1:1.
 ### A. The root window element is accepted
 - **testAcceptsAxWindowRootForTargetWid** — wid matches, role `AXWindow` → true.
 
-### B. Descendants sharing the wid are skipped (the #5849 regression guard)
+### B. Descendants sharing the wid are skipped (the AltTab #5849 regression guard)
 - **testSkipsAxOutlineDescendant** — Finder's case: wid matches, role `AXOutline` → false (the scan
   continues to the `AXWindow` that follows it).
 - **testSkipsAxMenuButtonDescendant** — Telegram's "Main menu": wid matches, role `AXMenuButton` → false.

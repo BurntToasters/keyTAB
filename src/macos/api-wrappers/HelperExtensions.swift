@@ -278,7 +278,7 @@ extension NSPanel {
 extension NSSearchField {
     /// The switcher's search field and the settings sidebar's look the same and both want every
     /// keystroke rather than a debounced one. `controlSize` tracks the OS: macOS 26 draws search
-    /// fields as a taller pill, and 13 through 15 as the `.large` bezel.
+    /// fields as a taller pill, and 14 through 15 as the `.large` bezel.
     func applySearchStyle() {
         placeholderString = NSLocalizedString("Search", comment: "")
         sendsSearchStringImmediately = true
@@ -286,7 +286,7 @@ extension NSSearchField {
         bezelStyle = .roundedBezel
         if #available(macOS 26.0, *) {
             controlSize = .extraLarge
-        } else if #available(macOS 13.0, *) {
+        } else {
             controlSize = .large
         }
     }
@@ -411,7 +411,7 @@ extension CGEvent {
         return port
     }
 
-    /// macOS disables taps on sleep and on a callback timeout (#5723). Put one back in the stream if we
+    /// macOS disables taps on sleep and on a callback timeout (AltTab #5723). Put one back in the stream if we
     /// still want it on. Returns whether it re-enabled, so each caller logs its own wording.
     static func reEnableTapIfNeeded(_ port: CFMachPort?, wanted: Bool) -> Bool {
         guard let port, wanted, !CGEvent.tapIsEnabled(tap: port) else { return false }

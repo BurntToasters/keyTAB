@@ -238,7 +238,7 @@ class WindowServerEvents {
     /// app where key focus actually landed. A switch inside the app that is already frontmost produces no
     /// activation, so for an app whose AX focus notifications never arrive this read is the only thing that
     /// says the user moved (`testTwoKeyTabsIntoTheSameAppBothMoveTheOrder`). A focus that did not take reads
-    /// back the window that kept focus, and the order stays true to the screen (#6055).
+    /// back the window that kept focus, and the order stays true to the screen (AltTab #6055).
     static func readFocusedWindowAfterFocusing(_ pid: pid_t) {
         readFocusedWindow(pid, key: "pid-\(pid)-post-focus", viaActivationRead: false)
     }
@@ -314,7 +314,7 @@ class WindowServerEvents {
     /// of closing it (Electron: QQ, WeChat, Notion, Slack) also tears down its a11y tree, so the sweep can
     /// acquire no element and rejects the window — and if rejection also meant "unsubscribed", the re-show
     /// would be silent (it emits no `windowCreated`; the per-window events are the ONLY signal it is back) and
-    /// the window stayed invisible until the next switcher-show sweep, seconds later (#5785). Subscribing is a
+    /// the window stayed invisible until the next switcher-show sweep, seconds later (AltTab #5785). Subscribing is a
     /// WindowServer fact (CGS lists this wid at an app window level); being tracked is an AX one. Coalesced so
     /// a sweep sends one request.
     ///
@@ -345,7 +345,7 @@ class WindowServerEvents {
     ///
     /// Dropping a wid here is a real unsubscribe, not just bookkeeping: the next request carries the set as
     /// it stands, and the call replaces the watch list. So the enumeration alone must NOT decide — a window
-    /// it happens to miss (an inactive tab, an other-Space window CGS omits, #1324) would go silently deaf,
+    /// it happens to miss (an inactive tab, an other-Space window CGS omits, AltTab #1324) would go silently deaf,
     /// which is the same failure the delta request caused. Anything still in the model is kept whatever the
     /// enumeration says; what's left to drop is a wid that is neither listed by the OS nor tracked by us.
     static func pruneSubscriptions(_ alive: Set<CGWindowID>) {

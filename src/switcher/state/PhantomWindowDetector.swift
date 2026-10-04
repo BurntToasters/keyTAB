@@ -10,8 +10,8 @@ import Foundation
 ///
 /// | family | producer | the fact |
 /// |---|---|---|
-/// | ordered out | Electron `show:false` (#5714, #5495, #5496) | the ordered-in bit is clear |
-/// | alpha 0 | Outlook reminders (#5170, #5448) | `alpha == 0` |
+/// | ordered out | Electron `show:false` (AltTab #5714, AltTab #5495, AltTab #5496) | the ordered-in bit is clear |
+/// | alpha 0 | Outlook reminders (AltTab #5170, AltTab #5448) | `alpha == 0` |
 ///
 /// Both were measured on macOS 26 by driving the two shapes on a probe's own windows. The split is real:
 /// AX does NOT see the alpha-0 phantom (it lists it as an ordinary `AXStandardWindow`), and only the
@@ -19,8 +19,8 @@ import Foundation
 ///
 /// What this replaces is a chain of inferences that each cost a regression: "absent from every Space" as a
 /// stand-in for ordered-out (which is also what a live window looks like when our Space data is wrong,
-/// #5791 / #5954), "CGS tagged it invisible" as a stand-in for alpha-0 (which is also what CGS says about a
-/// freshly reopened Electron window for seconds after it is on screen and focused, #5849 — a case that
+/// AltTab #5791 / AltTab #5954), "CGS tagged it invisible" as a stand-in for alpha-0 (which is also what CGS says about a
+/// freshly reopened Electron window for seconds after it is on screen and focused, AltTab #5849 — a case that
 /// needed an explicit focus exemption, and now needs none, because such a window is ordered IN).
 ///
 /// Pure kernel over the test-constructible `WindowState` + `ApplicationState` records (no SkyLight, no

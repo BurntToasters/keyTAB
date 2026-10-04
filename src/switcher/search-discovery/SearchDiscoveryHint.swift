@@ -173,9 +173,9 @@ final class SearchDiscoveryHint {
     }
 
     private func context() -> SearchDiscoveryPolicy.Context {
-        SearchDiscoveryPolicy.Context(access: .pro,
+        SearchDiscoveryPolicy.Context(
             windowCount: Windows.list.count { $0.shouldShowTheUser && !$0.isWindowlessApp },
-            enabled: CachedUserDefaults.bool("showSearchHint"), optedOut: false,
+            enabled: CachedUserDefaults.bool("showSearchHint"),
             searchActive: TilesView.isSearchModeOn,
             blockedByOtherUI: isOtherUIBlocking,
             hasShortcut: usableShortcut() != nil)

@@ -91,13 +91,13 @@ class App: NSApplication {
     }
 
     /// The rest of the dismissal, none of it visible. Kept behind the focus request because
-    /// `TilesView.endSearchSession` can stall on the OS text-input services (#5981).
+    /// `TilesView.endSearchSession` can stall on the OS text-input services (AltTab #5981).
     private static func endHideUi() {
         MainThreadStall.step()
         // Two event-server round trips (`tapIsEnabled`, then `tapEnable`), measured at up to 8ms on
         // macOS 26.6.2. Behind the focus request rather than in front of it: the tap's callback already
         // passes Esc through once `SwitcherSession.isActive` is false, so nothing absorbs a key in the gap.
-        KeyboardEvents.updateEscapeAbsorptionTap() // session closed: stop tapping keyDown (#5766)
+        KeyboardEvents.updateEscapeAbsorptionTap() // session closed: stop tapping keyDown (AltTab #5766)
         UsageStats.resetSession()
         TilesView.endSearchSession()
         ContextMenuEvents.toggle(false)
@@ -311,7 +311,7 @@ class App: NSApplication {
             // the default pick steps over — see `SwitcherSession.windowIdsAtSummon`.
             new.windowIdsAtSummon = Set(Windows.list.map { $0.id })
             SwitcherSession.current = new
-            KeyboardEvents.updateEscapeAbsorptionTap() // session opened: enable Esc keyDown tap if bound (#5585)
+            KeyboardEvents.updateEscapeAbsorptionTap() // session opened: enable Esc keyDown tap if bound (AltTab #5585)
             return new
         }()
         session.forceDoNothingOnRelease = forceDoNothingOnRelease_
@@ -460,7 +460,7 @@ class App: NSApplication {
             Applications.manuallyRefreshAllWindows()
         }
         KeyboardEvents.addEventHandlers()
-        // Evaluate the "ignore shortcuts" exception for whatever app is already frontmost at launch (#5842):
+        // Evaluate the "ignore shortcuts" exception for whatever app is already frontmost at launch (AltTab #5842):
         // no didActivateApplication fires for it, so without this an app blacklisted with ignore=.always keeps
         // KeyTab's shortcut registered after an auto-update relaunch until the user switches away and back.
         if let frontmostPid = Applications.frontmostPid, let frontmostApp = Applications.findOrCreate(frontmostPid) {
@@ -473,7 +473,9 @@ class App: NSApplication {
         WindowAttentionEvents.observe()
         // Needs the AX runloop `BackgroundWork.start()` created, so it cannot go with the launch-time setup.
         AxObserverRegistry.shared.startRecoveryTicks()
+        #if DEBUG
         CliEvents.observe()
+        #endif
         App.sparkleDelegate = SparkleDelegate()
         App.updaterController = SPUStandardUpdaterController(
             startingUpdater: false,
@@ -514,7 +516,7 @@ extension App: NSApplicationDelegate {
         // Create the background queues first, before anything that can pump the main run loop re-entrantly
         // (the "move to /Applications" modal below, the WindowServer tap's discovery). Window.init reads
         // BackgroundWork.screenshotsQueue (an implicitly-unwrapped optional) via Application.fetchAppIcon, so
-        // if a queued discovery block drains re-entrantly before this runs, it traps on the nil queue (#5819).
+        // if a queued discovery block drains re-entrantly before this runs, it traps on the nil queue (AltTab #5819).
         // preStart just allocates queues and depends on nothing, so it's safe at the very top.
         BackgroundWork.preStart()
         // Same reasoning as the queues above: a preference the user never changed lives only in the

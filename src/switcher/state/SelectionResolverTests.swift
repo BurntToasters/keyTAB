@@ -7,7 +7,7 @@ import XCTest
 ///
 /// Test method names follow `test<Group><Scenario>`. Groups:
 ///   - InitialPick (A): first call after the switcher opens (`selectedTarget == nil`)
-///   - PreserveTarget (B): list reorders but the user's chosen tile stays selected (#5665)
+///   - PreserveTarget (B): list reorders but the user's chosen tile stays selected (AltTab #5665)
 ///   - TargetRemoved (C): user's window closed / filtered out
 ///   - SearchMode (D): search filter / clear interactions
 ///   - EdgeCases (E): corruption, single-window flips, multi-step sequences
@@ -73,7 +73,7 @@ final class SelectionResolverTests: XCTestCase {
     }
 
     /// A4. Edge case at Windows.swift:204 — both top windows minimized, pick index 0 instead
-    /// of cycling. Behavior preserved from original (#5665 doesn't touch this).
+    /// of cycling. Behavior preserved from original (AltTab #5665 doesn't touch this).
     func testInitialPickTopTwoMinimized() {
         let i = inputs(list: [w("a", minimized: true), w("b", minimized: true), w("c")])
         XCTAssertEqual(SelectionResolver.decide(i), .resetThenSelect(0))
@@ -119,7 +119,7 @@ final class SelectionResolverTests: XCTestCase {
                        "an untouched default must re-derive, not follow the window it happened to land on")
     }
 
-    /// A8. The same target, but the USER chose it — now it is a commitment and must be followed (#5665).
+    /// A8. The same target, but the USER chose it — now it is a commitment and must be followed (AltTab #5665).
     func testUserPickedTargetIsFollowedNotRederived() {
         let settled = [w("current"), w("prev"), w("other")]
         let i = inputs(list: settled, selectedIndex: 2, selectedTarget: "other", userPickedSelection: true)
@@ -149,7 +149,7 @@ final class SelectionResolverTests: XCTestCase {
         XCTAssertEqual(SelectionResolver.decide(i), .resetThenSelect(1))
     }
 
-    // MARK: - B. Preserve target across reorders — the #5665 regression cluster
+    // MARK: - B. Preserve target across reorders — the AltTab #5665 regression cluster
 
     /// B1. Trivial preservation — target's still at its index after a benign refresh.
     func testPreserveTargetSameIndex() {
@@ -158,7 +158,7 @@ final class SelectionResolverTests: XCTestCase {
         XCTAssertEqual(SelectionResolver.decide(i), .selectAt(1))
     }
 
-    /// B2. #5665 regression — user picked "b" at slot 1, then Photoshop ("p") finished launching
+    /// B2. AltTab #5665 regression — user picked "b" at slot 1, then Photoshop ("p") finished launching
     /// and stole focus. List reorders so p=0, a=1, b=2. The user's selection must follow "b" to
     /// slot 2. Pre-fix, the kernel re-picked from scratch instead, jumping the highlight.
     func testPreserveTargetMovedToHigherIndexAfterPhotoshopLaunch() {
@@ -169,7 +169,7 @@ final class SelectionResolverTests: XCTestCase {
         ]
         let i = inputs(list: listAfterReorder, selectedIndex: 1, selectedTarget: "b")
         XCTAssertEqual(SelectionResolver.decide(i), .selectAt(2),
-                       "regression for #5665 — the user picked 'b'; the highlight must follow 'b' " +
+                       "regression for upstream #5665 — the user picked 'b'; the highlight must follow 'b' " +
                        "to its new slot, not jump back to a 'previous app' re-pick.")
     }
 
@@ -182,7 +182,7 @@ final class SelectionResolverTests: XCTestCase {
                     w("target", focusOrder: 2), w("c", focusOrder: 3)]
         let i = inputs(list: list, selectedIndex: 4, selectedTarget: "target")
         XCTAssertEqual(SelectionResolver.decide(i), .selectAt(2),
-                       "regression for #5665 — target moved to a different slot; highlight must follow.")
+                       "regression for upstream #5665 — target moved to a different slot; highlight must follow.")
     }
 
     /// B4. The list churns but the target happens to land at the same index.
@@ -395,7 +395,7 @@ final class SelectionResolverTests: XCTestCase {
         XCTAssertEqual(SelectionResolver.decide(i), .selectAt(1))
     }
 
-    // MARK: - F. The current window is not in the drawn list (#5941)
+    // MARK: - F. The current window is not in the drawn list (AltTab #5941)
 
     /// F1. `Apps to show: Non-active apps`, the user is on VS Code window V1 and the list draws Chrome's two
     /// windows. The front tile is ALREADY the window they were on before, so that is where the default
@@ -406,7 +406,7 @@ final class SelectionResolverTests: XCTestCase {
         XCTAssertEqual(SelectionResolver.decide(i), .resetThenSelect(0))
     }
 
-    /// F2. The other half of #5941: having landed on C1, the same shortcut must come BACK to V1. Chrome is
+    /// F2. The other half of AltTab #5941: having landed on C1, the same shortcut must come BACK to V1. Chrome is
     /// the active app now, so the list draws VS Code's windows and the front one is V1. Without the fix each
     /// press walks one window further away and the two-window toggle never returns.
     func testInitialPickCurrentWindowFilteredOutTogglesBackToWhereItCameFrom() {
@@ -473,7 +473,7 @@ final class SelectionResolverTests: XCTestCase {
         XCTAssertEqual(SelectionResolver.decide(filtered), .resetThenSelect(1))
     }
 
-    /// F10. Clearing a search query restores the default pick, and the restored default is the #5941 one.
+    /// F10. Clearing a search query restores the default pick, and the restored default is the AltTab #5941 one.
     func testSearchRestoreDefaultOnClearHonorsTheFilteredOutCurrentWindow() {
         let list = [w("C1"), w("C2"), w("C3")]
         let i = inputs(list: list, selectedIndex: 2, selectedTarget: "C3",
@@ -482,7 +482,7 @@ final class SelectionResolverTests: XCTestCase {
     }
 
     /// F11. Once the USER has moved the selection it is a commitment, followed by id however the list
-    /// reorders (#5665). The flag only ever answers where the DEFAULT starts.
+    /// reorders (AltTab #5665). The flag only ever answers where the DEFAULT starts.
     func testUserPickedTargetIsFollowedWhenTheCurrentWindowIsFilteredOut() {
         let list = [w("C1"), w("C2"), w("C3")]
         let i = inputs(list: list, selectedIndex: 2, selectedTarget: "C3", currentWindowIsDrawn: false)
@@ -593,7 +593,7 @@ final class SelectionResolverTests: XCTestCase {
         XCTAssertNil(SelectionResolver.findTarget(list, "missing"))
     }
 
-    // MARK: - G. Answering `currentWindowIsDrawn` from the frontmost app's windows (#5960)
+    // MARK: - G. Answering `currentWindowIsDrawn` from the frontmost app's windows (AltTab #5960)
 
     /// Concise builder for a window of the frontmost app. Defaults model the common case: a real, drawn,
     /// on-screen window.
@@ -603,7 +603,7 @@ final class SelectionResolverTests: XCTestCase {
                            isPhantom: phantom, isMinimized: minimized)
     }
 
-    /// G1. #5941, the case the flag exists for: the frontmost app owns a real on-screen window and a filter
+    /// G1. AltTab #5941, the case the flag exists for: the frontmost app owns a real on-screen window and a filter
     /// keeps it out of the list, so the front tile is already the window before it.
     func testCurrentWindowIsDrawnIsFalseWhenARealWindowIsFilteredOut() {
         XCTAssertFalse(SelectionResolver.currentWindowIsDrawn([fw(visible: false)]))
@@ -620,7 +620,7 @@ final class SelectionResolverTests: XCTestCase {
         XCTAssertTrue(SelectionResolver.currentWindowIsDrawn([fw(visible: false), fw()]))
     }
 
-    /// G4. #5960: the user closed the last window of the frontmost app, which stays running and frontmost
+    /// G4. AltTab #5960: the user closed the last window of the frontmost app, which stays running and frontmost
     /// with nothing but a placeholder, and `Windowless apps: Hide` drops that too. No window of theirs is
     /// being hidden — the window on top of the screen is the front tile — so the front tile is stepped over.
     func testCurrentWindowIsDrawnIsTrueForAWindowlessFrontmostApp() {
@@ -669,7 +669,7 @@ final class SelectionResolverTests: XCTestCase {
         XCTAssertTrue(SelectionResolver.currentWindowIsDrawn(.unknown))
     }
 
-    /// G11. #5960 end to end, through both kernels: the reporter's own steps. Terminal frontmost over
+    /// G11. AltTab #5960 end to end, through both kernels: the reporter's own steps. Terminal frontmost over
     /// Chrome/Google and Chrome/YouTube, close Terminal's last window, summon. Terminal contributes only a
     /// placeholder, so the pick steps over the front tile as usual and lands on Chrome/YouTube. Answering
     /// the first kernel `false` selected Chrome/Google — the window already on top of the screen — and the

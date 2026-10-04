@@ -119,7 +119,7 @@ final class WindowEventReducerMinimizeTests: XCTestCase {
         XCTAssertEqual(order(runner.state, Self.finderWid), 1)
     }
 
-    /// The counterfactual that keeps #5849 safe: a Space re-show orders in every window of the Space it is
+    /// The counterfactual that keeps AltTab #5849 safe: a Space re-show orders in every window of the Space it is
     /// bringing back. Those windows were never minimized, so the un-minimize path must not touch them —
     /// it keys on the flag precisely so it cannot widen into this — and the order stands either way.
     func testASpaceReShowStillDoesNotFrontItsWindows() {
@@ -204,7 +204,7 @@ final class WindowEventReducerMinimizeTests: XCTestCase {
             "the inactive tab must follow its active tab out of the minimized state")
     }
 
-    // MARK: - E. The on-screen bit that tab-grouping reads (#5954)
+    // MARK: - E. The on-screen bit that tab-grouping reads (AltTab #5954)
 
     /// Every path that can move the bit, pinned: without these, each line carrying it from the OS to the
     /// kernel could be deleted with the whole suite still green, which is how it shipped the first time.

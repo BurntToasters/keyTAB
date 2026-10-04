@@ -7,7 +7,7 @@
 The menubar shows a callout — "KeyTab is running without Screen Recording permissions. _X_ won't
 show." — with a "Grant permission" button. It used to appear for **every** user missing the
 permission, including users who deliberately skipped it and don't use any feature that needs it
-(reported in [#5623](https://github.com/keytab/alt-tab-macos/issues/5623)), and it always blamed
+(reported in [AltTab #5623](https://github.com/lwouis/alt-tab-macos/issues/5623)), and it always blamed
 "Thumbnails" even when the user relied on window previews instead.
 
 Screen Recording is consumed by exactly two features: the **Thumbnails** appearance style (window
@@ -46,7 +46,7 @@ Mirrors `PermissionCalloutResolverTests.swift` 1:1.
 - **testThumbnailsOnlyClassifiedAsThumbnails** — Thumbnails on, Preview off → `.thumbnails`.
 - **testPreviewsOnlyClassifiedAsPreviews** — Preview on, Thumbnails off → `.previews`.
 - **testBothFeaturesClassifiedAsBoth** — both on → `.both`.
-- **testNeitherFeatureClassifiedAsNone** — Titles/App Icons, Preview off → `.none` (the #5623 case).
+- **testNeitherFeatureClassifiedAsNone** — Titles/App Icons, Preview off → `.none` (the AltTab #5623 case).
 
 ### When the callout shows vs. stays hidden
 - **testGrantedNeverShowsEvenWhenUsed** — permission granted + `.both` → hide (it works, no need to nag).
@@ -54,4 +54,4 @@ Mirrors `PermissionCalloutResolverTests.swift` 1:1.
 - **testMissingPermissionShowsForThumbnails** — permission missing + `.thumbnails` → **show** (names Thumbnails).
 - **testMissingPermissionShowsForPreviews** — permission missing + `.previews` → **show** (names Window previews).
 - **testMissingPermissionShowsForBoth** — permission missing + `.both` → **show** (names both).
-- **testMissingPermissionHiddenWhenUnused** — permission missing + `.none` → hide (the #5623 fix).
+- **testMissingPermissionHiddenWhenUnused** — permission missing + `.none` → hide (the AltTab #5623 fix).

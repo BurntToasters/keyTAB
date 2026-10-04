@@ -5,7 +5,7 @@ import ShortcutRecorder
 final class SearchDiscoveryTests: XCTestCase {
     private let now = Date(timeIntervalSince1970: 1_800_000_000)
     private var context: SearchDiscoveryPolicy.Context {
-        .init(access: .pro, windowCount: 8, hasShortcut: true)
+        .init(windowCount: 8, hasShortcut: true)
     }
 
     func testThresholdUsesEligibleTargets() {
@@ -15,22 +15,6 @@ final class SearchDiscoveryTests: XCTestCase {
         XCTAssertFalse(c.isEligible(history: history))
         c.windowCount = 8
         XCTAssertTrue(c.isEligible(history: history))
-    }
-
-    func testTrialCalendarReservesExistingPrompts() {
-        for day in -1...15 {
-            var c = context
-            c.access = .trial(day: day)
-            XCTAssertEqual(c.isEligible(history: .init(hasSearched: false)),
-                           [1, 2, 4, 5, 6, 7, 8, 9, 10].contains(day), "day \(day)")
-        }
-    }
-
-    func testProCanDiscoverSearchButLockedUsersCannot() {
-        var c = context
-        XCTAssertTrue(c.isEligible(history: .init(hasSearched: false)))
-        c.access = .locked
-        XCTAssertFalse(c.isEligible(history: .init(hasSearched: false)))
     }
 
     func testUnknownOrUsedSearchNeverOffersHint() {
@@ -55,7 +39,7 @@ final class SearchDiscoveryTests: XCTestCase {
 
     func testRefusalSearchAndCompetingUIHavePriority() {
         let mutations: [(inout SearchDiscoveryPolicy.Context) -> Void] = [
-            { $0.enabled = false }, { $0.optedOut = true }, { $0.searchActive = true },
+            { $0.enabled = false }, { $0.searchActive = true },
             { $0.blockedByOtherUI = true }, { $0.hasShortcut = false },
         ]
         for mutate in mutations {
@@ -99,8 +83,7 @@ final class SearchDiscoveryTests: XCTestCase {
 
     #if DEBUG
     func testQAPreviewBypassesDiscoveryEligibilityOnlyForItsSession() {
-        let c = SearchDiscoveryPolicy.Context(access: .locked, windowCount: 1, enabled: false,
-                                              optedOut: true, hasShortcut: true)
+        let c = SearchDiscoveryPolicy.Context(windowCount: 1, enabled: false, hasShortcut: true)
         let history = SearchDiscoveryPolicy.History(hasSearched: true, exposures: 3, lastExposure: now)
         let preview = SearchDiscoveryPolicy.Opportunity()
         preview.isPreview = true

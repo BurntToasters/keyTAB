@@ -179,7 +179,7 @@ class Application: NSObject {
         let window = Window(self)
         Windows.appendWindow(window)
         focusedWindow = nil
-        // The add/remove pair is logged because the placeholder's LIFECYCLE was the #5849 bug: it is added
+        // The add/remove pair is logged because the placeholder's LIFECYCLE was the AltTab #5849 bug: it is added
         // while an app's only window looks phantom, and one un-phantom path forgot to remove it, so the app
         // showed two tiles forever. Nothing recorded either step, so it had to be inferred from the tiles.
         Logger.debug { "windowless + \(self.runningApplication.localizedName ?? "?") pid=\(self.pid) (no non-phantom window)" }

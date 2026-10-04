@@ -4,7 +4,7 @@ import CoreGraphics
 /// **Which of an app's answers actually commits.**
 ///
 /// An app raising all its windows moves its key window to each of them in turn, and the accessibility
-/// channel reports every step faithfully (#5974's shape, measured at 29ms apart). Each step is a true
+/// channel reports every step faithfully (AltTab #5974's shape, measured at 29ms apart). Each step is a true
 /// statement, and the run as a whole is one z-order change in which the user went nowhere: the app puts keys
 /// back where they started at the end. Committing each answer scrambled the MRU.
 ///

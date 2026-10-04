@@ -2,7 +2,7 @@ import XCTest
 import Carbon.HIToolbox.Events
 
 /// Pins `NativeHotkeyResolver.resolve` against the configurations that historically tripped
-/// issue #5653 (intermittent native ⌘⇥ override on launch).
+/// issue AltTab #5653 (intermittent native ⌘⇥ override on launch).
 ///
 /// Groups: A repro case (⌘⇥ + ⌘⇧⇥ with hold ⌘ + ⌘⇧) · B single ⌘⇥ pairing ·
 /// C ⌘\` only (nothing to disable) · D default option · E empty.
@@ -11,7 +11,7 @@ final class NativeHotkeyResolverTests: XCTestCase {
         ShortcutSnapshot(modifiers: UInt32(mods), keyCode: UInt32(key))
     }
 
-    // MARK: - A. Issue #5653 — ⌘⇥ + ⌘⇧⇥ with hold ⌘ + ⌘⇧
+    // MARK: - A. Issue AltTab #5653 — ⌘⇥ + ⌘⇧⇥ with hold ⌘ + ⌘⇧
 
     /// With both ⌘⇥ and ⌘⇧⇥ bound (and the matching ⌘ + ⌘⇧ hold-shortcuts present), both native
     /// switchers must be disabled — even though the ⌘⇥ snapshot matches *two* native predicates

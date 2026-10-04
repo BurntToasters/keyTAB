@@ -32,7 +32,7 @@ enum ExceptionMatcher {
     /// `hide` rule fires. nil bundle-id never matches.
     ///
     /// `activeAppOverride` is set when the filter is "Active app" and this window's app is the active
-    /// one (#5810): the user asked to see this app's windows, which is a stronger intent than the
+    /// one (AltTab #5810): the user asked to see this app's windows, which is a stronger intent than the
     /// Exceptions list, so the blanket `.always` / `.whenNoOpenWindow` hide rules are ignored. The
     /// narrower `.windowTitleContains` rule still fires, since it only hides *some* windows.
     static func hidesWindow(_ s: WindowState, _ app: ApplicationState, exceptions: [ExceptionEntry],

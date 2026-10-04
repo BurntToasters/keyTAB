@@ -14,15 +14,15 @@ class KeyboardEvents {
     /// key-downs only preserve source order for Carbon hotkeys delayed behind a main-thread stall.
     private static var eventTap: CFMachPort?
     /// `.keyDown` tap on `cghidEventTap` + `.defaultTap`, used only to absorb Esc ahead of macOS 26
-    /// Game Overlay (#5585). Created DISABLED; enabled only while a switcher session is open and a
+    /// Game Overlay (AltTab #5585). Created DISABLED; enabled only while a switcher session is open and a
     /// shortcut binds Esc (`updateEscapeAbsorptionTap`). Keeping this active HID keyDown tap out of
-    /// normal typing is the #5766 fix (it was breaking third-party IMEs like Vietnamese EVKey).
+    /// normal typing is the AltTab #5766 fix (it was breaking third-party IMEs like Vietnamese EVKey).
     private static var escapeEventTap: CFMachPort?
     // periphery:ignore - holds the monitor token so the handler stays installed
     private static var localEventMonitor: Any?
 
     /// Set by `ControlsTab` when the configured shortcuts change. When true and `SwitcherSession.isActive`,
-    /// our `escapeEventTap` absorbs Esc keyDowns and routes them through the matcher. Issue #5585:
+    /// our `escapeEventTap` absorbs Esc keyDowns and routes them through the matcher. Issue AltTab #5585:
     /// this is the only path that beats macOS 26 Game Overlay's hook on `⌘⎋`. Also gates whether
     /// `escapeEventTap` is enabled at all (see `updateEscapeAbsorptionTap`).
     static var anyShortcutUsesEscape = false
@@ -54,7 +54,7 @@ class KeyboardEvents {
     private static let escapeEventHandler: CGEventTapCallBack = { _, type, cgEvent, _ in
         switch type {
         case .keyDown:
-            // Issue #5585. Esc only — absorb when KeyTab is using it and a shortcut binds it. cghid is
+            // Issue AltTab #5585. Esc only — absorb when KeyTab is using it and a shortcut binds it. cghid is
             // the earliest tap point; absorbing here preempts macOS 26 Game Overlay's hook on `⌘⎋`.
             if cgEvent.getIntegerValueField(.keyboardEventKeycode) != Int64(kVK_Escape) ||
                 !anyShortcutUsesEscape || !SwitcherSession.isActive {
@@ -141,7 +141,7 @@ class KeyboardEvents {
 
     /// Enables `escapeEventTap` only while it can do something useful: a switcher session is open AND
     /// a shortcut binds Esc. Outside that window it stays disabled, so the active HID `.keyDown` tap is
-    /// never in the path during normal typing (#5766). Idempotent; safe from any thread; a no-op before
+    /// never in the path during normal typing (AltTab #5766). Idempotent; safe from any thread; a no-op before
     /// the tap exists (e.g. unit tests that set `SwitcherSession.current` directly).
     static func updateEscapeAbsorptionTap() {
         guard let escapeEventTap else { return }
@@ -211,8 +211,8 @@ class KeyboardEvents {
         // Two taps. The session tap is passive: flags drive hold-shortcut triggering, while key-downs are
         // only recorded to preserve their order relative to those flags when Carbon drains late. It never
         // handles or suppresses typing. The Esc tap is cghid + defaultTap (the only way to swallow Esc ahead
-        // of macOS 26 Game Overlay, #5585); it is disabled outside a switcher session, keeping the active HID
-        // path out of normal typing for #5766.
+        // of macOS 26 Game Overlay, AltTab #5585); it is disabled outside a switcher session, keeping the active HID
+        // path out of normal typing for AltTab #5766.
         eventTap = CGEvent.tapCreate(
             tap: .cgSessionEventTap,
             place: .headInsertEventTap,

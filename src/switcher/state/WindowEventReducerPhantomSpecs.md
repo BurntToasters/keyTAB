@@ -10,7 +10,7 @@ Driven through `WindowEventReducer.reduce` directly rather than the replay harne
 `.removeWindowlessPlaceholder` is a display-side effect that `TestReducerRunner` deliberately swallows
 (it has no model content) — so a scenario replay cannot observe it.
 
-## Why this exists (#5849)
+## Why this exists (AltTab #5849)
 
 An app whose only window looks phantom is indistinguishable from an app with no windows, so a windowless
 placeholder tile is added for it. When the window later un-phantoms, that placeholder is stale and must be
@@ -51,7 +51,7 @@ updates.
 
 ### B. An on-screen window is never a phantom
 - **testOnScreenWindowSurvivesTheOrderedOutSignal** — the window is ordered in while CGS still tags it
-  invisible and reports no Space (Slack reopened from the Dock, #5849) → not a phantom. This replaced a
+  invisible and reports no Space (Slack reopened from the Dock, AltTab #5849) → not a phantom. This replaced a
   FOCUS exemption, which made the verdict depend on MRU order.
 - **testOrderedOutWindowIsFlaggedEvenWhenItsAppIsFrontmost** — the same window while the WindowServer is not
   showing it → phantom, frontmost or not.
@@ -78,7 +78,7 @@ that moment instead of waiting for a pass (`TrackedWindowState.clearPhantomOnFoc
 - **testAttentionOnARealWindowEmitsNoPlaceholderRemoval** — an already-real window emits nothing, so
   ordinary switching doesn't churn.
 
-### D. The same, for the window a reopened app comes back to (#5849, second report)
+### D. The same, for the window a reopened app comes back to (AltTab #5849, second report)
 
 Reopening Slack from the Dock reaches the front through an activation that names only the process. The
 attention model uses Slack's cached focused-window fact, or requests one bounded `kAXFocusedWindow` read if
@@ -92,7 +92,7 @@ latch survived — the switcher summoned 130 ms later hid the window the user wa
 
 Which answers are worth anything is not decided here any more. `kAXFocusedWindow` reports "which window
 WOULD take keys", which every app has at all times, so an answer from an app the user is not in is a fact
-about that app rather than a bid for the front (#5785, a re-discovered QQ window offered as "the window you
+about that app rather than a bid for the front (AltTab #5785, a re-discovered QQ window offered as "the window you
 were on before"). That gate lives in `AttentionModel` —
 `testAnAnswerFromABackgroundAppIsRecordedAndMovesNothing` — and the reducer only sees what it committed.
 

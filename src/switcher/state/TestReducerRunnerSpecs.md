@@ -151,7 +151,7 @@ report a violation. These are tests OF the harness, not of the reducer.
   carries no focus signal at all, so the incoming tab must be fronted explicitly at discovery; otherwise the
   switcher shows the PREVIOUS tab until reopened (measured live, 2026-07-22).
 - **testTitlesThatNameNothingKeepTheGroup** — an AX read naming 2+ tabs and matching NO window says the
-  titles aren't comparable (#5785) or the siblings aren't tracked; either way the group stands.
+  titles aren't comparable (AltTab #5785) or the siblings aren't tracked; either way the group stands.
 - **testTitleReadThatChangesMembershipLeavesAFixedPoint** — a title read that changes membership must
   reconcile, or derived per-member facts (above all the fullscreen mirror) stay stale and the state is not a
   reconcile fixed point.
@@ -178,13 +178,13 @@ the bookkeeping it still owns: an untracked wid it names, and the sequences a re
 
 - **testTwoKeyTabsIntoTheSameAppBothMoveTheOrder** — two alt-tabs 219ms apart into one app. The second is a
   switch inside the app that is already frontmost, so no activation follows it and the app's answer is the
-  only thing that says the user moved. Unheard, nothing ever corrects it (#5785's stuck switcher).
-- **testLeavingFullscreenDoesNotRefrontTheAppsOtherWindows** — the recorded #5849 follow-up: leaving
+  only thing that says the user moved. Unheard, nothing ever corrects it (AltTab #5785's stuck switcher).
+- **testLeavingFullscreenDoesNotRefrontTheAppsOtherWindows** — the recorded AltTab #5849 follow-up: leaving
   fullscreen re-shows the whole desktop Space and every window on it is ordered in. A replay of the capture,
   kept now that the inference that misread it is gone.
 - **testReshownWindowLandsBehindWhatWasFocusedDuringItsDiscoveryGap** — the one thing an untracked order-in
   still does: an app that hides its window keeps the CGWindow, so reopening re-shows the same wid with no
-  create and no 808 (#5785). It is discovered rather than lost, and it claims no rank of its own — where it
+  create and no 808 (AltTab #5785). It is discovered rather than lost, and it claims no rank of its own — where it
   lands is decided the next time its app speaks.
 - **testReshownWindowOfAnAppThatWasNotFrontmostIsNotPromoted** — the pid gate on the circumstantial
   promotion: an untracked order-in counts only for the app that was frontmost when the window appeared, and
@@ -192,7 +192,7 @@ the bookkeeping it still owns: an untracked wid it names, and the sequences a re
 
 ### C2. The group token, and what it retires
 
-- **testTabsJoinOneGroupByTokenWhenTitlesAndFramesNameNobody** — two tabs whose AX titles name nobody (#5785's
+- **testTabsJoinOneGroupByTokenWhenTitlesAndFramesNameNobody** — two tabs whose AX titles name nobody (AltTab #5785's
   composed titles) and whose frames share no cluster (a tab bar resized one) still end up in ONE group,
   because each named the same `AXTabGroup` element while it was the selected tab. The point of the fixture is
   what it does NOT contain: no create, no pairing window, no clock — the second read lands whenever it lands

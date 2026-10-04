@@ -8,7 +8,7 @@ struct GestureTouch {
     /// identities may be re-used, they are unique during the life of the touch". So this must never
     /// be treated as recognising a finger across gestures — see `GestureTracker.prune`.
     let id: String
-    /// nil when `normalizedPosition` was unreadable; Universal Control forwards such touches (#5499).
+    /// nil when `normalizedPosition` was unreadable; Universal Control forwards such touches (AltTab #5499).
     let position: NSPoint?
     /// `phase == .began`: the OS saying the touch is new. Sounder than inferring newness from whether
     /// we happen to hold a start position for `id`, which a recycled identity makes a lie.
@@ -25,7 +25,7 @@ class GestureTracker {
     /// recycled, so a start position left behind by a lifted finger gets picked up by an unrelated
     /// finger in a later gesture, and the distance measured from it is meaningless — typically large,
     /// and typically off-axis, which is how it used to latch `GestureTriggerKernel`'s
-    /// `swipeStillPossible` off for good (#5137).
+    /// `swipeStillPossible` off for good (AltTab #5137).
     ///
     /// `ids` must be every touch still DOWN, including `.stationary` ones. Pruning to the touches
     /// being measured instead would drop the start position of a finger that paused for one event,
@@ -85,7 +85,7 @@ class GestureTracker {
 /// Pure state machine for the trackpad gesture *trigger*: the decision, taken while the switcher is
 /// NOT open, of whether the fingers on the trackpad just performed KeyTab's summon swipe.
 ///
-/// Extracted from `TrackpadEvents` because #5137 ("the gesture stops working until KeyTab is
+/// Extracted from `TrackpadEvents` because AltTab #5137 ("the gesture stops working until KeyTab is
 /// relaunched") was a reset-path bug in here, of a kind no live pass can catch: the trigger has
 /// state that outlives a gesture, and two pieces of it could keep a value that made every later
 /// swipe fail. `TrackpadEvents` stays the adapter — event taps, `NSTouch` mapping, haptics, showing
@@ -149,7 +149,7 @@ final class GestureTriggerKernel {
         triggerTracker.prune(toTouchesDown: frame.touchesDownIds)
         nonFreshTracker.prune(toTouchesDown: frame.touchesDownIds)
         // At most one finger left: that is pointer mode, not a gesture, so the gesture is over and all
-        // of its state goes with it. Clearing only `userHasDoneAnotherGesture` here was #5137 —
+        // of its state goes with it. Clearing only `userHasDoneAnotherGesture` here was AltTab #5137 —
         // `swipeStillPossible` gates its own recomputation, so once one swipe wandered off-axis
         // nothing ever set it back and the trigger stayed dead until KeyTab was relaunched. A
         // 2-finger scroll happened to clear it via the `requiredFingers` mismatch below, which is why

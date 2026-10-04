@@ -94,7 +94,7 @@ class Window {
         self.axStatus = axStatus
         self.lifecycle = axUiElement == nil ? .unverified : .alive
         // Default a new window to the current Space rather than fetching its Space here: that fetch is a
-        // blocking CGS call and `Window.init` runs on the main thread (#5721). A brand-new window is on the
+        // blocking CGS call and `Window.init` runs on the main thread (AltTab #5721). A brand-new window is on the
         // current Space ~always; the rare exception (an app restoring a window onto another Space) is
         // corrected off-main by Applications.syncSpacesState.
         self.updateSpacesAndScreen([wid: [Spaces.currentSpaceId]])
@@ -132,7 +132,7 @@ class Window {
 
     deinit {
         // debug, not info: `TrackedWindowState.removalLog` already names every removal WITH the reason that
-        // condemned it, which is the whole point of logging one (#5785)
+        // condemned it, which is the whole point of logging one (AltTab #5785)
         Logger.debug { self.debugId }
     }
 
@@ -148,7 +148,7 @@ class Window {
 
     /// DERIVED "phantom" verdict, computed at read time and never latched — so a window whose Space
     /// membership recovers shows again immediately. (It was a stored flag written monotonically on every
-    /// show, which needed force-clears in three places and flapped with CGS enumeration timing, #5791.)
+    /// show, which needed force-clears in three places and flapped with CGS enumeration timing, AltTab #5791.)
     /// Composition, most specific first:
     /// - a HELD tab (`windowsHeldVisibleForTab`) is never phantom: it just backgrounded as a new tab takes
     ///   over, and must keep its tile through the ~640ms discovery gap (the "window vanishes, then app icon,
@@ -159,7 +159,7 @@ class Window {
     /// - otherwise `PhantomWindowDetector.syncVerdict` over the stored record: the strong signal (no Space
     ///   at all — Joplin / Sprig / `show:false` Electron) evaluated live, OR'd with the latched CGS verdict
     ///   (`tracked.cgsPhantomLatch`, the only place the weak/alpha=0 case can come from — set by
-    ///   `WindowEventReducer`) — see #5714.
+    ///   `WindowEventReducer`) — see AltTab #5714.
     var isPhantom: Bool {
         if let wid = cgWindowId {
             if Windows.windowsHeldVisibleForTab.contains(wid) { return false }
@@ -206,7 +206,7 @@ class Window {
 
 
     /// Swap this window's cached AXUIElement for a fresher one (same wid). Some apps silently rebuild a
-    /// window's accessibility node, invalidating our ref (#5586), so on-demand reads + the window actions
+    /// window's accessibility node, invalidating our ref (AltTab #5586), so on-demand reads + the window actions
     /// would hit a dead node; swap in the freshly-resolved element.
     func rebindAxElement(_ fresh: AXUIElement) {
         axUiElement = fresh
@@ -369,8 +369,8 @@ class Window {
             // means "Space unknown": the window was missing from the last CGS map (Slack windows drop out of it,
             // and it goes stale after sleep/monitor changes until syncSpacesState re-queries). Treating unknown
             // as cross-Space ran SLSSpaceSetFrontPSN on the CURRENT Space, re-fronting the previous app and
-            // undoing the raise while the window stayed key (#5586, the Slack-after-sleep variant).
-            // The window order is NOT moved here. It moves when the OS reports the focus (#6055).
+            // undoing the raise while the window stayed key (AltTab #5586, the Slack-after-sleep variant).
+            // The window order is NOT moved here. It moves when the OS reports the focus (AltTab #6055).
             let generation = FocusIntents.shared.request(wid: cgWindowId!, pid: application.pid)
             Windows.promoteAttentionEvidence(cgWindowId!)
             let targetMaybeCrossSpace = !self.spaceIds.isEmpty && !self.spaceIds.contains(originSpaceId)
@@ -387,12 +387,12 @@ class Window {
     ///   1. _SLPSSetFrontProcessWithOptions fronts the process + the target window (passing the wid raises
     ///      only that window, not all the app's windows). For a cross-Space target it also makes macOS switch
     ///      to a Space showing it. The global front clobbers the front process of other Spaces where the app
-    ///      has windows (they pop on Space entry, #4507); step 4 repairs the origin Space for a cross-Space
+    ///      has windows (they pop on Space entry, AltTab #4507); step 4 repairs the origin Space for a cross-Space
     ///      focus.
     ///   2. makeKeyWindow: make it key, via a synthetic mouse-down/up aimed just outside the window, so it
-    ///      becomes key without clicking its content (a top-left click would hit fullscreen UI, #5381).
+    ///      becomes key without clicking its content (a top-left click would hit fullscreen UI, AltTab #5381).
     ///   3. raiseWindow (kAXRaiseAction): raise it within the app's own window stack. If our cached element
-    ///      went stale (the app silently rebuilt the window's a11y node, #5586), this returns
+    ///      went stale (the app silently rebuilt the window's a11y node, AltTab #5586), this returns
     ///      .invalidUIElement and no-ops, so re-resolve the live element by wid, retry, and heal the cache;
     ///      _SLPS/makeKeyWindow above use the wid/psn directly so they're unaffected.
     ///   4. cross-Space only: restore the origin Space's front process (snapshotted by the caller).
@@ -444,7 +444,7 @@ class Window {
 
     /// Steps 2 and 3. Step 3 is the only AX-dependent step: 1 and 2 use the wid and psn directly, so a window
     /// with no element still gets fronted and made key — which is the whole point of keeping a hung app's
-    /// window trackable. The guard before the #5586 re-resolve is the one that pays: it follows a call that
+    /// window trackable. The guard before the AltTab #5586 re-resolve is the one that pays: it follows a call that
     /// may have blocked for the full 1s timeout, and the re-resolve itself costs up to 1.25s more.
     private func makeKeyAndRaise(_ generation: FocusGeneration, _ psn: inout ProcessSerialNumber) {
         guard FocusIntents.shared.mayProceed(generation) else { return }
@@ -469,7 +469,7 @@ class Window {
         return true
     }
 
-    /// Step 4 (#4507): undo step 1's clobber of the origin Space. The front-switch made that Space remember
+    /// Step 4 (AltTab #4507): undo step 1's clobber of the origin Space. The front-switch made that Space remember
     /// our app as its front; restore the app that was there before so returning shows it, not our window.
     /// Cross-Space only (originFrontPid is nil otherwise), and skipped when the origin's front was already
     /// this app. Owed by whoever ran step 1, so it is never skipped for being superseded.
@@ -540,7 +540,7 @@ class Window {
         let wasEmpty = self.spaceIds.isEmpty
         let wasPhantom = self.isPhantom
         // No blocking CGS fallback here: callers always supply the map (resolved off-main, or the current
-        // Space at creation). A window absent from the map is treated as on no queried Space (#5721).
+        // Space at creation). A window absent from the map is treated as on no queried Space (AltTab #5721).
         var spaceIds = windowToSpacesMap?[cgWindowId] ?? []
         var borrowed = false
         // inactive tabs return no space from CGSCopySpacesForWindows; use the active tab sibling's space
@@ -599,7 +599,7 @@ class Window {
     }
 
     /// Seed the per-app focused-window fact after discovery. An app already frontmost when KeyTab starts has
-    /// produced no activation or AX focus change, so `kAXFocusedWindow` is the only initial answer (#5665).
+    /// produced no activation or AX focus change, so `kAXFocusedWindow` is the only initial answer (AltTab #5665).
     ///
     /// The answer is always recorded as a fact about that process; `AttentionModel` alone decides whether the
     /// process is frontmost when it lands. The scheduler key is per pid rather than per wid so a startup batch

@@ -27,7 +27,7 @@ So every rule that read an 808 or an 815 as "the user went here" was reconstruct
 something the app had already said. All of them are gone rather than gated: there is one engine, no mode and
 no runtime switch.
 
-## The removal repair (#5346)
+## The removal repair (AltTab #5346)
 
 **macOS never moves focus to another app because a window closed.** When the removed window held slot 0, the
 front goes to the frontmost app's own next window, not to the global runner-up. The reporter's REAPER window
@@ -41,7 +41,7 @@ already-frontmost app emits nothing at all.
 
 Mirrors `WindowEventReducerFocusTests.swift` 1:1.
 
-### A. The front of the MRU after a removal (#5346)
+### A. The front of the MRU after a removal (AltTab #5346)
 
 - **testRemovingTheFocusedWindowPromotesTheFrontmostAppsNextWindow** — another app holds slot 1; the
   frontmost app's own next window is promoted over it, and `.applyFocus` names it.
@@ -58,8 +58,8 @@ Mirrors `WindowEventReducerFocusTests.swift` 1:1.
 ### B. Nothing physical may move the order
 
 Pinned here rather than left implicit: the WindowServer's order and focus family keeps every physical and
-invalidation job it had and loses the one it was never entitled to. This is also why #5936 (a wake or Mission
-Control re-showing every window at once) and #5974 (an app raising all of its windows) need no rule of their
+invalidation job it had and loses the one it was never entitled to. This is also why AltTab #5936 (a wake or Mission
+Control re-showing every window at once) and AltTab #5974 (an app raising all of its windows) need no rule of their
 own any more — both were bursts of 815s and 808s, and neither event can reach the order at all.
 
 - **testAFocusEventCannotMoveTheOrder** / **testAnOrderInCannotMoveTheOrder** — an 808 and an 815 leave the
@@ -106,6 +106,6 @@ own any more — both were bursts of 815s and 808s, and neither event can reach 
 ### E. App Exposé — the re-show around a pick
 
 - **testAnAppExposePickMovesOnlyThePickedWindow** — the pick is a click naming one window, and the re-show
-  that puts every window of the app back lands either side of it. Only the picked window may move. The #5936
+  that puts every window of the app back lands either side of it. Only the picked window may move. The AltTab #5936
   mute never covered this: it was armed when Exposé opened, seconds before the pick. A live run is the
   counterpart.

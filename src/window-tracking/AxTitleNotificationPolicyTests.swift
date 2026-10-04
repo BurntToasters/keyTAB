@@ -3,7 +3,7 @@ import XCTest
 /// Pins `AxTitleNotificationPolicy.verdict` — the decision extracted from `AxObserverRegistry.refreshTitle`.
 /// Pure data in, a verdict out: no AX, no IPC, no globals.
 ///
-/// The #6011 regression: an `AXTitleChanged` naming a node INSIDE a Chromium window was recorded as that
+/// The AltTab #6011 regression: an `AXTitleChanged` naming a node INSIDE a Chromium window was recorded as that
 /// window's title. The node's title is empty, an empty title falls back to the app name when the
 /// WindowServer has none either, and the switcher listed a live browser window as "Chromium".
 class AxTitleNotificationPolicyTests: XCTestCase {
@@ -29,7 +29,7 @@ class AxTitleNotificationPolicyTests: XCTestCase {
         XCTAssertEqual(AxTitleNotificationPolicy.verdict(role: kAXWindowRole, title: nil), .ignoreNoTitle)
     }
 
-    /// the #6011 shape: a static text inside the window, its own title empty, its wid the window's
+    /// the AltTab #6011 shape: a static text inside the window, its own title empty, its wid the window's
     func testEmptyDescendantTitleIsIgnored() {
         XCTAssertEqual(AxTitleNotificationPolicy.verdict(role: kAXStaticTextRole, title: ""),
             .ignoreNotTheWindow)

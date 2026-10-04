@@ -2,7 +2,7 @@
 
 ## Summary
 
-A durable corpus of **real data recorded from a live machine** (macOS 26, 2026-07-06, #5830 investigation),
+A durable corpus of **real data recorded from a live machine** (macOS 26, 2026-07-06, AltTab #5830 investigation),
 fed to the pure decision kernels (`TabGroupResolver`, `PhantomWindowDetector`, `WsEventRouting`). The messy
 facts that break tab detection — duplicate `~` titles, identical tab geometry, Space-less background tabs,
 the removed-from-Space event storm — are captured ONCE as `CapturedWindow` / raw-event fixtures, so heuristics
@@ -115,10 +115,10 @@ order and unroll the free pairs as input states (see the "Race interleavings" se
   (4px taller — no tab bar) stay unclaimed. Also the live proof that the separate-window ambiguity Terminal
   poses is decided by SIZE (tab bar) + the hold, never by position (all at one point).
 
-## #5785 — composed window titles (`composedTitle*`, `reporterComposedTitle*`)
+## AltTab #5785 — composed window titles (`composedTitle*`, `reporterComposedTitle*`)
 
 Captured 2026-07-26 on macOS 26 by restoring the reporter's Terminal profile (`ShowDimensionsInTitle` +
-`ShowActiveProcessInTitle` on, which is the macOS DEFAULT), plus their own numbers from the #5785 logs.
+`ShowActiveProcessInTitle` on, which is the macOS DEFAULT), plus their own numbers from the AltTab #5785 logs.
 The whole title signal can be **absent**, not merely noisy: Terminal composes its WINDOW title from
 components the TAB title has no setting for, so the two strings are never equal.
 
@@ -230,7 +230,7 @@ coarser layer.
 - **testComposedTitleGroupIsFormedByTheTabCount** — the fix: the count from that same unusable read confirms
   the cluster, so the tabs group into one tile with no title comparison.
 - **testComposedTitleGroupStaysUnformedWithoutTheCount** — the counterfactual: `tabCount` 0 and these same
-  two windows are the #5830 case (same app, same size, one briefly Space-less) and stay ungrouped. The count
+  two windows are the AltTab #5830 case (same app, same size, one briefly Space-less) and stay ungrouped. The count
   is doing the work, not the geometry.
 - **testReporterComposedTitlesGroupByTheTabCount** — the same at the reporter's own numbers (1017×610).
   Their capture holds ONLY what their logs contain: no AX tab titles (the diagnostics flag they were

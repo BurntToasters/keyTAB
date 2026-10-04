@@ -11,7 +11,7 @@ is that rule as a pure kernel; `TilesView` performs it (`makeFirstResponder`, `N
 
 ### Why the rule exists at all
 
-Focus is handed to the field a runloop turn late, so the panel's reveal commits first (#5981 —
+Focus is handed to the field a runloop turn late, so the panel's reveal commits first (AltTab #5981 —
 activating the text-input context is a synchronous XPC that once timed out for 3.0s). A key can beat that
 deferred pass, so `handleKeyboardEvent` calls `giveTheFieldTheCaretNow` on every key routed to the field
 (`.passToField`), rather than betting on the race.
@@ -26,7 +26,7 @@ to the end of the text, in UTF-16 units (what `selectedRange` counts, so emoji a
 - Editing, field does NOT have the caret → take it, collapse the selection to the end of the text.
 - Editing, field HAS the caret → **do nothing at all**. Its selection is the user's.
 
-That last line is #6019. Every key-down went through the same call, so the field's selection was reset to
+That last line is AltTab #6019. Every key-down went through the same call, so the field's selection was reset to
 an empty caret at the end before the field ever saw the key: ⌘A then Delete deleted one character instead
 of clearing the search, ⌘A then typing appended instead of replacing, and a caret placed mid-text by
 clicking jumped back to the end. Making the call a no-op once the field holds the caret fixes all of them
@@ -45,7 +45,7 @@ at once, and it is what the method's doc comment already claimed ("a no-op once 
   field are all no-ops, exactly as in any macOS text field.
 - **Grapheme clusters**: one Delete removes a whole emoji, ZWJ sequence, composed accent or CJK character.
   AppKit's doing; pinned here because it's what the user sees.
-- **Not modeled here**: mode transitions, key routing and the Pro gate (`SearchModeResolver`); the deferral
+- **Not modeled here**: mode transitions and key routing (`SearchModeResolver`); the deferral
   and first-responder calls themselves (`TilesView`); how the resulting text ranks windows (`Search`).
 
 ---
@@ -58,7 +58,7 @@ same caret rule the production key path applies, so they assert AppKit's editing
 ### A. The caret rule
 - **testCaretIntentLeavesSelectionAloneWhenSearchIsOff** — search off → nothing to place, either way.
 - **testCaretIntentTakesTheCaretWhenTheFieldDoesNotHaveIt** — editing without the caret → take it, collapse to end.
-- **testCaretIntentLeavesSelectionAloneOnceTheFieldHasTheCaret** — editing with the caret → hands off (#6019).
+- **testCaretIntentLeavesSelectionAloneOnceTheFieldHasTheCaret** — editing with the caret → hands off (AltTab #6019).
 - **testEndOfTextIsACollapsedCaretAfterTheLastCharacter** — the placed range is `(length, 0)`, empty text included.
 
 ### B. Taking the caret
@@ -80,7 +80,7 @@ same caret rule the production key path applies, so they assert AppKit's editing
 - **testBackspaceAtTheStartDoesNothing** — nothing before the caret.
 - **testBackspaceOnAnEmptyFieldDoesNothing** — no text at all.
 - **testRepeatedBackspacesEmptyTheField** — and one extra press past empty is harmless.
-- **testBackspaceAfterSelectAllClearsTheField** — #6019, the reported sequence: ⌘A then Delete clears the search.
+- **testBackspaceAfterSelectAllClearsTheField** — AltTab #6019, the reported sequence: ⌘A then Delete clears the search.
 - **testBackspaceDeletesAPartialSelectionAndNothingElse** — a dragged selection is removed whole.
 - **testBackspaceOnASelectionDoesNotAlsoEatThePrecedingCharacter** — the character before the selection survives.
 
@@ -122,7 +122,7 @@ same caret rule the production key path applies, so they assert AppKit's editing
 - **testBackspaceDeletesAComposedAccentAsOneCharacter** — `e` + combining acute is one grapheme.
 - **testBackspaceDeletesOneCjkCharacter** — 京都 → 京.
 - **testCaretAfterFocusLandsAtTheEndOfNonAsciiText** — the placed caret is in UTF-16 units, so emoji don't shift it.
-- **testSelectAllThenBackspaceClearsNonAsciiText** — #6019 holds for mixed scripts.
+- **testSelectAllThenBackspaceClearsNonAsciiText** — AltTab #6019 holds for mixed scripts.
 
 ### K. Longer sessions
 - **testTypeCorrectSelectAllAndRetype** — type, fix a typo, ⌘A + retype, ⌘A + Delete, type again: a whole search as it is really used.

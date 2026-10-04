@@ -14,7 +14,7 @@ selection, and the kernel's state is left untouched until the session ends.
 
 Distances are fractions of the trackpad surface, the way `NSTouch.normalizedPosition` reports them.
 
-## Why it is extracted (#5137)
+## Why it is extracted (AltTab #5137)
 
 "The trackpad gesture stops working, several times a day, and only relaunching KeyTab fixes it." The
 trigger keeps state that outlives a single gesture, and two pieces of it could hold a value that made
@@ -92,7 +92,7 @@ Per event, while the switcher is closed:
    are raised, which prevents a 4→3 trigger. Fewer fingers deliberately don't latch; see the section
    above. Ignore.
 4. **Wrong finger count** — `activeTouches.count != requiredFingers`: *re-base* the trigger (start
-   positions only) and ignore. This branch was the accidental cure for the #5137 latch, and it was also
+   positions only) and ignore. This branch was the accidental cure for the AltTab #5137 latch, and it was also
    forgiving off-axis wanders; it must not clear any verdict about the session.
 5. **The swipe itself** — needs `swipeStillPossible`, a gesture already under way (the first frame
    only records start positions), a non-empty set of readable distances, every touch within
@@ -117,9 +117,9 @@ Mirrors `GestureTriggerKernelTests.swift` 1:1.
 - **testBeganPhaseAlwaysStartsANewGesture** — a `.began` touch re-bases even with a start position on
   file.
 - **testTouchWithUnreadablePositionIsSkippedNotMeasured** — a touch whose `normalizedPosition` threw
-  (#5499) contributes no distance.
+  (AltTab #5499) contributes no distance.
 
-### B. The `swipeStillPossible` latch (#5137)
+### B. The `swipeStillPossible` latch (AltTab #5137)
 - **testOffAxisWanderCancelsTheSwipeForTheRestOfTheGesture** — 0.15 across the axis, then a clean 0.2
   along it → still ignored. The latch is intended *within* a gesture.
 - **testCancelledSwipeDoesNotSurviveTheFingersBeingRaised** — cancel, lift all fingers, swipe cleanly
@@ -139,7 +139,7 @@ Mirrors `GestureTriggerKernelTests.swift` 1:1.
 - **testThreeFingersDoNotTriggerAFourFingerGesture** — wrong finger count.
 - **testThreeFingerGestureTriggersOnThreeFingers** — `requiredFingers` follows the preference.
 - **testUnreadablePositionsNeverTrigger** — all positions unreadable → no distances → must not
-  trigger on that emptiness (#5499).
+  trigger on that emptiness (AltTab #5499).
 
 ### D. Another gesture already claimed these fingers
 - **testExtraTravellingFingerBlocksTheTrigger** — five fingers, one travels; a clean four-finger

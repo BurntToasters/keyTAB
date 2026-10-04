@@ -278,7 +278,7 @@ final class TestScenarioSimulatorTests: XCTestCase {
                                     .init(pid: 2)])
     }
 
-    /// #5785's remaining symptom, from drauzio's TABDIAG capture: opening the FIRST tab in a standalone
+    /// AltTab #5785's remaining symptom, from drauzio's TABDIAG capture: opening the FIRST tab in a standalone
     /// window shows TWO Terminal tiles for one window. The tab bar grows the window, so the incoming tab
     /// reads 1017x610 while the outgoing keeps 1017x565 — same app, same position, same width, different
     /// height — and every clustering rule keys on size, so the pair never meets in one cluster and geometry

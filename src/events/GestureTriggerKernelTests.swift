@@ -1,7 +1,7 @@
 import XCTest
 
 /// Pins `GestureTriggerKernel` and `GestureTracker`, the decision extracted from `TrackpadEvents` for
-/// #5137 ("the trackpad gesture stops working until KeyTab is relaunched"). Pure value types in,
+/// AltTab #5137 ("the trackpad gesture stops working until KeyTab is relaunched"). Pure value types in,
 /// `Outcome` out — no trackpad, no taps, no globals; `TrackpadEvents` is the adapter that maps
 /// `NSTouch` into these frames.
 ///
@@ -48,7 +48,7 @@ final class GestureTriggerKernelTests: XCTestCase {
 
     // MARK: - A. GestureTracker: a touch identity means nothing once the finger is up
 
-    /// The root cause of #5137. `NSTouch.h`: "while touch identities may be re-used, they are unique
+    /// The root cause of AltTab #5137. `NSTouch.h`: "while touch identities may be re-used, they are unique
     /// during the life of the touch". A lifted finger's start position must go, or a recycled identity
     /// inherits it and the measured travel is another finger's, from another gesture.
     func testRecycledIdentityIsNotMistakenForAnOngoingTouch() {
@@ -90,7 +90,7 @@ final class GestureTriggerKernelTests: XCTestCase {
         XCTAssertTrue(tracker.distances(unreadable).isEmpty)
     }
 
-    // MARK: - B. The swipeStillPossible latch (#5137)
+    // MARK: - B. The swipeStillPossible latch (AltTab #5137)
 
     /// Wandering across the gesture's axis cancels the swipe for the rest of the gesture. Intended:
     /// it mirrors the native Space swipe.
@@ -183,7 +183,7 @@ final class GestureTriggerKernelTests: XCTestCase {
         XCTAssertEqual(kernel.handle(frame(moved(["A", "B", "C"], x: 0.55, y: 0.5), required: 3)), .trigger)
     }
 
-    /// #5499: Universal Control forwards indirect touches whose position can't be read. With no
+    /// AltTab #5499: Universal Control forwards indirect touches whose position can't be read. With no
     /// readable position there is no distance to check, and we must not trigger on that emptiness.
     func testUnreadablePositionsNeverTrigger() {
         let kernel = GestureTriggerKernel()
@@ -240,7 +240,7 @@ final class GestureTriggerKernelTests: XCTestCase {
 
     // MARK: - F. A gesture must start clean, not inherit a spent session
 
-    /// Reported after the #5137 fix, and present long before it: a long vertical wander followed by a
+    /// Reported after the AltTab #5137 fix, and present long before it: a long vertical wander followed by a
     /// horizontal swipe used to trigger, because any event where a finger paused took
     /// `activeTouches.count` off `requiredFingers`, and that branch reset `swipeStillPossible` along
     /// with the start positions. The off-axis cancel is scoped to the finger-down session, so only

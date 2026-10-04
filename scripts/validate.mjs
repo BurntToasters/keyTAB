@@ -21,6 +21,63 @@ export function artworkHashesReady(hashes) {
   return hashes.length > 0 && hashes.every((hash) => !knownPlaceholderHashes.has(hash));
 }
 
+function swiftStringLiterals(line) {
+  const literals = [];
+  let current = null;
+  for (let index = 0; index < line.length; index++) {
+    const character = line[index];
+    if (current === null) {
+      if (character === "/" && line[index + 1] === "/") break;
+      if (character === '"') current = "";
+    } else if (character === "\\") {
+      current += line.slice(index, index + 2);
+      index++;
+    } else if (character === '"') {
+      literals.push(current);
+      current = null;
+    } else current += character;
+  }
+  return literals;
+}
+
+export function swiftRuntimeBrandingLines(source) {
+  return source.split("\n").flatMap((line, index) => {
+    if (line.includes("modified fork of AltTab v11.8.0")) return [];
+    return swiftStringLiterals(line).some((literal) => literal.includes("AltTab")) ? [index + 1] : [];
+  });
+}
+
+export function isMachO(buffer) {
+  if (buffer.length < 4) return false;
+  const magic = buffer.readUInt32BE(0);
+  return [0xcffaedfe, 0xcefaedfe, 0xfeedfacf, 0xfeedface, 0xcafebabe, 0xcafebabf].includes(magic);
+}
+
+export function signingTeamMismatches(entries, team) {
+  return entries.filter((entry) => entry.team !== team).map((entry) => `${entry.file} is signed by ${entry.team ?? "no team"}`);
+}
+
+function machOFilesUnder(directory) {
+  return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+    const absolute = path.join(directory, entry.name);
+    if (entry.isSymbolicLink()) return [];
+    if (entry.isDirectory()) return machOFilesUnder(absolute);
+    const handle = fs.openSync(absolute, "r");
+    try {
+      const head = Buffer.alloc(4);
+      return isMachO(head.subarray(0, fs.readSync(handle, head, 0, 4, 0))) ? [absolute] : [];
+    } finally {
+      fs.closeSync(handle);
+    }
+  });
+}
+
+function signingTeam(file) {
+  const result = run("codesign", ["-dv", "--verbose=2", file], { capture: true, allowFailure: true });
+  const team = `${result.stdout ?? ""}\n${result.stderr ?? ""}`.match(/^TeamIdentifier=(\S+)$/m)?.[1];
+  return team && team !== "not" ? team : null;
+}
+
 function filesUnder(directory) {
   if (!fs.existsSync(directory)) return [];
   return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
@@ -79,10 +136,7 @@ export function validateWorkspace({ release = false, bundle = null } = {}) {
   const restricted = [path.join(root, "src"), path.join(root, "resources")].flatMap(filesUnder).filter((file) => !file.includes(`${path.sep}vendor${path.sep}`) && /\.(otf|ttf)$/i.test(file));
   assert(restricted.length === 0, `restricted bundled fonts remain: ${restricted.map((file) => path.relative(root, file)).join(", ")}`, failures);
   for (const file of filesUnder(path.join(root, "src")).filter((entry) => entry.endsWith(".swift"))) {
-    const lines = fs.readFileSync(file, "utf8").split("\n");
-    lines.forEach((line, index) => {
-      if (/"[^"\n]*AltTab/.test(line) && !line.includes("modified fork of AltTab v11.8.0")) failures.push(`AltTab runtime branding: ${path.relative(root, file)}:${index + 1}`);
-    });
+    for (const line of swiftRuntimeBrandingLines(fs.readFileSync(file, "utf8"))) failures.push(`AltTab runtime branding: ${path.relative(root, file)}:${line}`);
   }
   for (const required of [".env.example", "LICENCE.md", "NOTICE.md", "THIRD_PARTY_NOTICES.md", "resources/licenses/Sparkle-LICENSE.txt", "resources/licenses/ShortcutRecorder-LICENSE.txt", "docs/ASSET_LICENSES.md"]) {
     assert(fs.existsSync(path.join(root, required)), `missing compliance file: ${required}`, failures);
@@ -127,6 +181,8 @@ function validateBundle(bundle, expected, failures) {
     const signing = run("codesign", ["-dv", "--verbose=4", bundle], { capture: true });
     const signingText = `${signing.stdout ?? ""}\n${signing.stderr ?? ""}`;
     assert(signingText.includes("TeamIdentifier=FYJZP8B2KG"), "release Team ID mismatch", failures);
+    const nested = machOFilesUnder(bundle).map((file) => ({ file: path.relative(bundle, file), team: signingTeam(file) }));
+    failures.push(...signingTeamMismatches(nested, "FYJZP8B2KG").map((mismatch) => `release nested signature: ${mismatch}`));
     assert(/flags=.*runtime/.test(signingText), "release hardened runtime is missing", failures);
     const entitlements = run("codesign", ["-d", "--entitlements", ":-", bundle], { capture: true });
     const entitlementText = `${entitlements.stdout ?? ""}\n${entitlements.stderr ?? ""}`;

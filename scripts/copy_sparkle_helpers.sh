@@ -100,10 +100,10 @@ for plist in "$SPARKLE_VERSIONED/Resources/Info.plist" "$SPARKLE_PKG/Resources/I
 done
 
 # Re-seal Sparkle.framework so its _CodeSignature/CodeResources reflects our CFBundleIdentifier
-# rewrite + the helper/resource copies above. We don't have to sign Updater.app / Autoupdate —
-# those are pre-signed with the maintainer's Developer ID at vendor time (see
-# vendor/scripts/update_sparkle.sh) and their seals deeper than --deep walks, so Xcode's final
-# pass on KeyTab.app never touches them.
+# rewrite + the helper/resource copies above. Updater.app / Autoupdate keep their vendor-time
+# signature (upstream AltTab's Developer ID, see vendor/scripts/update_sparkle.sh) in Debug builds.
+# Release builds re-sign them inside-out with KeyTab's identity (`signRelease` in scripts/build.mjs),
+# and release validation rejects any nested Mach-O not signed by the KeyTab team.
 # Why this can't be Xcode's --deep alone: Release adds --deep via release.xcconfig and Xcode does
 # re-seal Sparkle.framework, but Debug uses --timestamp=none without --deep, leaving the SPM
 # linker-signed adhoc seal in place — which then fails `codesign --verify --deep --strict`

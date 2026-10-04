@@ -333,7 +333,7 @@ class Preferences {
     /// Which Screen-Recording-dependent features any shortcut's effective settings rely on: the
     /// Thumbnails appearance style (window screenshots) and/or the "preview selected window" overlay.
     /// These are the only features needing the permission, so when none are configured the menubar
-    /// callout that nags about the missing permission is pointless and is suppressed (see #5623). The
+    /// callout that nags about the missing permission is pointless and is suppressed (see AltTab #5623). The
     /// result also drives which feature(s) the callout names. We OR each flag across every shortcut
     /// slot, so a per-shortcut override that enables Thumbnails/Preview on any one slot flips it on.
     /// The pure classification lives in `PermissionCalloutResolver` (unit-tested).

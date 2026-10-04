@@ -5,7 +5,7 @@ import XCTest
 /// the thin adapter that feeds these inputs from `SwitcherSession` / `ControlsTab` / `TilesView`.
 ///
 /// Groups: A holdShortcut ("contains at least") · B nextWindow base-key during a session ·
-/// C the search-editing gate for modifier-only shortcuts (#5781, the previousWindow = ⇧ regression) ·
+/// C the search-editing gate for modifier-only shortcuts (AltTab #5781, the previousWindow = ⇧ regression) ·
 /// D default exact / exact+hold matching.
 final class ShortcutModifierResolverTests: XCTestCase {
 
@@ -48,7 +48,7 @@ final class ShortcutModifierResolverTests: XCTestCase {
                              isNextWindow: true, sessionActive: false))
     }
 
-    // MARK: - C. Search-editing gate for modifier-only shortcuts (previousWindow = ⇧, #5781)
+    // MARK: - C. Search-editing gate for modifier-only shortcuts (previousWindow = ⇧, AltTab #5781)
 
     func testModifierOnlyBareDoesNotMatchWhileEditing() {
         // The regression: bare ⇧ while editing is uppercasing input, not "select previous window".

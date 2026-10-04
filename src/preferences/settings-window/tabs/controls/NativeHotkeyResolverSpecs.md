@@ -14,7 +14,7 @@ returns disjoint `disable` / `enable` sets over `CGSSymbolicHotKey`. `ControlsTa
 is a thin adapter that builds the inputs from `ControlsTab.shortcuts` and applies the result via
 `setNativeCommandTabEnabled`.
 
-The kernel encodes one invariant the previous in-place code got wrong (issue #5653): **a single
+The kernel encodes one invariant the previous in-place code got wrong (issue AltTab #5653): **a single
 shortcut can overlap multiple native predicates and must contribute to all of them.** ⌘⇥ matches
 `.commandTab` exactly *and* `.commandShiftTab` via `combinedModifiersMatch` whenever a hold-shortcut
 carries shift (the user's second-shortcut scenario). The previous `.first { … }` over a dictionary
@@ -37,7 +37,7 @@ iteration order isn't stable across launches) — leaving native ⌘⇥ enabled 
 
 Mirrors `NativeHotkeyResolverTests.swift` 1:1.
 
-### A. Issue #5653 — overlapping ⌘⇥ + ⌘⇧⇥ + hold ⌘ + ⌘⇧
+### A. Issue AltTab #5653 — overlapping ⌘⇥ + ⌘⇧⇥ + hold ⌘ + ⌘⇧
 - **testCommandTabAndCommandShiftTabBothDisableNativeSwitchers** — the user's stuck-session
   config; both `.commandTab` and `.commandShiftTab` must end up disabled, regardless of which
   predicate the ⌘⇥ snapshot was visited under first.

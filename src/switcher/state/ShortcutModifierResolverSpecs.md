@@ -5,7 +5,7 @@
 `ShortcutModifierResolver` is the pure decision kernel for `ATShortcut.modifiersMatch`: given a
 keyboard event's modifier set and a configured shortcut's modifiers, does the event match the
 shortcut? Extracted from `ATShortcut` so its branch order is unit-tested (same rationale as
-`NativeHotkeyResolver`, #5653). `ATShortcut` is the thin adapter that gathers the inputs from
+`NativeHotkeyResolver`, AltTab #5653). `ATShortcut` is the thin adapter that gathers the inputs from
 `SwitcherSession` (is a session active, which hold modifiers apply), `ControlsTab`, and `TilesView`
 (is the search field being edited), then calls this kernel.
 
@@ -22,7 +22,7 @@ only compares bits, so tests use opaque bit values.
 3. **search-editing gate for modifier-only shortcuts** — while editing the search field, a bare
    modifier-only shortcut (e.g. the default `previousWindow = ⇧`) is uppercasing input, not a command,
    so it must not fire on its own; it is routed through `SearchModeResolver.editingShortcutMatch`
-   (`isPrintable: true`), which requires the hold modifiers (⌥⇧). This closes the #5781 gap: modifier-only
+   (`isPrintable: true`), which requires the hold modifiers (⌥⇧). This closes the AltTab #5781 gap: modifier-only
    shortcuts arrive as `flagsChanged` (no keyDown), so they bypass `TilesView.handleSearchEditingKeyDown`
    and would otherwise fire on the bare modifier, making capitals untypeable in search. The gate is
    **editing-only** and **modifier-only**: key shortcuts (close = W, etc.) keep default matching here
@@ -43,7 +43,7 @@ Mirrors `ShortcutModifierResolverTests.swift` 1:1.
 - **testNextWindowMatchesBaseKeyWithoutHoldDuringSession** — shortcut ⌘⌥, hold ⌥, event ⌘ → matches the base key.
 - **testNextWindowBaseKeyNotMatchedWithoutSession** — same inputs, no session → falls through to default → no match.
 
-### C. Search-editing gate for modifier-only shortcuts (previousWindow = ⇧, #5781)
+### C. Search-editing gate for modifier-only shortcuts (previousWindow = ⇧, AltTab #5781)
 - **testModifierOnlyBareDoesNotMatchWhileEditing** — modifier-only, editing, bare ⇧ → does NOT match (types a capital). The regression guard.
 - **testModifierOnlyWithHoldMatchesWhileEditing** — modifier-only, editing, ⌥⇧ → matches (navigates).
 - **testModifierOnlyBareMatchesWhenNotEditing** — modifier-only, not editing, bare ⇧ → matches (normal session navigates).

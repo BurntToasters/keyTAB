@@ -8,7 +8,7 @@ import Cocoa
 /// button, outline, tab bar, and menu of the target window also matches its wid. Those descendants often sit
 /// at a LOWER AXUIElementID than the window element itself, so a scan that stopped at the first wid match
 /// handed admission a descendant (role `AXOutline` / `AXGroup` / `AXTabGroup` / `AXMenuButton`,
-/// subrole nil), which was rightly rejected — and the window vanished from the switcher entirely (#5849, the
+/// subrole nil), which was rightly rejected — and the window vanished from the switcher entirely (AltTab #5849, the
 /// v11.4 WindowServer-migration regression: the old fallback filtered by subrole, the migration dropped it).
 ///
 /// The fix is a root check: the target's root window element is the one whose role is `AXWindow`. Subrole is

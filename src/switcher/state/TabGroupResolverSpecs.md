@@ -32,7 +32,7 @@ Several independent signals locate tabs, used at different times:
   are dynamic (Terminal renames tabs by cwd/command) or drift between the tab-button title and the window's
   own title. That drift can be TOTAL, not marginal: an app may compose its WINDOW title from components its
   TAB title has no setting for, which is what stock Terminal does (`"~/Documents — -zsh ▸ -zsh — 80×23"` as a
-  window, `"~/Documents"` as a tab, #5785). Then nothing matches, ever, and this signal is simply absent.
+  window, `"~/Documents"` as a tab, AltTab #5785). Then nothing matches, ever, and this signal is simply absent.
 - **AX tab COUNT** — the half of the same read that is never in doubt. macOS exposes no per-tab window
   handle (`_AXUIElementGetWindow`, `AXWindow`, `AXParent` and `AXTopLevelUIElement` on an AXTabButton all
   return the PARENT window's wid — re-probed on macOS 26, don't re-litigate), but the AXTabGroup's presence
@@ -44,7 +44,7 @@ Several independent signals locate tabs, used at different times:
   alone does not **create** a group: it only fires when the visible window is fullscreen or was already
   AX-confirmed as tabbed (`tabbedSiblingWids != nil`). Otherwise separate windows of one app that share a
   default size and go briefly Space-less (a Space transition, a flaky CGS read) get collapsed into a phantom
-  tab group, hiding real windows (#5830).
+  tab group, hiding real windows (AltTab #5830).
 
 ## Functions
 
@@ -62,10 +62,10 @@ Several independent signals locate tabs, used at different times:
   visible was AX-confirmed tabbed (`tabbedSiblingWids != nil`), OR any member is fullscreen (its tabs expose
   no readable AXTabGroup and a new active's own fullscreen flag lags discovery), OR a background candidate is
   already grouped **and its group has lost its visible** (no other member of it still holds a Space — a new tab
-  taking over that group) — so geometry never fabricates a group from unconfirmed same-size windows (#5830).
+  taking over that group) — so geometry never fabricates a group from unconfirmed same-size windows (AltTab #5830).
   The visible's own AXTabGroup COUNT (`tabCount > 1`) is a fourth confirmation, for the app whose titles
   never match: `tabbedSiblingWids` is written only by the title path, so without it that gate could never
-  open and the tabs churned as separate tiles forever (#5785). It can only be ADDITIONALLY true where no
+  open and the tabs churned as separate tiles forever (AltTab #5785). It can only be ADDITIONALLY true where no
   group was formed — an app whose titles match already has `tabbedSiblingWids` — so it cannot change those
   apps' behaviour. A fold confirmed ONLY this way is BOUNDED by the count: more background candidates than
   `tabCount - 1` means the cluster holds a non-tab (a separate same-frame window gone transiently
@@ -127,7 +127,7 @@ Several independent signals locate tabs, used at different times:
   OWN AXTabGroup as the active element and never reaches this path (`testOnScreenWindowNeverClaimedAsTab` runs
   with the flag off); still title-gated (coexisting same-app groups keep distinct titles) and bounded by the
   tab count. A window still tabbed into THIS group (`isTabbed` + `tabbedSiblingWids` ∋ active) is then
-  **kept** even if no title named it, so a duplicate or renamed title can't flap an inactive tab out (#5830);
+  **kept** even if no title named it, so a duplicate or renamed title can't flap an inactive tab out (AltTab #5830);
   each kept sibling also cancels one `untrackedTitle`. ALSO kept: an on-screen un-tabbed member of this group
   that is MORE RECENTLY FOCUSED than the reading active — AX reads are queued, so a read can land right after
   the user switched to another member, and treating the reader as the active then ejected the REAL active
@@ -341,7 +341,7 @@ and silence is not a verdict.
   group's `tabbedSiblingWids` (AX-confirmed), one sibling Space-less → grouped. The tab-switch re-link.
 - **testFullscreenVisibleGroupsWithoutAxConfirmation** — visible is fullscreen (no `tabbedSiblingWids`, since
   AX can't read a fullscreen AXTabGroup) + one Space-less sibling → grouped via the fullscreen exemption.
-- **testTabCountConfirmsWhenTitlesCannot** — stock Terminal's composed window title (#5785) leaves
+- **testTabCountConfirmsWhenTitlesCannot** — stock Terminal's composed window title (AltTab #5785) leaves
   `tabbedSiblingWids` nil forever; the AXTabGroup's COUNT confirms the cluster instead and the tab is grouped.
 - **testTabCountRefusesToFoldMoreCandidatesThanTabs** — AX says 2 tabs but two Space-less same-frame
   candidates exist → the whole fold is refused rather than guess which is the intruder and hide a real window.
@@ -364,7 +364,7 @@ and silence is not a verdict.
 - **testStaleTabCountAloneDoesNotConfirm** — a window whose tabs are gone reads `tabCount` 0 (the reducer
   retires it on a nil read of an ungrouped window), so it can't keep the gate open.
 - **testNormalUnconfirmedNotGrouped** — same app + size, visible is normal and never AX-confirmed, one sibling
-  briefly Space-less → **not** grouped. The #5830 fix: geometry alone can't fabricate a group.
+  briefly Space-less → **not** grouped. The AltTab #5830 fix: geometry alone can't fabricate a group.
 - **testTwoVisibleSameSizeNotGrouped** — same app + size but *both* hold a Space (two separate real windows)
   → no group. A real window is never Space-less, so it's never collapsed into a tab.
 - **testDifferentSizesNotGrouped** — same app, different sizes → no group.
@@ -416,7 +416,7 @@ and silence is not a verdict.
 - **testUntrackedTitleReported** — a title with no tracked window → in `untrackedTitles` (to brute-force
   discover), not matched.
 - **testStillTabbedSiblingKeptDespiteNoTitle** — a window still tabbed into this group (isTabbed +
-  `tabbedSiblingWids` ∋ active) with no matching AX title → **kept** (the #5830 flap fix), not un-tabbed.
+  `tabbedSiblingWids` ∋ active) with no matching AX title → **kept** (the AltTab #5830 flap fix), not un-tabbed.
 - **testDepartedSiblingUntabbedOnceNoLongerTabbed** — once that window's own read clears `isTabbed` (it went
   standalone), the next match un-tabs it (`toUntabWids`), clearing the stale link.
 - **testOtherGroupTabsNotUntabbed** — a same-app window in a DIFFERENT group (`tabbedSiblingWids` lacks this
@@ -446,11 +446,11 @@ and silence is not a verdict.
 - **testDynamicTitleMismatchKeepsSibling** — the cause-B flap, now fixed: the active's AXTabGroup reports the
   inactive tab as "B2" (Terminal renamed it) but the tracked window still reads "B1". Title equality fails,
   but the sibling is still tabbed into this group, so it is **kept** (not shown as a separate window) and "B2"
-  is **not** reported untracked (we already hold that tab). The #5830 stability fix.
+  is **not** reported untracked (we already hold that tab). The AltTab #5830 stability fix.
 
 ### B2. matchSiblings — the group token
 
-- **testTokenClaimsSiblingNoTitleCanName** — #5785's shape (composed titles name nobody, the tab bar made the
+- **testTokenClaimsSiblingNoTitleCanName** — AltTab #5785's shape (composed titles name nobody, the tab bar made the
   frames disagree): both windows named the same `AXTabGroup` element, so the sibling is matched anyway. One
   title is still reported untracked, and that is pre-existing accounting, not the token: when an app composes
   tab titles unlike window titles the ACTIVE's own title is absent too, so N titles are shared by N-1
@@ -620,7 +620,7 @@ some later pass happened to re-run geometry over them — a state that is not a 
 the convergence invariant reports. `normalizeGroupVisibility` now backfills every member from the
 representative, marked borrowed because it is our inference and not CGS evidence.
 
-### An on-screen window is nobody's background tab (#5954)
+### An on-screen window is nobody's background tab (AltTab #5954)
 
 Geometry infers a background tab from Space-lessness, and Space-lessness lies whenever our own Space data is
 wrong. The WindowServer's ordered-in bit settles it, and the two facts were measured against a real macOS tab

@@ -27,9 +27,9 @@ class ScreenLockEvents {
         AxObserverRegistry.shared.recoverAll(.unlock)
         // Whatever the OS reported while the screen was dark was measured on apps publishing zero windows;
         // re-enumerate now that they answer again, instead of waiting for the next summon's throttled pass
-        // (#6021). Cheap: the same four passes a show already runs, behind the same throttle.
+        // (AltTab #6021). Cheap: the same four passes a show already runs, behind the same throttle.
         Applications.manuallyRefreshAllWindows()
-        // a locked/idle screen can let macOS disable our event taps (kCGEventTapDisabledByTimeout); re-enable on unlock (#5723)
+        // a locked/idle screen can let macOS disable our event taps (kCGEventTapDisabledByTimeout); re-enable on unlock (AltTab #5723)
         SleepWakeEvents.reEnableAllTaps()
     }
 }

@@ -4,7 +4,7 @@ import Foundation
 /// configured shortcut's modifiers, decide whether they match — accounting for the activation (hold)
 /// modifiers and the current context (the holdShortcut / nextWindowShortcut special cases, and the
 /// search-editing gate for modifier-only shortcuts). Extracted from `ATShortcut` so the branch *order*
-/// is unit-tested (same rationale as `NativeHotkeyResolver`, #5653); `ATShortcut` is the thin adapter
+/// is unit-tested (same rationale as `NativeHotkeyResolver`, AltTab #5653); `ATShortcut` is the thin adapter
 /// that gathers the inputs from `SwitcherSession` / `ControlsTab` / `TilesView`.
 ///
 /// All modifier args are *cleaned* Carbon bitmasks (see `CarbonModifierFlags.cleaned()`). The kernel
@@ -31,7 +31,7 @@ enum ShortcutModifierResolver {
         }
         // While editing the search field, a bare modifier-only shortcut (e.g. previousWindow = ⇧) is
         // uppercasing input, not a command, so it must not fire on its own; require the hold modifiers
-        // too (e.g. ⌥⇧), mirroring `editingShortcutMatch` for printable keyDown shortcuts (#5781).
+        // too (e.g. ⌥⇧), mirroring `editingShortcutMatch` for printable keyDown shortcuts (AltTab #5781).
         // Modifier-only shortcuts arrive as `flagsChanged` (no keyDown), so they bypass
         // `TilesView.handleSearchEditingKeyDown` and must be gated here instead.
         if isModifierOnly && isSearchEditing {

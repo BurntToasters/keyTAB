@@ -21,7 +21,7 @@ Both share a **bundle-id prefix gate**: an exception applies to an app iff the e
 - **Hide rules**: `.none` never hides; `.always` always hides; `.whenNoOpenWindow` hides only the
   windowless placeholder row; `.windowTitleContains` hides when any non-empty pattern is a substring of
   the window title (nil / empty / empty-string patterns never match).
-- **Active-app override (#5810)**: when `activeAppOverride` is set (filter is "Active app" and this is
+- **Active-app override (AltTab #5810)**: when `activeAppOverride` is set (filter is "Active app" and this is
   the active app), the blanket `.always` / `.whenNoOpenWindow` rules are ignored — the shortcut intent
   beats the Exceptions list. The narrower `.windowTitleContains` still fires (it hides only some windows).
 - **Ignore rules**: `.always` disables shortcuts whenever the app is frontmost; `.whenFullscreen` only

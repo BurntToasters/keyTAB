@@ -2,7 +2,7 @@ import XCTest
 import CoreGraphics
 
 /// Pins drag-and-drop over the switcher as pure, deterministic decisions — no AppKit drag session, timers,
-/// or event tap. Covers the four refinements from issue #5350 (no grab on appear, the movement deadzone,
+/// or event tap. Covers the four refinements from issue AltTab #5350 (no grab on appear, the movement deadzone,
 /// the inter-tile gap targeting like hover, the always-on auto-select timer with its reset radius), the
 /// drop's validity, and the regression fix: the mouse tap must yield the drop's mouseUp. Future refactors
 /// of the drag pipeline must keep this green.

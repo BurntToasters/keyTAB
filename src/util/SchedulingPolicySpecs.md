@@ -36,7 +36,7 @@ Mirrors `SchedulingPolicyTests.swift` 1:1.
 
 One key's throttle state, holding the work its pending tail will run. The tail runs the LATEST work offered:
 callers pass closures that carry values, so running the one that scheduled the tail applied a burst's second
-value and dropped its last. A window kept a stale title that way until something re-read it (#6047).
+value and dropped its last. A window kept a stale title that way until something re-read it (AltTab #6047).
 
 - **testThrottleSlotTailRunsTheLatestWorkOfABurst** — A runs now, B schedules the tail, C and D coalesce, the tail runs D.
 - **testThrottleSlotTailRestartsTheWindow** — the tail counts as a run: the next call inside 200ms of it schedules a new tail.
@@ -125,7 +125,7 @@ cannot make a window undiscoverable.
 **A window that changes nothing is the case this budget cannot judge alone**, and the caller owns that half:
 it records no failure reached while the screen is locked, and drops a process's records once it starts
 answering accessibility again. Without those, a wake wrote off every window KeyTab did not already hold an
-element for, and a quiescent background app never moved its window set to earn another attempt (#6031).
+element for, and a quiescent background app never moved its window set to earn another attempt (AltTab #6031).
 
 - **testAFreshSurfaceIsAlwaysAttempted** — a surface with no failure on record is swept, as before.
 - **testAFailedSurfaceIsRetriedWithinTheBudget** — a failure is not a verdict: the situation keeps its three

@@ -14,6 +14,23 @@ export function debugBuildArguments({ unsigned = false, derivedData = "DerivedDa
   return args;
 }
 
+export function releaseSigningTargets(app) {
+  const sparkle = path.join(app, "Contents/Frameworks/Sparkle.framework");
+  return [path.join(sparkle, "Versions/A/Autoupdate"), path.join(sparkle, "Versions/A/Updater.app"), sparkle, app];
+}
+
+export function releaseCodesignArguments(target, { identity, entitlements, isApp }) {
+  return ["--force", "--options", "runtime", "--timestamp", "--sign", identity, ...(isApp ? ["--entitlements", entitlements] : []), target];
+}
+
+function signRelease(app, identity) {
+  const entitlements = path.join(root, "KeyTab.entitlements");
+  for (const target of releaseSigningTargets(app)) {
+    if (!fs.existsSync(target)) throw new Error(`release signing target is missing: ${path.relative(app, target) || path.basename(app)}`);
+    run("codesign", releaseCodesignArguments(target, { identity, entitlements, isApp: target === app }));
+  }
+}
+
 export function buildDebug() {
   validate();
   const unsigned = process.env.KEYTAB_UNSIGNED_BUILD === "1";
@@ -42,7 +59,7 @@ export function buildRelease() {
   const architectures = output("lipo", ["-archs", path.join(app, "Contents/MacOS/KeyTab")]).split(/\s+/).sort();
   if (architectures.join(" ") !== "arm64 x86_64") throw new Error(`release executable is not universal: ${architectures.join(" ")}`);
   const identity = process.env.KEYTAB_SIGNING_IDENTITY || "Developer ID Application";
-  run("codesign", ["--force", "--deep", "--options", "runtime", "--timestamp", "--sign", identity, "--entitlements", path.join(root, "KeyTab.entitlements"), app]);
+  signRelease(app, identity);
   run("codesign", ["--verify", "--deep", "--strict", "--verbose=2", app]);
   const signing = run("codesign", ["-dv", "--verbose=4", app], { capture: true });
   const signingText = `${signing.stdout ?? ""}\n${signing.stderr ?? ""}`;

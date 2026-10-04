@@ -79,7 +79,7 @@ final class KeyRepeatTimerTests: XCTestCase {
 
     // MARK: C. The tick reached the main thread late — it stands for nothing
 
-    /// **#5977.** The first summon after a few idle minutes stalls the main thread AFTER the panel was
+    /// **AltTab #5977.** The first summon after a few idle minutes stalls the main thread AFTER the panel was
     /// ordered front, so every tick the timer fired during the stall was eligible at once and the selection
     /// walked ~8 tiles. A tick a whole repeat interval late is refused, whatever the anchors say.
     func testSkipsATickThatWaitedLongerThanOneRepeatInterval() {
@@ -106,7 +106,7 @@ final class KeyRepeatTimerTests: XCTestCase {
 
     // MARK: D. When the repeat stops
 
-    /// **#6075.** Carbon's hotkey-released event never arrived, so the shortcut still read `.down` and one tap
+    /// **AltTab #6075.** Carbon's hotkey-released event never arrived, so the shortcut still read `.down` and one tap
     /// walked the selection to the last tile. The key read as physically up stops the repeat anyway.
     func testStopsWhenTheKeyIsUpThoughItsReleaseWasLost() {
         XCTAssertTrue(KeyRepeatTimerTestable.shouldStop(shortcutIsUp: false, keyIsPhysicallyDown: false, holdModifierIsReleased: false))

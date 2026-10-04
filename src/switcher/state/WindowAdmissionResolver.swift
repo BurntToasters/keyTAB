@@ -148,7 +148,7 @@ enum WindowAdmissionResolver {
     /// describes as a titled `AXDialog`, and its floating sidebar as `AXStandardWindow`; the same two
     /// subroles name the ordinary windows of every AppKit app. Gating them by placement is what separates
     /// them, and it is why this is one rule over every subrole instead of a list of the ones caught so far
-    /// (#5565).
+    /// (AltTab #5565).
     ///
     /// Covering the screen is the other positive vouch: a fullscreen surface is where the user already is,
     /// whatever level the WindowServer parks it at.
@@ -159,7 +159,7 @@ enum WindowAdmissionResolver {
     /// **Exact attention fills a silence; it does not overrule an answer.** Both channels that reach here read
     /// `kAXFocusedWindow`, the app's own focus notification and the activation read, and that attribute names
     /// floating panels and borderless HUDs where `kAXMain` names neither, measured across ~100 installed apps
-    /// in #5983. So attention is evidence about where focus went, never about what the surface IS.
+    /// in AltTab #5983. So attention is evidence about where focus went, never about what the surface IS.
     ///
     /// Which is why `admissiblePlacement` binds here too, and it is the whole reason the gate holds. An app
     /// that key-focuses its own HUD reaches attention exactly as a real window does — ChatGPT's dictation

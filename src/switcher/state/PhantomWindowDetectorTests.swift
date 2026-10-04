@@ -1,7 +1,7 @@
 import XCTest
 
 /// Pins the phantom-window decision (`PhantomWindowDetector`) against canonical `WindowState` /
-/// `ApplicationState` snapshots, so the per-app real-user scenarios and the #5714 "never clears a
+/// `ApplicationState` snapshots, so the per-app real-user scenarios and the AltTab #5714 "never clears a
 /// phantom" invariant are regression-proof. Group A covers the synchronous path (`Window.isPhantom`);
 /// group B the authoritative CGS path; group C the two EXACT WindowServer facts that replaced the
 /// inferences, each paired with the case it used to get wrong. See PhantomWindowDetectorSpecs.md.
@@ -32,7 +32,7 @@ final class PhantomWindowDetectorTests: XCTestCase {
     }
 
     func testNeverClearsAPhantom() {
-        // #5714 invariant: a phantom latched by cgsVerdict keeps a Space, and syncVerdict must not clear
+        // AltTab #5714 invariant: a phantom latched by cgsVerdict keeps a Space, and syncVerdict must not clear
         // it on the next show.
         XCTAssertTrue(PhantomWindowDetector.syncVerdict(ws(isPhantom: true, spaceIds: [4]), appState(),
             isOrderedIn: false, alpha: 1))
@@ -119,7 +119,7 @@ final class PhantomWindowDetectorTests: XCTestCase {
     // MARK: - C. the two exact facts, each against the case the inference got wrong
 
     func testAlphaZeroIsPhantomEvenOnScreen() {
-        // Outlook reminders (#5170, #5448): the window is genuinely ordered in and on a visible Space, and
+        // Outlook reminders (AltTab #5170, AltTab #5448): the window is genuinely ordered in and on a visible Space, and
         // it is still invisible to the user. Only alpha says so — AX lists it as an ordinary
         // AXStandardWindow, so no accessibility signal can ever catch this family.
         XCTAssertTrue(PhantomWindowDetector.cgsVerdict(ws(spaceIds: [1]), appState(),
@@ -129,7 +129,7 @@ final class PhantomWindowDetectorTests: XCTestCase {
     }
 
     func testOnScreenWindowIsNeverPhantomWhateverCgsSaysAboutItsSpaces() {
-        // #5849: Slack reopened from the Dock is on screen and focused while CGS still tags it invisible
+        // AltTab #5849: Slack reopened from the Dock is on screen and focused while CGS still tags it invisible
         // and reports no Space for it. This used to need an explicit `isFocused` exemption, which had to be
         // threaded from the MRU into a pure kernel; the ordered-in bit settles it as a fact about the
         // window rather than about where the user is looking.
@@ -141,7 +141,7 @@ final class PhantomWindowDetectorTests: XCTestCase {
 
     func testOnScreenExemptionDoesNotResurrectAWindowCgsForgot() {
         // The exemption is not unconditional: a wid CGS dropped from every list is gone, and a stale
-        // ordered-in bit must not bring it back. Resurrecting it here would undo #5714.
+        // ordered-in bit must not bring it back. Resurrecting it here would undo AltTab #5714.
         XCTAssertTrue(PhantomWindowDetector.cgsVerdict(ws(spaceIds: []), appState(),
             inVisibleList: false, inAllList: false, isOrderedIn: true, alpha: 1, visibleSpaceIds: []))
     }

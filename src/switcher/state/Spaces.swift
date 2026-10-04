@@ -15,7 +15,7 @@ class Spaces {
     /// A point-in-time read of the Space layout + (optionally) per-window membership, gathered entirely
     /// from SkyLight. `query` does all the blocking CGS IPC and touches no main-only state, so it can run
     /// OFF the main thread; `applyTopology` writes the statics on the main thread. `mainScreenUuid` is
-    /// captured on main first (`NSScreen.main` is main-only) and threaded through. See #5721: this is what
+    /// captured on main first (`NSScreen.main` is main-only) and threaded through. See AltTab #5721: this is what
     /// lets the expensive Space refresh run off the switcher's render path.
     struct Snapshot {
         let topology: [SpaceTopologyParser.Display]?

@@ -75,7 +75,7 @@ final class WindowEventReducerSpaceTests: XCTestCase {
     }
 
     /// Every capture costs the OS's permission service three signature validations, and recapturing every
-    /// window on every Space switch was enough to exhaust it on a busy desktop (#6067). Only the arriving
+    /// window on every Space switch was enough to exhaust it on a busy desktop (AltTab #6067). Only the arriving
     /// Space's windows are recaptured; a window on a Space that is not on screen keeps its thumbnail.
     func testSpaceChangeSettledRecapturesOnlyWindowsOnVisibleSpaces() {
         var s = state()
@@ -133,7 +133,7 @@ final class WindowEventReducerSpaceTests: XCTestCase {
         XCTAssertTrue(s.isPhantom(s.windows[1]))
     }
 
-    // MARK: - D. An empty Space answer is not evidence on its own (#5954)
+    // MARK: - D. An empty Space answer is not evidence on its own (AltTab #5954)
 
     /// CGS answers a non-NULL EMPTY array for a wid it has no record of at all — measured on macOS 26 for
     /// wid 0, 1, 999999 and UINT32_MAX — so "this window is on no Space" and "there is no such window" reach

@@ -44,12 +44,12 @@ struct SelectionInputs: Equatable {
     /// the list because that is normally the window you are ON, and you summoned the switcher to leave it —
     /// but filters can drop it from the list entirely (`Apps to show: Non-active apps`, a blacklisted active
     /// app), and then the front tile IS the window you were on before and stepping over it lands one tile too
-    /// far (#5941).
+    /// far (AltTab #5941).
     ///
     /// Answered exactly when attention names a window. App-only and unknown attention retain the conservative
     /// app-wide rule: guessing `false` while the user's window is drawn selects the window they are already on.
     ///
-    /// Defaults to `true`: the ordinary case, and what every scenario written before #5941 assumes.
+    /// Defaults to `true`: the ordinary case, and what every scenario written before AltTab #5941 assumes.
     var currentWindowIsDrawn = true
     var removalFallback: SelectionRemovalFallback? = nil
 }
@@ -129,7 +129,7 @@ enum SelectionResolver {
         // hasn't moved it. The window set is still settling as the switcher opens (tabs group, Spaces settle),
         // so a default computed a moment ago may no longer BE the second visible window; re-deriving keeps it
         // meaning "the window you were on before". Only a target the USER chose is followed by id below —
-        // that's what must not jump when AX events reorder the list mid-show (#5665). Conflating the two made
+        // that's what must not jump when AX events reorder the list mid-show (AltTab #5665). Conflating the two made
         // the default lock onto whatever occupied the slot mid-churn and then trail it across the list.
         if i.selectedTarget == nil || !i.userPickedSelection {
             return resetInitialPick(i)
@@ -165,7 +165,7 @@ enum SelectionResolver {
     /// is the current one. Filters can drop the current window from the list — `Apps to show: Non-active
     /// apps` removes the whole frontmost app — and then the first drawn window already IS the previous one:
     /// stepping over it lands on the one before THAT, so alt-tab skips a window and the two-window toggle
-    /// never comes back (#5941). `currentWindowIsDrawn` is the shell's answer to that question.
+    /// never comes back (AltTab #5941). `currentWindowIsDrawn` is the shell's answer to that question.
     ///
     /// The list itself must keep showing the truth: a window created and focused behind the switcher takes
     /// tile 0 and pushes everything along. But the user pressed the shortcut to get back to the window they
@@ -243,14 +243,14 @@ enum SelectionResolver {
     /// exists: an app with no such window is not having anything hidden from the user, so the ordinary rule
     /// applies and the front tile is stepped over as the window they are on.
     ///
-    /// That distinction is the whole of #5960. Closing the last window of the frontmost app leaves it running
+    /// That distinction is the whole of AltTab #5960. Closing the last window of the frontmost app leaves it running
     /// and still frontmost with nothing but a windowless placeholder — which `Windowless apps: Hide` then
     /// drops — so no tile belonged to it and the pick stopped stepping over the front tile. The window on top
     /// of the screen was the front tile, and alt-tab handed the user the window they were already looking at.
     /// Same shape for an app left with only minimized windows under `Minimized windows: Hide`.
     ///
     /// So a placeholder, a phantom and a minimized window are all skipped: none of them is a window the user
-    /// can be looking at. Everything else the app owns counts, drawn or not — which keeps #5941 exact for the
+    /// can be looking at. Everything else the app owns counts, drawn or not — which keeps AltTab #5941 exact for the
     /// filters that drop a whole app, and as coarse as it always was for the Spaces / Screens ones.
     static func currentWindowIsDrawn(_ frontmostAppWindows: [FrontmostAppWindow]) -> Bool {
         let candidates = frontmostAppWindows.filter { !$0.isWindowlessApp && !$0.isPhantom && !$0.isMinimized }

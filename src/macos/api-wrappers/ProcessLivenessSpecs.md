@@ -8,7 +8,7 @@ after a launch was announced, whether the process is still worth tracking. `NSRu
 can't serve there: it stays `false` for 1-3s after the process is gone, while the `runningApplications`
 removal is announced immediately. A dead process admitted through that gap has already had its removal
 processed, so nothing ever removes it, and its AX observer is retried every 30s for the rest of the
-session (#6051).
+session (AltTab #6051).
 
 ## Behavior & edge cases
 

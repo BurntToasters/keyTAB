@@ -19,7 +19,7 @@ enum AxTitleVerdict: Equatable {
 /// `Applications.applyObservedElement` before it adopts one.
 ///
 /// Recording a descendant's `kAXTitle` as its window's is what listed a Chromium window as "Chromium"
-/// (#6011): the node's own title is empty, and `Window.bestEffortTitle` resolves an empty title to the app
+/// (AltTab #6011): the node's own title is empty, and `Window.bestEffortTitle` resolves an empty title to the app
 /// name once the WindowServer has no title either, which is the case for every app that draws its own title
 /// bar.
 enum AxTitleNotificationPolicy {

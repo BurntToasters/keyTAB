@@ -35,6 +35,7 @@ final class QAMenu: NSPanel {
         stack.addArrangedSubview(graphCheckbox())
         stack.addArrangedSubview(languageDropdown())
         stack.addArrangedSubview(corruptionRow())
+        stack.addArrangedSubview(makeButton("Show search hint next session") { SearchDiscoveryHint.shared.showForQA() })
         let container = NSView()
         stack.translatesAutoresizingMaskIntoConstraints = false
         container.addSubview(stack)

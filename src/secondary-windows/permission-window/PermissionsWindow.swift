@@ -100,9 +100,8 @@ extension PermissionsWindow: NSWindowDelegate {
             if AccessibilityPermission.status == .notGranted || ScreenRecordingPermission.status == .notGranted {
                 Logger.error {
                     """
-                    Before using this app, you need to give permission in System Settings > Privacy & Security > Accessibility.
+                    KeyTab needs Accessibility, and Screen Recording unless skipped, in System Settings > Privacy & Security.
                     Please authorize and re-launch.
-                    See https://help.rescuetime.com/article/59-how-do-i-enable-accessibility-permissions-on-mac-osx
                     """
                 }
                 App.shared.terminate(self)

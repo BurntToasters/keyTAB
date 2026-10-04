@@ -62,7 +62,7 @@ struct TabWindow: Equatable {
     /// fact macOS states reliably: the AXTabGroup's presence means tabbed and its button count is exact.
     /// Only the per-tab TITLES are unreliable: an app may
     /// compose its window title from more than its tab label, which is what stock Terminal does and what
-    /// left #5785's groups unformable. So the count is what confirms a geometry cluster when titles can't
+    /// left AltTab #5785's groups unformable. So the count is what confirms a geometry cluster when titles can't
     /// (`geometryGroups`), and what BOUNDS it: a fold wider than the count is over-claiming by construction.
     var tabCount = 0
     /// The `AXTabGroup` element this window named on its last read as the selected tab (see `TabGroupToken`).
@@ -367,7 +367,7 @@ enum TabGroupResolver {
         // ...but a member the WindowServer still shows ON SCREEN is not anybody's background tab, whatever
         // its Space membership says. A real background tab is ordered OUT — the OS draws one tab of a tabbed
         // window, never two — so an ordered-IN member that merely reads Space-less is a real window whose
-        // membership we lost, and folding it hides a window the user is looking at (#5954: four same-frame
+        // membership we lost, and folding it hides a window the user is looking at (AltTab #5954: four same-frame
         // Firefox windows, one entering fullscreen, three folded behind it). Space-lessness and this bit
         // disagree only when our Space data is wrong, so believe the WindowServer.
         var background = members.filter { !hasGenuineSpace($0) && !$0.isOrderedIn && $0.wid != visible.wid }
@@ -448,7 +448,7 @@ enum TabGroupResolver {
         // Only geometry-group a CONFIRMED tab cluster. Geometry alone is not enough to CREATE a group:
         // separate windows of one app routinely share a default size (every Terminal window is the same size)
         // and go briefly Space-less during a Space transition or a flaky CGS read, which looked exactly like a
-        // background tab and collapsed real windows into a phantom tab group (#5830). Confirmed when any of:
+        // background tab and collapsed real windows into a phantom tab group (AltTab #5830). Confirmed when any of:
         //  - the visible was already AX-confirmed tabbed (`tabbedSiblingWids != nil`) — re-link a tab switch;
         //  - any member is fullscreen (its tabs expose no readable AXTabGroup, and a new active's own
         //    fullscreen flag lags discovery — so check the members, not just the visible);
@@ -456,12 +456,12 @@ enum TabGroupResolver {
         //    — a NEW tab taking over an existing group.
         //  - the visible's own AXTabGroup says it HAS tabs (`tabCount > 1`). AX naming the siblings is what
         //    normally writes `tabbedSiblingWids`, and that naming is by TITLE, which fails outright for an
-        //    app composing its window title from more than its tab label (stock Terminal, #5785), so that
+        //    app composing its window title from more than its tab label (stock Terminal, AltTab #5785), so that
         //    first clause could never open and the tabs churned as separate tiles forever. The COUNT is the
         //    part of the AX read that is never in doubt, so it confirms the cluster on its own. For an app
         //    whose titles DO match, `tabbedSiblingWids` is already non-nil and clause one already opened the
         //    gate, so this clause cannot change those apps' behaviour.
-        // None can false-positive on #5830: a window going briefly Space-less there is a SEPARATE window,
+        // None can false-positive on AltTab #5830: a window going briefly Space-less there is a SEPARATE window,
         // never fullscreen-sized and never already carrying `tabbedSiblingWids`.
         //
         // KNOWN HOLE, and the fullscreen clause is where it lives: alone it confirms almost any fullscreen
@@ -617,7 +617,7 @@ enum TabGroupResolver {
     /// title list (there may be duplicate titles); each remaining title is matched to the first
     /// compatible, not-yet-matched window that is PLAUSIBLY an inactive tab (already tabbed or Space-less —
     /// an on-screen window is never claimed). A window already tabbed into THIS group is then kept even if no
-    /// title named it, so a duplicate/renamed title can't flap an inactive tab out of its group (#5830).
+    /// title named it, so a duplicate/renamed title can't flap an inactive tab out of its group (AltTab #5830).
     /// Titles with no tracked window are returned as `untrackedTitles` (inactive tabs to discover); windows
     /// that were in this group but are no longer tabbed (became standalone) are returned as `toUntabWids`.
     static func matchSiblings(active: TabWindow, axTitles: [String], sameAppWindows: [TabWindow],
@@ -717,7 +717,7 @@ enum TabGroupResolver {
                 }
             }
         }
-        // Stability (#5830): a window already in THIS group and still tabbed stays in it even when the AX
+        // Stability (AltTab #5830): a window already in THIS group and still tabbed stays in it even when the AX
         // titles don't name it. Terminal's tabs all read "~" and get renamed by cwd/command, so a title miss
         // must not eject an inactive tab from its own group (the "cause-B flap") — it would flash out as a
         // separate window and re-trigger discovery. Keyed on `tabbedSiblingWids` containing the active wid, so
@@ -742,7 +742,7 @@ enum TabGroupResolver {
         // geometry pass repaired it 385ms later (measured live, 2026-08-31).
         // Windows the OS itself puts in this group: they named the SAME `AXTabGroup` element as the active
         // (`TabGroupToken`). Every other route here is an inference ABOUT a group — a title that might be
-        // shared or composed differently (#5785), a frame that might coincide — while this one is the group,
+        // shared or composed differently (AltTab #5785), a frame that might coincide — while this one is the group,
         // stated by AppKit. So it needs no title and no geometry to agree, and it claims the tabs those two
         // routes cannot: Terminal composes tab titles unlike window titles, and after "Merge All Windows"
         // absorbed frames never converge.

@@ -46,7 +46,7 @@ final class SwitcherSession {
     /// acted on it (`ShortcutActions`), as opposed to it sitting on the default pick untouched. It decides
     /// whether `selectedTarget` is a commitment to
     /// follow or just where the default landed: a user's pick must stay on ITS window however the list
-    /// reorders (#5665), while the default must keep tracking the model — the window set is still settling
+    /// reorders (AltTab #5665), while the default must keep tracking the model — the window set is still settling
     /// when the switcher opens, and locking the default onto whatever occupied the slot mid-churn made the
     /// selection trail that window to a nonsense position as the list reordered.
     var userPickedSelection = false
@@ -80,7 +80,7 @@ final class SwitcherSession {
     var searchQuery: String = ""
 
     /// Full-resolution frames for the Preview panel, fetched just-in-time for the selected window and
-    /// its cycling neighbors (`WindowThumbnails.fetchPreviewFrames`, #5861). Living on the session, they
+    /// its cycling neighbors (`WindowThumbnails.fetchPreviewFrames`, AltTab #5861). Living on the session, they
     /// are released wholesale when it ends, so idle RAM only holds thumbnail-scale images. Capped +
     /// least-recently-used-evicted so a long session arrow-keying through many windows stays bounded.
     private static let maxPreviewFrames = 10

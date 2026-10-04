@@ -5,7 +5,7 @@ import ApplicationServices
 ///
 /// An observer created for a pid and subscribed on the APPLICATION element receives the descendant window
 /// notifications this needs. Per-window observers are therefore redundant, and orphaned per-window runloop
-/// sources caused #5612's reported 399 GB virtual-memory growth. The observer count here is one per eligible
+/// sources caused AltTab #5612's reported 399 GB virtual-memory growth. The observer count here is one per eligible
 /// process and is independent of how many windows that process has.
 ///
 /// This provider contributes the app-side story: focus, titles, tab groups, and AX-node creation/end. An AX
@@ -352,7 +352,7 @@ class AxObserverRegistry {
                 // The rescan is owed a fresh surface budget or it cannot act on what this moment just
                 // taught it: the inventory sweep's give-up is keyed to the app's window set, so the
                 // verdicts it reached while this process was silent would refuse this very pass, and the
-                // app would keep its icon placeholder for as long as it keeps its window set still (#6031).
+                // app would keep its icon placeholder for as long as it keeps its window set still (AltTab #6031).
                 Applications.forgetAcquisitionFailures(pid: process.pid)
                 Applications.manuallyRefreshAllWindows()
             }
@@ -396,7 +396,7 @@ class AxObserverRegistry {
     // MARK: teardown
 
     /// **Synchronous invalidation.** The runloop source is removed explicitly rather than left to the
-    /// observer's deallocation: orphaned sources are what leaked in #5612, and a source still installed keeps
+    /// observer's deallocation: orphaned sources are what leaked in AltTab #5612, and a source still installed keeps
     /// delivering into a generation that no longer exists.
     private func teardown(_ pid: pid_t) {
         guard let process = health.entries[pid]?.process else { return }
@@ -456,7 +456,7 @@ class AxObserverRegistry {
     /// window continuously.
     ///
     /// **The role decides whether the title counts.** A delivery names any element of the app, and only a
-    /// window's own element speaks for the window: `AxTitleNotificationPolicy` says why, and #6011 is what
+    /// window's own element speaks for the window: `AxTitleNotificationPolicy` says why, and AltTab #6011 is what
     /// it costs to skip.
     ///
     /// Two local `CFEqual` scans run before any IPC, on the observer thread. An element cached as a window's
@@ -492,7 +492,7 @@ class AxObserverRegistry {
     /// **The app says one window element ended.** Matched locally, then reconciled against a fresh AX window
     /// list and a direct WindowServer surface query. The notification is authoritative only for the node:
     /// apps rebuild one while its window stays on screen (Chromium and Electron do it routinely), and
-    /// condemning on that edge alone made a live QQ window vanish and return with no MRU history (#5785).
+    /// condemning on that edge alone made a live QQ window vanish and return with no MRU history (AltTab #5785).
     private func windowDestroyed(_ process: ProcessGeneration, _ element: AXUIElement) {
         // Dropped BEFORE the match, so a muted app never proves delivery and never gains the capability.
         guard !Self.destroysAreMuted(process.pid) else { return }

@@ -116,7 +116,7 @@ struct TestInteractionModel {
     ///
     /// Measured live on macOS 26 via `SLSWindowQueryWindows` (one Terminal window, then New Tab): the
     /// standalone was 757x547, and afterwards the active read 757x583 while the background read 757x543.
-    /// The reporter's #5785 capture is the same shape at their size — 1017x610 against 1017x565, same
+    /// The reporter's AltTab #5785 capture is the same shape at their size — 1017x610 against 1017x565, same
     /// position, same width, differing only by the tab bar. Every window in this model shared one size
     /// before this axis existed, which is exactly why a green generator sweep never found the bug.
     ///
@@ -127,7 +127,7 @@ struct TestInteractionModel {
     /// The app composes its WINDOW title from more than its TAB title, so the two strings never match. Stock
     /// Terminal does exactly this: `"~/Documents — -zsh ▸ -zsh — 80×23"` as a window, `"~/Documents"` as a
     /// tab, because the window title has settings (dimensions, active process) the tab title has no
-    /// counterpart for (#5785, dumped live on macOS 26). Every title-keyed decision then fails at once, which
+    /// counterpart for (AltTab #5785, dumped live on macOS 26). Every title-keyed decision then fails at once, which
     /// is not a degraded match but NO match: `matchSiblings` names nobody and the group must be found some
     /// other way.
     ///
@@ -407,7 +407,7 @@ struct TestInteractionModel {
             size: world[wi].size, position: world[wi].position))
         world[wi].activeTab = world[wi].tabs.count - 1
         var e = ActionEvents()
-        // The real order, from the #5785 capture: the new tab is CREATED, then JOINS the Space, and only
+        // The real order, from the AltTab #5785 capture: the new tab is CREATED, then JOINS the Space, and only
         // then does the tab it replaced LEAVE it. The join was missing here, and it is not decoration — it is
         // the half of the handover that names the successor, so without it nothing could pair the incoming
         // tab with the outgoing one and a scenario could never exercise that path.
@@ -619,7 +619,7 @@ struct TestInteractionModel {
             spaceMap[w.activeWid] = [w.space]
         }
         // An ALL-empty map is unreachable in the app and so is never emitted: `syncSpacesState` backfills any
-        // tracked wid the per-Space enumeration missed with a per-window `CGSCopySpacesForWindows` (#5791),
+        // tracked wid the per-Space enumeration missed with a per-window `CGSCopySpacesForWindows` (AltTab #5791),
         // and that query still reports a backgrounded tab's OLD Space. Emitting one anyway asked the reducer
         // to converge from "every tracked window is Space-less at once", a state it never actually sees.
         if !spaceMap.isEmpty {
@@ -630,7 +630,7 @@ struct TestInteractionModel {
             assert(spaceMap.keys.allSatisfy { queriedWids.contains($0) },
                 "the model answered about \(spaceMap.keys.filter { !queriedWids.contains($0) }), which it never queried")
             // `placedByWindowServer` is empty: in the model the two OS reads never contradict each other, so
-            // every unplaced wid is a confirmed empty. The contradiction is a live-OS anomaly (#5954) with no
+            // every unplaced wid is a confirmed empty. The contradiction is a live-OS anomaly (AltTab #5954) with no
             // recording to model it — inventing one would grade changes against a world we have not observed.
             e.readUnits.append([.input(.spacesSynced(windowToSpaces: spaceMap, queried: queriedWids,
                 answered: queriedWids, placedByWindowServer: [], topologyChanged: false))])

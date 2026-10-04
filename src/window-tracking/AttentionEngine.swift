@@ -104,7 +104,7 @@ class AttentionEngine {
 
     /// **An app's answers are debounced per process, and only the last one commits.**
     ///
-    /// An app raising all its windows really does move its key window to each of them in turn (#5974's
+    /// An app raising all its windows really does move its key window to each of them in turn (AltTab #5974's
     /// shape, measured at 29ms apart), and the accessibility channel reports every step faithfully. Each step
     /// is a true statement and the run as a whole is one z-order change in which the user went nowhere: the
     /// app puts keys back where they started at the end. Committing each answer scrambled the order.

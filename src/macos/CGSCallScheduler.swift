@@ -30,7 +30,7 @@ class CGSCallScheduler {
     }
 
     /// Synchronous form for callers ALREADY off-main: the Space(s) a single window belongs to. Used by the
-    /// #5791 backfill (a window the per-Space enumeration misses would otherwise get empty spaceIds).
+    /// AltTab #5791 backfill (a window the per-Space enumeration misses would otherwise get empty spaceIds).
     static func windowSpaces(_ wid: CGWindowID) -> [CGSSpaceID]? {
         dispatchPrecondition(condition: .notOnQueue(.main))
         return rawWindowSpaces(wid)

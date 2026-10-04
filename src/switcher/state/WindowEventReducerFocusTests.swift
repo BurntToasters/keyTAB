@@ -43,7 +43,7 @@ final class WindowEventReducerFocusTests: XCTestCase {
         state.window(wid)?.lastFocusOrder
     }
 
-    // MARK: the front of the MRU after a removal (#5346)
+    // MARK: the front of the MRU after a removal (AltTab #5346)
 
     /// Another app holds slot 1, but focus never crosses apps because a window closed: the frontmost app's
     /// own next window takes the front, and `.applyFocus` names it so the live model agrees.
@@ -208,7 +208,7 @@ final class WindowEventReducerFocusTests: XCTestCase {
 
     /// **Closing the front window is not a claim about the user.** Something has to take the slot, so this
     /// repair keeps writing where no attention decision exists. The successor stays inside the same app,
-    /// which is the #5346 rule this test must not disturb.
+    /// which is the AltTab #5346 rule this test must not disturb.
     func testAStructuralRepairStillWrites() {
         var s = state([window(Self.reaperMainWid, Self.reaperPid, "REAPER", order: 0),
                        window(Self.reaperDialogWid, Self.reaperPid, "Dialog", order: 1),
@@ -374,7 +374,7 @@ final class WindowEventReducerFocusTests: XCTestCase {
     }
 
     /// The chain must name BOTH sides: one that names only the held window is what a fullscreen transition
-    /// arms, and the window the app answers with is not in it (#6017).
+    /// arms, and the window the app answers with is not in it (AltTab #6017).
     func testSemanticFocusDoesNotCarryAHeldWindowOutsideTheChain() {
         let incomingWid: CGWindowID = 900
         var s = state([window(Self.reaperMainWid, Self.reaperPid, "Window 1", order: 0),
@@ -421,7 +421,7 @@ final class WindowEventReducerFocusTests: XCTestCase {
     /// app's OTHER windows to the top behind the pick, which is how a Chrome window untouched for hours came
     /// back sitting at the front of the switcher.
     ///
-    /// The #5936 mute could never have covered this: it was armed when Exposé OPENED and sized to be over
+    /// The AltTab #5936 mute could never have covered this: it was armed when Exposé OPENED and sized to be over
     /// before a hand could reach the trackpad, while the pick comes seconds later. Nothing mutes anything
     /// here — an 815 is not entitled to the order in the first place — and this pins the whole gesture rather
     /// than that one rule.

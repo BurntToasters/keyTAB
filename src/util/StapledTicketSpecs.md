@@ -5,7 +5,7 @@
 KeyTab parks its stapled notarization ticket while it runs and puts it back when it quits. At rest the bundle
 is exactly what was downloaded; while it runs, macOS's permission checks skip the ticket.
 
-## Why this exists (#6067)
+## Why this exists (AltTab #6067)
 
 Each window screenshot makes macOS check three times that KeyTab may record the screen. Each check rebuilds
 KeyTab's code identity from the bundle on disk, and when a ticket is stapled it also extracts that ticket and

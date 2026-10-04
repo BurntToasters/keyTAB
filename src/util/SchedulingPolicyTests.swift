@@ -47,7 +47,7 @@ final class SchedulingPolicyTests: XCTestCase {
 
     // MARK: - A1. ThrottleSlot
 
-    /// #6047: a page load retitles a Chrome window several times within 200ms, and the switcher must end on
+    /// AltTab #6047: a page load retitles a Chrome window several times within 200ms, and the switcher must end on
     /// the last title, not the second one
     func testThrottleSlotTailRunsTheLatestWorkOfABurst() {
         var slot = ThrottleSlot<String>()

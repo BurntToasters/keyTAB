@@ -76,7 +76,7 @@ class Menubar {
 
     // The callout is only useful when the user lacks Screen Recording AND has settings that need it
     // (Thumbnails style or window previews). Users who skipped the permission but use neither aren't
-    // nagged (see #5623). Its copy names whichever of the two features are actually affected, so we
+    // nagged (see AltTab #5623). Its copy names whichever of the two features are actually affected, so we
     // refresh the text before showing it. Re-evaluated on permission ticks and on each menu open
     // (settings can change). Decision logic lives in `PermissionCalloutResolver` (unit-tested).
     static func refreshPermissionCallout() {
@@ -209,7 +209,7 @@ class PermissionCallout: StackView {
     // NSControl target/action never fires inside an NSMenuItem custom view: the menu's modal
     // tracking loop swallows the click before the button's own mouse-tracking can call sendAction.
     // Route the click through the container: `hitTest` keeps the button visual-only, and
-    // `mouseUp` runs the action and dismisses the menu. (#5771)
+    // `mouseUp` runs the action and dismisses the menu. (AltTab #5771)
     override func hitTest(_ point: NSPoint) -> NSView? {
         super.hitTest(point) != nil ? self : nil
     }
@@ -229,7 +229,7 @@ class PermissionCallout: StackView {
         // The earlier fit() pinned our height with a required constraint sized for the previous
         // (initially empty) message. While it stays active, fittingSize keeps reporting that stale
         // height, so re-fitting can't grow to fit the new text and the last line clips. Drop the
-        // self-imposed size constraints first so fit() measures the real content. (#5771)
+        // self-imposed size constraints first so fit() measures the real content. (AltTab #5771)
         constraints.filter {
             ($0.firstAnchor == widthAnchor || $0.firstAnchor == heightAnchor) && $0.secondAnchor == nil
         }.forEach { $0.isActive = false }

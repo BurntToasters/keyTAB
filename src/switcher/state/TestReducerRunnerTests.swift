@@ -348,12 +348,12 @@ final class TestReducerRunnerTests: XCTestCase {
     }
 
     /// An AX read naming two or more tabs while matching NO window is not evidence that the reader left its
-    /// group — it means the titles aren't comparable to window titles at all (#5785: an app composing the two
+    /// group — it means the titles aren't comparable to window titles at all (AltTab #5785: an app composing the two
     /// differently, where even the prefix fallback misses), or that every sibling is still untracked. The read
     /// used to dissolve the group geometry had just formed; geometry re-formed it on the next WindowServer
     /// event, and the pair churned between one tile and two for as long as the window lived. Same rule as the
     /// The group token doing the job `recentPairingWindow` does by timing: two tabs whose AX titles name
-    /// nobody (composed titles, #5785) and whose frames share no cluster (the tab bar resized one of them)
+    /// nobody (composed titles, AltTab #5785) and whose frames share no cluster (the tab bar resized one of them)
     /// still end up in one group, because each named the same `AXTabGroup` element while it was selected.
     /// The tell is that no pairing WINDOW is involved: the second read lands whenever it lands.
     func testTabsJoinOneGroupByTokenWhenTitlesAndFramesNameNobody() {
@@ -370,7 +370,7 @@ final class TestReducerRunnerTests: XCTestCase {
         // 20 is the selected tab, and its read is what says WHICH element this group is
         harness.run([.input(.titleAndTabsRead(wid: 20, tabTitles: ["1. bash", "2. ssh"], tabGroupToken: 4242,
                                               reconcileTabs: true, changedSoFar: false))])
-        XCTAssertNil(harness.state.groups.siblingWids(of: 20), "titles alone name nobody, as in #5785")
+        XCTAssertNil(harness.state.groups.siblingWids(of: 20), "titles alone name nobody, as in upstream #5785")
         // the user switches tabs: 21 comes on-screen, 20 backgrounds (the two halves the reducer otherwise
         // has to pair on a clock — here they only set the physical state, they decide nothing)
         harness.run([
@@ -565,7 +565,7 @@ final class TestReducerRunnerTests: XCTestCase {
         }
     }
 
-    /// #5785, the stuck switcher: two alt-tabs in a row into the SAME app, 219ms apart (log2). The first is a
+    /// AltTab #5785, the stuck switcher: two alt-tabs in a row into the SAME app, 219ms apart (log2). The first is a
     /// cross-app activation, the second a switch inside the app that is already frontmost — which produces no
     /// activation at all, so the app's answer (its AX focus notification, or the read KeyTab makes after its
     /// own focus) is the only thing that says the user moved. Since re-focusing an already-focused window
@@ -593,7 +593,7 @@ final class TestReducerRunnerTests: XCTestCase {
         XCTAssertEqual(harness.state.window(100)?.lastFocusOrder, 1)
     }
 
-    /// #5785: an app that HIDES its window instead of closing it (WeChat to the tray) keeps the CGWindow, so
+    /// AltTab #5785: an app that HIDES its window instead of closing it (WeChat to the tray) keeps the CGWindow, so
     /// reopening re-shows the SAME wid — no create event, no 808, just an order-in of a wid we had removed.
     /// Discovery then takes ~80ms, and a user alt-tabbing inside that gap used to strand the window at the
     /// very back of the MRU, behind even the windowless placeholders (Weixin on the last tile). It must land
@@ -643,7 +643,7 @@ final class TestReducerRunnerTests: XCTestCase {
     }
 
 
-    /// RECORDED 2026-07-29, macOS 26, #5849 follow-up (SamadiPour): two Chrome windows with another app's
+    /// RECORDED 2026-07-29, macOS 26, AltTab #5849 follow-up (SamadiPour): two Chrome windows with another app's
     /// window between them in the MRU. Fullscreen the front Chrome window, then leave fullscreen, and the
     /// OTHER Chrome window has taken the middle slot — "Chrome(1)/Other/Chrome(2)" became
     /// "Chrome(1)/Chrome(2)/Other". Nobody focused it; the desktop Space simply came back on screen and every

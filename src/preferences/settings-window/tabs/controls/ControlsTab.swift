@@ -714,7 +714,7 @@ class ControlsTab {
         recomputeEscapeAbsorption()
     }
 
-    /// Issue #5585. The shared cghidEventTap absorbs Esc keyDown only when a configured shortcut
+    /// Issue AltTab #5585. The shared cghidEventTap absorbs Esc keyDown only when a configured shortcut
     /// binds Escape; otherwise Esc passes through to the active app unchanged.
     static func recomputeEscapeAbsorption() {
         KeyboardEvents.anyShortcutUsesEscape = shortcuts.values.contains { $0.shortcut.carbonKeyCode == kVK_Escape }
@@ -723,7 +723,7 @@ class ControlsTab {
 
     /// Thin adapter over `NativeHotkeyResolver.resolve` — builds the snapshot inputs from the live
     /// shortcut registry and applies the resolver's verdict via the symbolic-hotkey API. See
-    /// `NativeHotkeyResolverSpecs.md` for the kernel's invariants and #5653's root cause.
+    /// `NativeHotkeyResolverSpecs.md` for the kernel's invariants and AltTab #5653's root cause.
     static func toggleNativeCommandTabIfNeeded() {
         let snapshots = shortcuts.values.map { ShortcutSnapshot(modifiers: $0.shortcut.carbonModifierFlags, keyCode: $0.shortcut.carbonKeyCode) }
         let holdShortcutModifiers: [UInt32] = (0..<Preferences.holdShortcut.count).compactMap { i in

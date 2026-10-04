@@ -25,7 +25,7 @@ target bookkeeping, and the preview. Pure data in, `Equatable` decision out — 
 
 Once the user moves the highlight, the selected window's id is remembered as the **target**. On every
 refresh the resolver tries to keep the highlight on that same window even as the list reorders — this is
-the #5665 fix (before it, a background app finishing launch could yank the highlight away mid-pick).
+the AltTab #5665 fix (before it, a background app finishing launch could yank the highlight away mid-pick).
 
 ### Actions before a deferred repaint
 
@@ -57,7 +57,7 @@ window, releases the shortcut before repaint, and checks the window macOS actual
 `selectedTarget` means two different things, split by `userPickedSelection`: while the user hasn't moved the
 selection it is merely where the DEFAULT landed, so step 4 re-derives it on every refresh; once the user
 cycles horizontally or vertically, or hovers, it is a commitment and step 5 follows THAT window by id however
-the list reorders (#5665). A successful vertical move records that commitment before updating the selected index.
+the list reorders (AltTab #5665). A successful vertical move records that commitment before updating the selected index.
 Conflating them was a bug: the switcher opens while the window set is still settling (tabs grouping, Spaces
 settling), so the default locked onto whatever occupied the slot mid-churn and then trailed that window across
 the list as things resolved — the highlight ending up on an unrelated tile.
@@ -75,7 +75,7 @@ isn't.** `Apps to show: Non-active apps` removes the whole frontmost app from th
 whenever a filter excludes the current window (a blacklisted active app, a Space or screen scope it falls
 outside of). The front tile is then already "the window you were on before", and stepping over it aims one
 tile past what the user asked for: alt-tab hands them a window they never chose, and the two-window toggle
-never comes back (#5941). `SelectionInputs.currentWindowIsDrawn` carries the answer; when it is false the
+never comes back (AltTab #5941). `SelectionInputs.currentWindowIsDrawn` carries the answer; when it is false the
 pick is the FIRST drawn tile as of the summon rather than the second, and every other rule is untouched.
 
 `SelectionResolver.currentWindowIsDrawn` answers it of the APP — "is a window of the frontmost app that
@@ -85,7 +85,7 @@ answering it wrongly puts the default on the window the user is already looking 
 
 Only windows that cannot be the one on screen are skipped: a windowless placeholder, a phantom, a minimized
 window. An app owning nothing else is not having anything hidden from the user, so the ordinary rule applies.
-Reading it as "does some drawn tile belong to the frontmost app" was #5960: closing the last window of the
+Reading it as "does some drawn tile belong to the frontmost app" was AltTab #5960: closing the last window of the
 frontmost app leaves it running and still frontmost with only a placeholder, `Windowless apps: Hide` drops
 that, and the pick stopped stepping over a front tile that was the very window on top of the screen — alt-tab
 handed the user the window they were already looking at, and the two-window toggle took two presses to start.
@@ -120,9 +120,9 @@ so no event can land in between.
 
 ## Test scenarios
 
-Mirrors `SelectionResolverTests.swift` 1:1. Groups: A initial pick · B preserve target (#5665) ·
-C target removed · D search mode · E edge cases · F current window not drawn (#5941) · G answering that
-question from the frontmost app's windows (#5960) · plus direct helper-kernel checks.
+Mirrors `SelectionResolverTests.swift` 1:1. Groups: A initial pick · B preserve target (AltTab #5665) ·
+C target removed · D search mode · E edge cases · F current window not drawn (AltTab #5941) · G answering that
+question from the frontmost app's windows (AltTab #5960) · plus direct helper-kernel checks.
 
 ### A. Initial pick (`selectedTarget == nil`)
 - **testInitialPickEmptyList** — no windows → `clearTargetAndHover`.
@@ -133,7 +133,7 @@ question from the frontmost app's windows (#5960) · plus direct helper-kernel c
 - **testInitialPickAllInvisible** — everything filtered out → `clearTargetAndHover`.
 - **testInitialPickSkipsWindowlessInLastFocusedRule** — windowless entries skipped when scanning.
 
-### B. Preserve target across reorders (the #5665 regression cluster)
+### B. Preserve target across reorders (the AltTab #5665 regression cluster)
 - **testPreserveTargetSameIndex** — target still at its index → `selectAt` unchanged.
 - **testPreserveTargetMovedToHigherIndexAfterPhotoshopLaunch** — an app launches and reorders the list; highlight follows the target to its new slot (not a re-pick).
 - **testPreserveTargetMovedToLowerIndex** — a window closed above the target; highlight follows down.
@@ -166,7 +166,7 @@ question from the frontmost app's windows (#5960) · plus direct helper-kernel c
 - **testEdgeNewWindowPushesTargetDown** — a window inserts ahead → highlight follows the target down.
 - **testEdgeStaleSelectedTarget** — target id never existed (corrupt/stale) → adapt + backfill.
 
-### F. The current window is not in the drawn list (#5941)
+### F. The current window is not in the drawn list (AltTab #5941)
 - **testInitialPickCurrentWindowFilteredOutLandsOnTheFrontTile** — `Non-active apps` on VS Code draws Chrome's
   two windows; the front one is the window you were on before, so the default lands there.
 - **testInitialPickCurrentWindowFilteredOutTogglesBackToWhereItCameFrom** — the return trip, which is what
@@ -184,23 +184,23 @@ question from the frontmost app's windows (#5960) · plus direct helper-kernel c
   first drawn tile does not shift the answer onto raw index 0.
 - **testInitialPickLastFocusedRuleIsUnaffectedByTheFlag** — alphabetical / Space ordering already picked the
   most recently focused DRAWN window; the flag leaves that path alone.
-- **testSearchRestoreDefaultOnClearHonorsTheFilteredOutCurrentWindow** — clearing a query restores the #5941
+- **testSearchRestoreDefaultOnClearHonorsTheFilteredOutCurrentWindow** — clearing a query restores the AltTab #5941
   default, not the old one.
 - **testUserPickedTargetIsFollowedWhenTheCurrentWindowIsFilteredOut** — a target the USER picked is still
-  followed by id (#5665); the flag only says where the DEFAULT starts.
+  followed by id (AltTab #5665); the flag only says where the DEFAULT starts.
 - **testInitialPickTopTwoMinimizedIsUnaffectedByTheFlag** — the both-top-minimized edge never stepped over
   anything, and still doesn't.
 
-### G. Answering `currentWindowIsDrawn` from the frontmost app's windows (#5960)
+### G. Answering `currentWindowIsDrawn` from the frontmost app's windows (AltTab #5960)
 
 An exact attention identity is used only while that window can still be the drawn front window. A minimized,
 phantom, windowless, or background-tab identity is stale by construction; the shell then answers from the
 frontmost application's viable windows. This covers the handoff after minimizing the exact window and the brief
 tab-switch interval where attention still names the outgoing background tab.
-- **testCurrentWindowIsDrawnIsFalseWhenARealWindowIsFilteredOut** — the #5941 case the flag exists for.
+- **testCurrentWindowIsDrawnIsFalseWhenARealWindowIsFilteredOut** — the AltTab #5941 case the flag exists for.
 - **testCurrentWindowIsDrawnIsTrueWhenTheRealWindowIsDrawn** — its control.
 - **testCurrentWindowIsDrawnIsTrueWhenOnlySomeWindowsAreFilteredOut** — one tile of the app is drawn.
-- **testCurrentWindowIsDrawnIsTrueForAWindowlessFrontmostApp** — #5960: the last window was closed and
+- **testCurrentWindowIsDrawnIsTrueForAWindowlessFrontmostApp** — AltTab #5960: the last window was closed and
   `Windowless apps: Hide` drops the placeholder; nothing of theirs is hidden, so the front tile is stepped over.
 - **testCurrentWindowIsDrawnIsTrueForADrawnWindowlessPlaceholder** — the same app with the placeholder shown.
 - **testCurrentWindowIsDrawnIsTrueWhenOnlyMinimizedWindowsAreHidden** — a minimized window is not one the
@@ -215,7 +215,7 @@ tab-switch interval where attention still names the outgoing background tab.
 - **testExactAttentionAnswersForTheWindowRatherThanItsApplication** — when attention identifies the current
   window, its own filter result decides even if a sibling from the same app remains drawn.
 - **testUnknownAttentionPreservesTheOrdinaryRule** — missing evidence never becomes evidence of absence.
-- **testInitialPickStepsOverTheFrontTileAfterTheFrontmostAppLostItsLastWindow** — #5960 through both kernels,
+- **testInitialPickStepsOverTheFrontTileAfterTheFrontmostAppLostItsLastWindow** — AltTab #5960 through both kernels,
   on the reporter's own steps: the pick lands on the second tile, not the window already on screen.
 
 ### Helper kernels (direct)
@@ -241,7 +241,7 @@ tab-switch interval where attention still names the outgoing background tab.
   counting raw indices selected the current window itself).
 - **testFindTargetSkipsInvisibleMatches** — finds visible id; nil for invisible/missing/nil id.
 - **testDefaultSelectionRetracksModelUntilUserPicks** — an untouched default re-derives as the model settles.
-- **testUserPickedTargetIsFollowedNotRederived** — the same target, once the USER chose it, is followed (#5665).
+- **testUserPickedTargetIsFollowedNotRederived** — the same target, once the USER chose it, is followed (AltTab #5665).
 - **testVerticalNavigationCommitsTheUserPickBeforeMovingSelection** — a successful up/down move records user
   intent before changing the selected index, so an immediate model refresh follows the chosen window.
 - **testDefaultDoesNotTrailAWindowThatSlidDownTheList** — the captured failure: the default locked onto a

@@ -268,7 +268,7 @@ extension AXUIElement {
     ///
     /// `_AXUIElementGetWindow` on a descendant returns its CONTAINING window's wid too, so a wid match is not
     /// enough. Read the role only for descendants of a requested wid and keep scanning until the `AXWindow`
-    /// root. This is the same #5849 invariant as the single-wid route below.
+    /// root. This is the same AltTab #5849 invariant as the single-wid route below.
     static func windowsByBruteForce(_ pid: pid_t, _ wids: Set<CGWindowID>) -> [CGWindowID: AXUIElement] {
         guard !wids.isEmpty else { return [:] }
         var remaining = wids
@@ -323,7 +323,7 @@ extension AXUIElement {
 extension AXUIElement {
     /// Raise the window within its app's stack. Returns the raw AXError instead of throwing, so callers can
     /// react to `.invalidUIElement` (a stale element: the app silently rebuilt the window's accessibility node,
-    /// #5586) by re-resolving and retrying, rather than silently no-opping.
+    /// AltTab #5586) by re-resolving and retrying, rather than silently no-opping.
     @discardableResult
     func raiseWindow() -> AXError {
         return AXUIElementPerformAction(self, kAXRaiseAction as CFString)

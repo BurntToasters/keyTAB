@@ -86,7 +86,7 @@ may erase a cached answer when its window ceases to exist; it never names or mov
 - `testAStaleGenerationIsRefused` — a dead process's callback is not current.
 - `testARelaunchedPidForgetsThePreviousGenerationsFact` — a reused pid inherits nothing.
 - `testProcessExitForgetsItsFactAndReleasesTheFront` — an exit releases rather than hands over.
-- `testARaiseBurstEndsWhereItStarted` — #5974's shape needs no guess made in advance and taken back later.
+- `testARaiseBurstEndsWhereItStarted` — AltTab #5974's shape needs no guess made in advance and taken back later.
 - `testNamingTheWindowThatAlreadyHoldsTheFrontMovesNothing` — a repeat is a fact, not a move.
 - `testAStaleAnswerFlushedByAnUnwedgeLosesToTheClicksOutcome` — the measured race resolves on arrival order.
 - `testAnActivationAwaitingAnAnswerNeitherFrontsNorReads` — the app's cached answer predates the switch that

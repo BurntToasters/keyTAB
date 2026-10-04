@@ -121,7 +121,7 @@ func _SLPSSetFrontProcessWithOptions(_ psn: UnsafeMutablePointer<ProcessSerialNu
 /// Sets the front process for a SINGLE Space, from a normal connection (yabai uses it in
 /// `window_manager_send_window_to_space`). Unlike `_SLPSSetFrontProcessWithOptions`, it doesn't set the
 /// global front or touch other Spaces' front-window memory — so we use it to focus a window on the current
-/// Space without clobbering other Spaces, which is the #4507 cross-Space bleed.
+/// Space without clobbering other Spaces, which is the AltTab #4507 cross-Space bleed.
 /// * macOS 10.10+
 @_silgen_name("SLSSpaceSetFrontPSN") @discardableResult
 func SLSSpaceSetFrontPSN(_ cid: CGSConnectionID, _ sid: CGSSpaceID, _ psn: ProcessSerialNumber) -> CGError
@@ -150,19 +150,19 @@ private enum MakeKeyWindowEvent {
     /// windows, `windowDidBecomeKey` logged), the down alone makes the right window key, an up alone does
     /// nothing, and the front-process call alone does nothing either. Dropping the up costs no key focus and
     /// means no control can ever be activated, wherever the point lands — the point can be sanitized, but a
-    /// half-click can't be completed. That is what finally closed #5381 (see `offContentPoint`).
+    /// half-click can't be completed. That is what finally closed AltTab #5381 (see `offContentPoint`).
     static let eventTypeOffset = 0x08
     static let leftMouseDown: UInt8 = 0x01 // kCGEventLeftMouseDown
     /// 0x20: `windowLocation`, the window-relative click point (a 16-byte CGPoint). Aimed far past the
     /// window's BOTTOM-RIGHT corner, which is the only region no failure has come from:
     ///   * NaN (yabai's `memset(0xff)`, what we posted before v11.3.1) is sanitized by some apps back to
-    ///     (0, 0), onto real content — Figma's Home button, Telegram's sidebar, Wezterm's first pane (#5381).
+    ///     (0, 0), onto real content — Figma's Home button, Telegram's sidebar, Wezterm's first pane (AltTab #5381).
     ///   * a point one or two off the frame sits in the window's resize grab region, and macOS 27 acts on it:
     ///     rapid switching grew the target's top-left corner out to the screen's visible corner, bottom-right
-    ///     anchored (#5900). The reporter measured -1 broken, -2000 and +3000 clean; never reproducible on
+    ///     anchored (AltTab #5900). The reporter measured -1 broken, -2000 and +3000 clean; never reproducible on
     ///     macOS 26.5 at any distance.
-    ///   * -2000 still tripped #5381 in fullscreen Figma, so the sanitizing fallback is (0, 0) regardless of
-    ///     how far out the point is. Every #5381 report names a TOP-LEFT control, because that is what (0, 0)
+    ///   * -2000 still tripped AltTab #5381 in fullscreen Figma, so the sanitizing fallback is (0, 0) regardless of
+    ///     how far out the point is. Every AltTab #5381 report names a TOP-LEFT control, because that is what (0, 0)
     ///     hits; aiming positive puts any fallback on the bottom-right of the content instead.
     /// Hence far past the bottom-right of any conceivable window — too big to be inside one (a fullscreen
     /// window on a Pro Display XDR is already 3008pt wide), too far out to graze a grab region.
@@ -278,7 +278,7 @@ func SLSWindowIteratorGetTags(_ iterator: CFTypeRef) -> UInt64
 // returned in SIMD registers on arm64 (so `@_silgen_name` looked correct, and does work there) but via a
 // hidden sret pointer on the x86_64 SysV ABI. Under the Swift-convention binding that sret setup is wrong on
 // x86_64: the iterator pointer lands in the wrong register, so the very next `SLSWindowIteratorAdvance`
-// dereferences garbage and crashes inside SkyLight — on Intel Macs ONLY (issue #5819; arm64 never saw it).
+// dereferences garbage and crashes inside SkyLight — on Intel Macs ONLY (issue AltTab #5819; arm64 never saw it).
 // Bind it through a `@convention(c)` pointer instead so the correct C ABI (sret on x86_64, registers on arm64)
 // is used on both. Every other private call we make returns a pointer or scalar, so this is the only one hit.
 private let _SLSWindowIteratorGetBounds = unsafeBitCast(

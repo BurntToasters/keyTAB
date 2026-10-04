@@ -39,7 +39,7 @@ final class TabGroupResolverTests: XCTestCase {
     }
 
     func testOnScreenWindowsAreNotFoldedIntoAFullscreenNewcomer() {
-        // #5954, from the reporter's `--detailed-list`: four Firefox windows at one frame (1147x719 @ 0,26),
+        // AltTab #5954, from the reporter's `--detailed-list`: four Firefox windows at one frame (1147x719 @ 0,26),
         // one of them entering fullscreen, the other three reading Space-less. Geometry folded the three
         // behind the newcomer and the switcher showed ONE of the four — "a window is missing, and when it
         // comes back a different one goes missing". Firefox exposes no AXTabGroup (probed live), so the
@@ -66,7 +66,7 @@ final class TabGroupResolverTests: XCTestCase {
     }
 
     func testTabCountConfirmsWhenTitlesCannot() {
-        // #5785: stock Terminal composes its WINDOW title from components its TAB title has no setting for
+        // AltTab #5785: stock Terminal composes its WINDOW title from components its TAB title has no setting for
         // ("~/Documents — -zsh ▸ -zsh — 80×23" vs "~/Documents"), so `matchSiblings` names nobody and
         // `tabbedSiblingWids` stays nil forever — the confirmation this gate normally waits for can never
         // arrive and the tabs churned as separate tiles. The AXTabGroup's COUNT is the half of that read
@@ -166,14 +166,14 @@ final class TabGroupResolverTests: XCTestCase {
     func testStaleTabCountAloneDoesNotConfirm() {
         // A window whose tabs are gone must not keep the gate open. `tabCount` is retired by the reducer when
         // a read returns no AXTabGroup for a window that is also in no group, so a lone window reads 0 here
-        // and this stays the #5830 case below.
+        // and this stays the AltTab #5830 case below.
         let visible = tw(wid: 1, spaceIds: [1], tabCount: 0)
         let spaceless = tw(wid: 2, spaceIds: [])
         XCTAssertEqual(TabGroupResolver.geometryGroups([visible, spaceless]), [])
     }
 
     func testNormalUnconfirmedNotGrouped() {
-        // #5830: separate normal windows of one app sharing a default size, one briefly Space-less (a flaky
+        // AltTab #5830: separate normal windows of one app sharing a default size, one briefly Space-less (a flaky
         // CGS read or a mid-transition strip). Not fullscreen, never AX-confirmed as tabs → NOT grouped.
         let visible = tw(wid: 1, spaceIds: [1])
         let spaceless = tw(wid: 2, spaceIds: [])
@@ -326,7 +326,7 @@ final class TabGroupResolverTests: XCTestCase {
     }
 
     func testStillTabbedSiblingKeptDespiteNoTitle() {
-        // #5830 stability: a window still tabbed into this group (isTabbed + tabbedSiblingWids ∋ active) is
+        // AltTab #5830 stability: a window still tabbed into this group (isTabbed + tabbedSiblingWids ∋ active) is
         // kept even when no AX title names it — a renamed/duplicate title must not flap it out.
         let active = tw(wid: 1, title: "git")
         let sibling = tw(wid: 2, title: "old", isTabbed: true, tabbedSiblingWids: [1, 2])
@@ -358,7 +358,7 @@ final class TabGroupResolverTests: XCTestCase {
 
     func testOtherGroupTabsNotUntabbed() {
         // A same-app window belonging to a DIFFERENT tab group (its `tabbedSiblingWids` doesn't contain this
-        // active) is neither kept nor un-tabbed here — the two groups don't churn each other (#5830).
+        // active) is neither kept nor un-tabbed here — the two groups don't churn each other (AltTab #5830).
         let active = tw(wid: 1, title: "git")
         let otherGroupTab = tw(wid: 9, title: "x", isTabbed: true, tabbedSiblingWids: [8, 9])
         let m = TabGroupResolver.matchSiblings(active: active, axTitles: ["git"],
@@ -555,7 +555,7 @@ final class TabGroupResolverTests: XCTestCase {
         // The cause-B flap, now FIXED: the AXTabGroup reports the inactive tab as "B2" (Terminal renamed it)
         // but the tracked window still reads "B1". Title equality fails, yet the sibling is still tabbed into
         // this group, so it's KEPT (not dropped, not shown as a separate window) and "B2" is NOT reported
-        // untracked (we already hold that tab). This is the #5830 stability fix.
+        // untracked (we already hold that tab). This is the AltTab #5830 stability fix.
         let active = tw(wid: 1, title: "A", tabbedSiblingWids: [1, 2])
         let stale = tw(wid: 2, title: "B1", isTabbed: true, tabbedSiblingWids: [1, 2])
         let m = TabGroupResolver.matchSiblings(active: active, axTitles: ["A", "B2"],
@@ -566,7 +566,7 @@ final class TabGroupResolverTests: XCTestCase {
     // MARK: - B2. matchSiblings — the group token
 
     func testTokenClaimsSiblingNoTitleCanName() {
-        // #5785's shape: Terminal composes tab titles unlike window titles, so no title names the sibling and
+        // AltTab #5785's shape: Terminal composes tab titles unlike window titles, so no title names the sibling and
         // the frames disagree (the tab bar resized the active). Both windows named the same AXTabGroup
         // element, which settles it without either.
         let active = tw(wid: 1, title: "1. bash", tabGroupToken: 77)

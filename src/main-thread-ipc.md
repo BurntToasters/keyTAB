@@ -3,7 +3,7 @@
 Point-in-time audit, 2026-09-02, macOS 26.6.2 (25G83). The rule this exists to serve is in `AGENTS.md`;
 this file is the inventory behind it.
 
-Ordinary AppKit calls can turn into a synchronous XPC round trip. That was not known here until #5981: a
+Ordinary AppKit calls can turn into a synchronous XPC round trip. That was not known here until AltTab #5981: a
 user's main thread sat for 3.017s inside `searchField.stringValue = ""`, because mutating a field that is
 first responder makes AppKit resign it, and resigning deactivates the system text-input context, a
 synchronous call into the input-method services that returned only by timing out. The three off-main
@@ -45,7 +45,7 @@ one call per process so a crash in one didn't hide the others:
   comes from, but the lock is what builds the deadlock rather than what prevents it.
 - `window.makeFirstResponder(...)` — **throws** `NSInternalInconsistencyException`,
   `-[_NSViewGeometryInWindowConcreteObservation invalidate] must be called on main thread only`, raised
-  inside `-[NSTextView resignFirstResponder]`. That is the #5981 code path exactly. It only survives when no
+  inside `-[NSTextView resignFirstResponder]`. That is the AltTab #5981 code path exactly. It only survives when no
   field editor exists to tear down.
 - `window.orderOut(nil)` — **traps**. Disassembling `-[NSWMWindowCoordinator performTransactionUsingBlock:]`
   shows AppKit calling `[NSThread isMainThread]`, and on false falling through to
@@ -57,14 +57,14 @@ one call per process so a crash in one didn't hide the others:
 
 One number from the same harness is worth keeping: on the main thread, with a live input context,
 `makeFirstResponder(nil)` took **62.9ms**. Resigning first responder is expensive even when nothing is
-wrong, which is what makes the #5981 tail as bad as it is.
+wrong, which is what makes the AltTab #5981 tail as bad as it is.
 
 ## Which lever applies
 
 "Move it off the main thread" is available for almost none of this. What is left, roughly in order of how
 often it applies:
 
-1. **Reorder** so the stall lands after everything the user is waiting for. What #5981 did: the panel hides
+1. **Reorder** so the stall lands after everything the user is waiting for. What AltTab #5981 did: the panel hides
    and the focus request goes out in `beginHideUi`, all bookkeeping in `endHideUi`.
 2. **Defer one runloop turn.** The CoreAnimation transaction commits when the turn ends, so `alphaValue = 0`
    or an `orderOut` earlier in the same turn has *not* reached the screen yet — blocking later in that turn
@@ -93,12 +93,12 @@ Critical paths are: summoning the switcher, each keystroke while cycling or sear
 The per-keystroke path was measured separately, by scripting 25 `App.cycleSelection` steps 60ms apart with
 the threshold at 1ms. With Preview off (the default) **not one step exceeded 1ms**. With Preview forced on,
 the only costs are the preview window's own geometry and ordering, listed below. So the cycling path carries
-no unbounded stall of the #5981 kind; the summon and the dismissal are where the risk lives.
+no unbounded stall of the AltTab #5981 kind; the summon and the dismissal are where the risk lives.
 
 | Call site | Service | Path | Evidence | Treatment |
 |---|---|---|---|---|
-| `TilesView.endSearchSession` — `stringValue` / `isEditable` | input-method services (`CursorUIViewService`, `CharacterPalette`) | dismissal | 3.017s in a reporter's unified log, plus `IMKServerXPCInvocation timed out`; 2–12ms measured here | deferred one turn (#5981), via `takeTheCaretFromTheField` |
-| `TilesView.disableSearchMode` — `isEditable` / `stringValue` | same, deactivation side | Escape while searching | 4-7ms measured here, ahead of the `refreshUi` that restores the unfiltered list; the reporter's follow-up flow (#5981, summon → search → Escape → arrows → Enter) is this path | deferred one turn, same `takeTheCaretFromTheField` as the dismissal |
+| `TilesView.endSearchSession` — `stringValue` / `isEditable` | input-method services (`CursorUIViewService`, `CharacterPalette`) | dismissal | 3.017s in a reporter's unified log, plus `IMKServerXPCInvocation timed out`; 2–12ms measured here | deferred one turn (AltTab #5981), via `takeTheCaretFromTheField` |
+| `TilesView.disableSearchMode` — `isEditable` / `stringValue` | same, deactivation side | Escape while searching | 4-7ms measured here, ahead of the `refreshUi` that restores the unfiltered list; the reporter's follow-up flow (AltTab #5981, summon → search → Escape → arrows → Enter) is this path | deferred one turn, same `takeTheCaretFromTheField` as the dismissal |
 | `TilesView.enableSearchEditing` — `makeFirstResponder(searchField)` | same, activation side | summon in search style; search shortcut mid-session | <1ms measured; reporter's console shows `Create CursorUIViewService: TUINSRemoteViewController` 40–75ms after each summon | deferred one turn, with `giveTheFieldTheCaretNow` on the key path so a keystroke can't beat it |
 | `Windows.voiceOverWindow` — `makeFirstResponder(tile)` | in-process | every selection change | 0.10-0.16ms over 29 calls. A tile is a plain view with no input context, so the responder change costs ~100µs against the 62.9ms a live text field costs — the price is the input context, not the responder change | already deferred 10ms, with a comment describing the symptom ("creates a delay in showing the main window") without naming the cause. Nothing more to do |
 | `TilesPanel.show` — `alphaValue` + `makeKeyAndOrderFront` | WindowServer | summon | 14ms first summon, 7ms steady | unavoidable; it *is* the visible work |
@@ -108,9 +108,9 @@ no unbounded stall of the #5981 kind; the summon and the dismissal are where the
 | `CursorEvents.toggle` / `TrackpadEvents.setAbsorbTapEnabled` — `CGEvent.tapEnable` | WindowServer event server | summon, dismissal | <1ms | fine as is; already at gesture boundaries only, never per event |
 | `ContextMenuEvents.toggle(true)` | in-process (`NotificationCenter`) | summon | 2ms on the first summon only | no IPC; first-call cost |
 | `PreviewPanel.show` — `setFrame`, `order(.below:)`, `level` | WindowServer | every selection change, when Preview is on (off by default) | over 25 scripted cycles: `setFrame` 1-2ms on 6 of them, `order(.below:)` 2ms and 6ms, `level` always under 1ms. `PreviewPanel.hide()`'s `orderOut`, taken when the selected window has no frame yet, cost 4-5ms | none. It is bounded and it is the visible work for that feature. `order(.below:)` could be skipped while the panel is already visible and already on a lower level, but the flicker it exists to prevent (#preview z-order, see the comment there) needs two monitors to reproduce, so that is not worth trading blind for ~4ms on a minority of keystrokes |
-| `Window.focus` — `NSWorkspace.shared.frontmostApplication` | LaunchServices | dismissal with focus, cross-Space branch only | 0.58ms off-main in the probe | left deliberately. It is thread-safe, so it *could* move into the AX block, and `Applications.frontmostPid` carries the same value — but both change WHEN the value is sampled, and it must be sampled before the focus request for the #5586 origin-Space repair to be right. Not worth re-risking for half a millisecond |
+| `Window.focus` — `NSWorkspace.shared.frontmostApplication` | LaunchServices | dismissal with focus, cross-Space branch only | 0.58ms off-main in the probe | left deliberately. It is thread-safe, so it *could* move into the AX block, and `Applications.frontmostPid` carries the same value — but both change WHEN the value is sampled, and it must be sampled before the focus request for the AltTab #5586 origin-Space repair to be right. Not worth re-risking for half a millisecond |
 | `Window.focus` — `launchApplication` / `NSRunningApplication.activate` | LaunchServices | dismissal with focus, windowless-app branch | not measured | unavoidable; it *is* the requested action |
-| `Windows.updatesBeforeShowing` — `Spaces.refresh` | SkyLight | summon, only mid-Space-transition | 0.1ms p50 (#5864) | already bounded to the topology read |
+| `Windows.updatesBeforeShowing` — `Spaces.refresh` | SkyLight | summon, only mid-Space-transition | 0.1ms p50 (AltTab #5864) | already bounded to the topology read |
 | `NSScreen.withActiveMenubar` — `CGSCopyActiveMenuBarDisplayIdentifier` | WindowServer | summon | one call, hoisted out of the per-screen predicate | fine as is |
 | `Applications.findOrCreate` — `NSRunningApplication(processIdentifier:)`, `ApplicationDiscriminator` | LaunchServices, Carbon process IPC | new-pid path on main; `refreshBadges_` while open | — | already memoised per pid; the LaunchServices lookup is AppKit-cached |
 

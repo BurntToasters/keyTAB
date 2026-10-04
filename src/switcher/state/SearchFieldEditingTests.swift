@@ -85,7 +85,7 @@ final class SearchFieldEditingTests: XCTestCase {
         XCTAssertEqual(SearchFieldEditing.caretIntent(mode: .editing, fieldOwnsCaret: false), .takeCaretAndCollapseToEnd)
     }
 
-    /// #6019: once the field has the caret, its selection is the user's. Every key-down passed to the field
+    /// AltTab #6019: once the field has the caret, its selection is the user's. Every key-down passed to the field
     /// ran through here, so moving it turned ⌘A into a no-op.
     func testCaretIntentLeavesSelectionAloneOnceTheFieldHasTheCaret() throws {
         XCTAssertEqual(SearchFieldEditing.caretIntent(mode: .editing, fieldOwnsCaret: true), .leaveSelectionAlone)
@@ -214,7 +214,7 @@ final class SearchFieldEditingTests: XCTestCase {
         XCTAssertEqual(field.caret, 0)
     }
 
-    /// #6019, the reported sequence: ⌘A then Delete must clear the whole search, not one character.
+    /// AltTab #6019, the reported sequence: ⌘A then Delete must clear the whole search, not one character.
     func testBackspaceAfterSelectAllClearsTheField() throws {
         let field = Field("chrome")
         field.selectAll()

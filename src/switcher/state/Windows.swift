@@ -21,7 +21,7 @@ class Windows {
     /// wids that got a `windowRemovedFromSpace` (1326) while still UNtracked — the delta was dropped because
     /// there was no `Window` to apply it to. During a rapid tab burst a new tab backgrounds (loses its Space)
     /// before its async discovery lands, so discovery would otherwise keep the wrong current-Space default and
-    /// the background tab would show as a separate window until the next show (#5830). `addDiscoveredWindow`
+    /// the background tab would show as a separate window until the next show (AltTab #5830). `addDiscoveredWindow`
     /// consumes this to record the tab Space-less at discovery. Cleared if the wid is re-added to a Space, or
     /// on destroy/removal.
     static var windowsPendingSpaceRemoval = [CGWindowID: UInt64]()
@@ -94,7 +94,7 @@ class Windows {
         let missionControl = MissionControl.state()
         if missionControl == .showAllWindows || missionControl == .showFrontWindows { return false }
         if list.isEmpty { return true }
-        // Space/screen membership is refreshed OFF the hot path now (#5721): reactively on Space change
+        // Space/screen membership is refreshed OFF the hot path now (AltTab #5721): reactively on Space change
         // (WindowServerEvents) and screen change (ScreensEvents), and after show in
         // `Applications.syncSpacesState`. Here we
         // only read the cached values, so there is no blocking SkyLight IPC on the way to rendering. A
@@ -104,9 +104,9 @@ class Windows {
         // ...with ONE exception: a summon can land inside a Space transition, before the leading-edge
         // re-read (`WindowEventReducer.spaceTransitionStarted`) ran, or in the gap where it ran but CGS was
         // still answering with the Space we are leaving. Filtering and sorting against that Space is the
-        // whole of #5864, and the topology is one CGS round-trip — 0.1ms p50, measured, against a ~110ms
+        // whole of AltTab #5864, and the topology is one CGS round-trip — 0.1ms p50, measured, against a ~110ms
         // show — so re-read it rather than render a frame we know may be wrong. Only the topology: the
-        // per-window membership fan-out is the expensive part #5721 moved off this path and it stays off.
+        // per-window membership fan-out is the expensive part AltTab #5721 moved off this path and it stays off.
         if WindowServerEvents.inSpaceTransition {
             Spaces.refresh()
         }
@@ -182,7 +182,7 @@ class Windows {
     /// Size is logged because tab grouping keys on it — without it a capture can't be replayed into the
     /// `RealWorldScenariosTests` corpus without inventing frames.
     ///
-    /// `w` and `F` earn their place from #5849, where both had to be DEDUCED from a capture. A windowless
+    /// `w` and `F` earn their place from AltTab #5849, where both had to be DEDUCED from a capture. A windowless
     /// placeholder was only recognizable by its missing wid, so an app showing a real tile AND a placeholder
     /// (the "Slack appears twice" bug) read as two ordinary windows. And the bug itself was a window flagged
     /// phantom while the user was looking at it — a contradiction invisible here until `F` and `p` could be
@@ -207,7 +207,7 @@ class Windows {
         }
         // `space=` is the Space the tiles below were filtered and sorted AGAINST, at the instant of this
         // render. Without it a capture cannot tell a wrong list from a right list judged against the Space
-        // the user had just left, which is the whole of #5864 and what the live Space tests assert on.
+        // the user had just left, which is the whole of AltTab #5864 and what the live Space tests assert on.
         Logger.debug { "show[\(context)] sel=\(selected) space=\(Spaces.currentSpaceId) "
             + "tiles=\(tiles.joined(separator: " "))" }
     }
@@ -432,7 +432,7 @@ class Windows {
 
     /// The selected window plus up to `radius` displayed windows on each side in cycling order (wrapping
     /// like Tab does). These are the windows the Preview panel may imminently show, so they are the only
-    /// ones worth capturing at full resolution (#5861); quick Tab presses land on a pre-captured neighbor.
+    /// ones worth capturing at full resolution (AltTab #5861); quick Tab presses land on a pre-captured neighbor.
     static func selectedNeighborhoodIds(_ radius: Int = 2) -> Set<CGWindowID> {
         guard let session = SwitcherSession.current, session.selectedIndex < list.count else { return [] }
         var ids = Set<CGWindowID>()
@@ -474,7 +474,7 @@ class Windows {
     /// `.zOrderRead` branch, which writes it into the `focusedAt` tiebreak — a real focus is knowledge,
     /// stacking is a guess, and this used to rewrite EVERY window's rank here instead.
     ///
-    /// The query BLOCKS, hence the off-main scheduler (#5721), and that is also why it is fired a beat after
+    /// The query BLOCKS, hence the off-main scheduler (AltTab #5721), and that is also why it is fired a beat after
     /// launch and never on the first summon: called there, its answer lands after that summon's first render
     /// and the user watches the list re-order. Every in-flight answer re-checks `startupOrderIsAGuess`, so a
     /// launch query that finishes after the first summon is discarded too.
@@ -576,7 +576,7 @@ class Windows {
             // window's accessibility element while keeping the same CGWindowID, with no destroyed notification,
             // so our cached ref goes stale and every AX call returns kAXErrorInvalidUIElement. Rebinding here
             // heals it on the sync points that already hand us a fresh element: every show (discovery
-            // re-acquires the element), app activation (kAXFocusedWindowAttribute), and focus notifications (#5586).
+            // re-acquires the element), app activation (kAXFocusedWindowAttribute), and focus notifications (AltTab #5586).
             if window.axUiElement != windowAxUiElement {
                 window.rebindAxElement(windowAxUiElement)
             }
@@ -835,12 +835,10 @@ class Windows {
         // Drop the cached `SCWindow` for any window we're removing. Otherwise the array
         // grows over time as new shareable-content refreshes leave stale entries behind
         // (see leak #5).
-        if #available(macOS 14.0, *) {
-            let removedWids = Set(windows.compactMap { $0.cgWindowId })
-            if !removedWids.isEmpty {
-                BackgroundWork.screenshotsQueue.addOperation {
-                    WindowCaptureScreenshots.cachedSCWindows.withLock { $0.removeAll { removedWids.contains($0.windowID) } }
-                }
+        let removedWids = Set(windows.compactMap { $0.cgWindowId })
+        if !removedWids.isEmpty {
+            BackgroundWork.screenshotsQueue.addOperation {
+                WindowCaptureScreenshots.cachedSCWindows.withLock { $0.removeAll { removedWids.contains($0.windowID) } }
             }
         }
         for w in windows {

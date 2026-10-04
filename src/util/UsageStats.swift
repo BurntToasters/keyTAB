@@ -18,7 +18,7 @@ struct UsageStats {
     private static var dirty = Set<String>()
     private static var flushScheduled = false
     #if DEBUG
-    /// Set by `QaSurfaces`, so the counts the About window and the Pro prompts quote are the same on every run.
+    /// Set by `QaSurfaces`, so the counts the About window quotes are the same on every run.
     /// Read in place of what is stored; recording still goes to the real arrays.
     static var qaPinned: [String: [Int]]?
     #endif

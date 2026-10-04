@@ -1,6 +1,6 @@
 import Foundation
 
-/// Names the main-thread step that stalled. #5981 was a 3.0s freeze that had to be inferred from the gap
+/// Names the main-thread step that stalled. AltTab #5981 was a 3.0s freeze that had to be inferred from the gap
 /// between two log timestamps, because nothing recorded which step ate it.
 ///
 /// `step()` at the top of a main-thread function closes the previous step and opens this one. A step is

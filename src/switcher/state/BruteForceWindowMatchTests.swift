@@ -3,7 +3,7 @@ import XCTest
 /// Pins `BruteForceWindowMatch.isTargetWindowRoot` — the decision extracted from
 /// `AXUIElement.windowsByBruteForce`. Pure data in, `Bool` out: no AX, no IPC, no globals.
 ///
-/// The #5849 regression: `_AXUIElementGetWindow` returns the containing window's id for a window's
+/// The AltTab #5849 regression: `_AXUIElementGetWindow` returns the containing window's id for a window's
 /// DESCENDANTS too, so a brute-force scan that stopped at the first wid match returned a descendant
 /// (`AXOutline` / `AXMenuButton` / `AXGroup`) instead of the `AXWindow` root, and admission
 /// dropped the window entirely. These tests guarantee only the `AXWindow` root for the target wid is
@@ -20,7 +20,7 @@ final class BruteForceWindowMatchTests: XCTestCase {
             candidateWid: Self.targetWid, candidateRole: kAXWindowRole, targetWid: Self.targetWid))
     }
 
-    // MARK: - B. Descendants sharing the wid are skipped (the #5849 regression guard)
+    // MARK: - B. Descendants sharing the wid are skipped (the AltTab #5849 regression guard)
 
     func testSkipsAxOutlineDescendant() {
         // Finder: element 697 (AXOutline) precedes element 698 (AXWindow), both owning wid 42637.

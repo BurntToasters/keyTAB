@@ -41,7 +41,7 @@ enum WindowThumbnails {
     /// we expect back can't drift apart.
     /// `fullRes` = no thumbnail downscale: full resolution is only for windows the Preview panel may
     /// imminently show (the selected window and its cycling neighbors, decided by the caller). Capturing
-    /// every window full-res floods the system capture path and can wedge screenshots machine-wide (#5861).
+    /// every window full-res floods the system capture path and can wedge screenshots machine-wide (AltTab #5861).
     static func capturePixelSize(_ size: CGSize, _ scaleFactor: CGFloat, _ fullRes: Bool) -> CGSize? {
         // window.size is the logical size and doesn't change with scaleFactor. We need to correct for this as we need to capture more or less pixels depending on DPI.
         let pixels = CGSize(width: size.width * scaleFactor, height: size.height * scaleFactor)
@@ -150,7 +150,7 @@ enum WindowThumbnails {
     /// Dispatch screenshot requests off the main-thread. These captures are thumbnail-scale ONLY (on
     /// macOS 26+): full-resolution frames for the Preview panel are fetched separately and just-in-time
     /// by `fetchPreviewFrames` into the session's capped cache, so idle RAM stays small and a show
-    /// doesn't burst N full-res captures at the system capture path (#5861).
+    /// doesn't burst N full-res captures at the system capture path (AltTab #5861).
     static func refreshAsync(_ windows: [Window], _ source: RefreshCausedBy, windowRemoved: Bool = false, prioritizedIds: Set<CGWindowID>? = nil, force: Bool = false) {
         guard (!windows.isEmpty || windowRemoved) && ScreenRecordingPermission.status == .granted
                && !ScreenLockEvents.isScreenLocked
@@ -170,7 +170,7 @@ enum WindowThumbnails {
         guard (!eligibleWindows.isEmpty || windowRemoved) else { return }
         // ScreenCaptureKit's capture path is unreliable before macOS 26: macOS 14 crashes inside Apple's own
         // teardown (-[SCStreamManager serverDidDisconnect], a top crash in 11.3.0) and macOS 15 hits the bugs
-        // in #5190 (https://github.com/keytab/alt-tab-macos/issues/5190). Apple rewrote ScreenCaptureKit's
+        // in AltTab #5190 (https://github.com/lwouis/alt-tab-macos/issues/5190). Apple rewrote ScreenCaptureKit's
         // internals for macOS 26, so we only use it there; everything older captures via CGSHWCaptureWindowList.
         if #available(macOS 26.0, *) {
             WindowCaptureScreenshots.oneTimeScreenshots(eligibleWindows, source, prioritizedIds: prioritizedIds)

@@ -14,7 +14,7 @@ The switcher treats a title as one line everywhere — one label, one line heigh
 does not: `NSCell.cellSize.height` is one font line height *per line* in the string. A single such window on
 the desktop made `TilesView.layoutCache.labelHeight` two or three times what it should be, and every tile in
 the grid inherited it: the thumbnails were pushed down inside their tiles almost onto the next row, and the
-title drew over the image (#6010).
+title drew over the image (AltTab #6010).
 
 `WindowTitle.singleLine` flattens the string where `Window.bestEffortTitle` records it, so the model has no
 multi-line titles in it and every consumer downstream — layout, search ranges, tooltips, VoiceOver, the
@@ -69,6 +69,6 @@ Mirrors `WindowTitleTests.swift` 1:1.
 - **testATitleOfNothingButBreaksIsEmpty** — `"\n\n"` → `""`.
 
 ### E. The measurement this exists for
-- **testFlattenedTitleMeasuresOneLineHigh** — the real assertion behind #6010: a multi-line title measured
+- **testFlattenedTitleMeasuresOneLineHigh** — the real assertion behind AltTab #6010: a multi-line title measured
   through an `NSTextField` cell is several line heights tall, and the flattened one is exactly as tall as a
   plain title. Pins the AppKit behaviour the rest of the file is reasoning about.

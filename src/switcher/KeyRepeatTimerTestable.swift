@@ -20,7 +20,7 @@ enum KeyRepeatTimerTestable {
 
     /// Stop when the shortcut is known released, by its own event or by reading the key itself.
     ///
-    /// **The key's physical state is read because Carbon's hotkey-released event can go missing** (#6075).
+    /// **The key's physical state is read because Carbon's hotkey-released event can go missing** (AltTab #6075).
     /// While the hold modifier stays down, that event is the only thing that sets a key shortcut's state to
     /// `.up`, so without it the timer kept cycling after a single tap, pinned the selection on the last tile
     /// (cycling refuses to wrap while the timer runs), and every later tap was refused the same way. The read
@@ -49,7 +49,7 @@ enum KeyRepeatTimerTestable {
     /// that would have stopped the timer is an event source, and the run loop drains the whole main dispatch
     /// queue before it reads the next event, so a backlog of ticks is always applied BEFORE the release that
     /// cancels them. That is what walked the selection ~8 tiles on the first summon after a few idle minutes
-    /// (#5977): a stall after the panel was ordered front, with the grace measured from the show, made every
+    /// (AltTab #5977): a stall after the panel was ordered front, with the grace measured from the show, made every
     /// queued tick eligible at once.
     static func shouldApplyArtificialRepeat(now: TimeInterval, firedAt: TimeInterval, armedAt: TimeInterval,
                                             panelBecameVisibleAt: TimeInterval?, panelShownAt: TimeInterval?,

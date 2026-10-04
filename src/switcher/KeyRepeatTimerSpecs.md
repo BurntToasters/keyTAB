@@ -41,7 +41,7 @@ the visible signal stays above it as the correction rather than replacing it, an
 plainly: on a genuinely slow show the grace now starts at the order-front instead of at the paint, which
 can let ONE advance land early. That is the price of not being a second late on every ordinary summon.
 
-## The stall AFTER the show (#5977)
+## The stall AFTER the show (AltTab #5977)
 
 The visibility anchor covers a stall BEFORE the panel is presented. A stall after it does the same damage,
 and the anchor cannot see it: `panelShownAt` is set as the panel is ordered front, while the expensive part
@@ -84,7 +84,7 @@ Inputs are `systemUptime` timestamps. `firedAt` is when the timer fired, `now` w
 The late budget is floored at 20ms because `defaults write -g KeyRepeat 0` is legal, and a zero-length budget
 would refuse every tick.
 
-## When the repeat stops (#6075)
+## When the repeat stops (AltTab #6075)
 
 Each tick first asks `KeyRepeatTimerTestable.shouldStop`: the shortcut's state is `.up`, OR its key reads as
 physically up, OR the hold modifier is released. The key read is there because Carbon's hotkey-released
@@ -118,13 +118,13 @@ Mirrors `KeyRepeatTimerTests.swift` 1:1.
   → applies (`>= 0.4 + 1`), so a missed visible signal doesn't wedge hold-to-cycle.
 
 ### C. The tick reached the main thread late
-- **testSkipsATickThatWaitedLongerThanOneRepeatInterval** — #5977: fired 0.6s before it ran, refused.
+- **testSkipsATickThatWaitedLongerThanOneRepeatInterval** — AltTab #5977: fired 0.6s before it ran, refused.
 - **testAppliesATickThatReachedMainPromptly** — the ordinary microsecond hop still cycles.
 - **testTheLateBudgetIsOneRepeatInterval** — a slower `KeyRepeat` tolerates a proportionally longer wait.
 - **testAZeroRepeatRateStillAppliesPromptTicks** — the 20ms floor keeps `KeyRepeat 0` working.
 
 ### D. When the repeat stops
-- **testStopsWhenTheKeyIsUpThoughItsReleaseWasLost** — #6075: Carbon's release never arrived; the key read
+- **testStopsWhenTheKeyIsUpThoughItsReleaseWasLost** — AltTab #6075: Carbon's release never arrived; the key read
   as physically up stops the repeat, so one tap no longer walks to the last tile.
 - **testKeepsRepeatingWhileTheKeyIsHeld** — key and hold modifier both down → keeps cycling.
 - **testAModifierOnlyShortcutIgnoresTheKeyRead** — no key of its own to read; its state and the hold

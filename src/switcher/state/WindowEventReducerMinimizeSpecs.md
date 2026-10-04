@@ -41,7 +41,7 @@ prove its rank is 2. Under the default `.show` the same staleness is invisible i
 why this went unreported for so long.
 
 **The restore took no front.** When its app was already frontmost the restore emits ONLY the 815 — the same
-shape as Cmd+` — and `cameBackOnScreen` swallows the bump. That guard exists for Space re-shows (#5849) and
+shape as Cmd+` — and `cameBackOnScreen` swallows the bump. That guard exists for Space re-shows (AltTab #5849) and
 cannot tell a Dock restore from one. When the app was NOT frontmost the restore activates it and the
 attention model uses the app's cached focused-window fact, or requests one bounded read if no fact exists.
 That fronts the window a beat later, which is why the bug only bites on a same-app restore.
@@ -91,7 +91,7 @@ Mirrors `WindowEventReducerMinimizeTests.swift` 1:1.
 - **testABackgroundAppsRestoreClearsTheFlagWithoutStealingTheFront** — an app deminiaturizing one of its own
   windows while another app is frontmost: the flag clears (the window IS back on screen) and the MRU does
   not move. Clearing a state bit is not a claim about where the user is, and the two must stay separable.
-- **testASpaceReShowStillDoesNotFrontItsWindows** — the counterfactual that keeps #5849 safe: windows the OS
+- **testASpaceReShowStillDoesNotFrontItsWindows** — the counterfactual that keeps AltTab #5849 safe: windows the OS
   re-shows with a Space were never minimized, so the un-minimize path must not touch them. It keys on the
   flag precisely so it cannot widen into this.
 
@@ -120,7 +120,7 @@ Mirrors `WindowEventReducerMinimizeTests.swift` 1:1.
 That the live Dock path emits the 815 at all, and that every queryable source lags it. Both are OS facts;
 they were established by measurement (above) and are re-checked live, not here.
 
-### E. The on-screen bit that tab-grouping reads (#5954)
+### E. The on-screen bit that tab-grouping reads (AltTab #5954)
 
 `TrackedWindow.isOrderedIn` is the WindowServer's ordered-in bit, and `TabGroupResolver` reads it to refuse
 folding a window the OS still shows (an on-screen window is nobody's background tab — a real background tab

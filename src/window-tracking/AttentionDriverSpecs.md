@@ -44,7 +44,7 @@ model's by what it says about the user. Four groups:
   it through the current tab mapping on activation, rather than retaining a stale representative.
 - **testAClickFrontsItsWindowWithoutWaitingForTheActivation** — the click names both levels at once, so it
   fronts a window of an app that has not activated yet. The only source that survives a wedged app.
-- **testAFocusThatDidNotTakeLeavesTheFrontAlone** — #6055. KeyTab's switch moves nothing by itself: when the
+- **testAFocusThatDidNotTakeLeavesTheFrontAlone** — AltTab #6055. KeyTab's switch moves nothing by itself: when the
   focus did not take, the read of the target app afterwards is a fact about that app, and the front stays
   where the OS left it.
 - **testAnActivationWeAreStillWaitingOnDoesNotFrontTheCachedWindow** — the activation KeyTab's own switch

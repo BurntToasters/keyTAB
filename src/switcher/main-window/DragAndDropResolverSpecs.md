@@ -19,7 +19,7 @@ the global mouse tap must yield the drop's mouse-up (`passesThroughMouseUp`), an
   exactly that: yield any up whose down the tap didn't see, so AppKit / the source app concludes the drop
   instead of the tap swallowing it and leaving the file glued to the cursor. This holds wherever the release
   lands — on a tile, on the padding around the tiles, or outside the panel — because none of those are a
-  down the tap saw. A normal click's down IS seen, so clicks route normally. This is the #5350-regression fix.
+  down the tap saw. A normal click's down IS seen, so clicks route normally. This is the AltTab #5350-regression fix.
 - **No grab on appear + deadzone.** A drag already in flight when the switcher shows must not select a
   window on the first stray pixel. `dragOver` reports `.inDeadzone` (still a valid `.link` drop, but no
   selection and no timer) until the pointer clears the same movement deadzone mouse hover uses.

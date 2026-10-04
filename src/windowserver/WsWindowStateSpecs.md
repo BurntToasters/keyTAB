@@ -31,7 +31,7 @@ future macOS that shifts them fails loudly here rather than silently mis-decodin
 
 One window walked through every state, diffing `tags`. Baseline for a plain windowed window is
 `0x0300000100482001`. Verified on TextEdit, Chrome, Finder and an own-process `NSWindow` (the last one built
-for the probe, because the two #5714 phantom shapes cannot be produced on demand in someone else's app).
+for the probe, because the two AltTab #5714 phantom shapes cannot be produced on demand in someone else's app).
 
 | state | tags | vs baseline |
 |---|---|---|
@@ -42,12 +42,12 @@ for the probe, because the two #5714 phantom shapes cannot be produced on demand
 | fullscreen | `0x0300048100082401` | +10 +42, −22 |
 | fullscreen + hidden | same as fullscreen | — |
 | fullscreen + minimize attempt | unchanged | macOS refuses to minimize a fullscreen window |
-| `orderOut:` (#5714 phantom) | `0x0300000100480001` | −13 only, **no bit 60** |
-| alpha=0 (#5714 phantom) | unchanged from normal | tags do not see alpha at all |
+| `orderOut:` (AltTab #5714 phantom) | `0x0300000100480001` | −13 only, **no bit 60** |
+| alpha=0 (AltTab #5714 phantom) | unchanged from normal | tags do not see alpha at all |
 | background tab, Space-less | `0x0300000100480001` | −13 only, **no bit 60** |
 | restored | back to baseline | bit 60 clears — it is not sticky |
 
-**Bit 60 is specific.** Every state that otherwise looks identical from CGS — both #5714 phantom shapes,
+**Bit 60 is specific.** Every state that otherwise looks identical from CGS — both AltTab #5714 phantom shapes,
 app-hidden alone, fullscreen, and a native background tab — leaves it clear. It composes independently with
 bit 39. Tab cases were measured on Finder and Terminal `AXTabGroup`s (4 tabs each), not on Chrome, whose tabs
 are not native windows: **minimizing a tab group sets bit 60 on every member**, active and background alike,
@@ -85,7 +85,7 @@ Mirrors `WsWindowStateTests.swift` 1:1.
 - **testMinimizedWhenTagBitSet** — `tags = 0x1300000100480001` (observed minimized) → minimized.
 - **testNotMinimizedWhenTagBitClear** — `tags = 0x0300000100482001` (observed normal) → not minimized.
 - **testOrderedOutWindowIsNotMinimized** — `tags = 0x0300000100480001`, the observed `orderOut:` / background-tab
-  value: ordered out, but NOT minimized. This is the discrimination the whole change rests on (#5714).
+  value: ordered out, but NOT minimized. This is the discrimination the whole change rests on (AltTab #5714).
 - **testFullscreenWindowIsNotMinimized** — `tags = 0x0300048100082401` (observed fullscreen) → not minimized.
 - **testHiddenAppsWindowIsNotMinimized** — `tags = 0x0300008100480001` (observed app-hidden) → not minimized.
 - **testHiddenAndMinimizedComposes** — `tags = 0x1300008100480001` → minimized, the two bits being independent.

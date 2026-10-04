@@ -27,9 +27,9 @@ class KeyRepeatTimer {
     static func startRepeatingKeyNextWindow() {
         let nextWindowShortcutName = Preferences.indexToName("nextWindowShortcut", SwitcherSession.current?.shortcutIndex ?? 0)
         if let shortcut = ControlsTab.shortcuts[nextWindowShortcutName],
-           // Esc is delivered via the cghid event tap (#5585), which emits real OS key-repeats; an artificial
+           // Esc is delivered via the cghid event tap (AltTab #5585), which emits real OS key-repeats; an artificial
            // timer would never stop, because the absorbed keyDown gives Carbon no release event to pair with,
-           // so it cycles selection to the very end (#5742). Same rationale as startRepeatingKeyPreviousWindow().
+           // so it cycles selection to the very end (AltTab #5742). Same rationale as startRepeatingKeyPreviousWindow().
            shortcut.shortcut.carbonKeyCode != kVK_Escape {
             startTimerForRepeatingKey(shortcut) {
                 ShortcutActions.execute(Preferences.indexToName("nextWindowShortcut", SwitcherSession.current?.shortcutIndex ?? 0))
@@ -70,7 +70,7 @@ class KeyRepeatTimer {
     /// rather than firing on a fixed repeating schedule.** The handler hops to main, and a repeating source
     /// keeps firing on its background queue while main is busy — so a stall piles up one queued block per
     /// missed interval, and the run loop then runs all of them before it reads the key-up that would have
-    /// stopped them (#5977). Re-arming from the handler means a stall simply delays the next tick.
+    /// stopped them (AltTab #5977). Re-arming from the handler means a stall simply delays the next tick.
     ///
     /// The cost is that the interval is measured handler-to-handler rather than fire-to-fire, so it drifts by
     /// however long a cycle takes. That is sub-millisecond work against a 33-500ms `KeyRepeat`.

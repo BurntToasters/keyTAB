@@ -26,17 +26,14 @@ the Edit menu, call `App.cycleSelection`).
 - **Escape is contextual** (the headline interaction): if search was *toggled mid-session*, Escape
   exits search back to the normal switcher (a second Escape then closes it). If the session *started
   in search*, Escape closes the whole switcher immediately — there's no "normal switcher" to fall back to.
-- **Pro gating timing**: `ProFeature.searchInSwitcher.attemptUse()` has side effects (consume the free
-  pass, surface the upgrade UI), so the *caller* evaluates it at the real attempt moment and passes a
-  `Bool` in. The gate is checked **before** the state branches, so a denied attempt never mutates mode
-  (it returns `.proGateBlocked`). `toggle` is gate-free — it just routes to the enter/disable path,
-  which applies its own gate (mirrors the original delegation).
+- **Search is always available**: entering search has no entitlement check. `toggle` just routes to the
+  enter/disable path.
 - **Entering editing refreshes the UI** (`enterEditing` is only reached from `.off`).
 - **Key routing precedence** (while editing): IME-composing or an open context menu wins first (never
   steal composing keystrokes) → arrows drive selection → Tab is swallowed → a matched when-active
   shortcut passes to the shortcut pipeline → everything else (typed text, **cmd+A/C/V/X**) goes to the
   `NSSearchField`, which handles select-all/copy/paste/cut natively. KeyTab does not intercept those.
-- **Any when-active shortcut works in editing via hold+key** (`editingShortcutMatch`, #5781 generalized):
+- **Any when-active shortcut works in editing via hold+key** (`editingShortcutMatch`, AltTab #5781 generalized):
   in search you release the activation modifiers to type, so a when-active shortcut bound to a bare
   printable key (e.g. the default `closeWindow = W`, `quitApp = Q`) must not steal the keystroke — you
   type the letter, and trigger the shortcut by re-pressing the hold modifiers (`Cmd+Option+W`), exactly
@@ -56,7 +53,7 @@ the Edit menu, call `App.cycleSelection`).
   capitals in the search field.
 - **Field editability** tracks mode exactly: editable iff `.editing`.
 - **Not modeled here**: who owns the caret and where it lands when the field takes it, which is
-  `SearchFieldEditing` (#6019); and, as `TilesView` side effects, first-responder changes,
+  `SearchFieldEditing` (AltTab #6019); and, as `TilesView` side effects, first-responder changes,
   `forceDoNothingOnRelease`, hover clearing, key-repeat-timer stops, the Edit-menu toggle, and
   `endSearchSession` teardown (which unconditionally resets to `.off` and is distinct from `disable`).
 
@@ -74,10 +71,9 @@ Mirrors `SearchModeResolverTests.swift` 1:1.
 - **testToggleFromOffEntersEditing** — `.off` → `.enterEditing`.
 - **testToggleFromEditingDisables** — `.editing` → `.disable`.
 
-### C. Enter editing (Pro-gated)
-- **testEnterFromOffEntersEditing** — `.off` + entitled → `.enterEditing`.
-- **testEnterWhenAlreadyEditingJustPlacesCaret** — `.editing` + entitled → `placeCaretOnly`.
-- **testEnterBlockedWhenSearchNotEntitled** — not entitled (gate checked before state branch) → `.proGateBlocked`.
+### C. Enter editing
+- **testEnterFromOffEntersEditing** — `.off` → `.enterEditing`.
+- **testEnterWhenAlreadyEditingJustPlacesCaret** — `.editing` → `placeCaretOnly`.
 
 ### D. Disable
 - **testDisableFromEditingExitsToOff** — `.editing` → `.exitToOff`.
@@ -110,10 +106,10 @@ Mirrors `SearchModeResolverTests.swift` 1:1.
 
 ### K. editingShortcutMatch: a bare printable key is typed text, not a shortcut
 - **testEditingNonPrintableBareMatches** — non-printable binding (default `cancel = Escape`) → bare tap still matches.
-- **testEditingPrintableBareIsTypedTextNotShortcut** — `cancel = Q`, bare `q` with hold released → does NOT match (types). (#5781)
+- **testEditingPrintableBareIsTypedTextNotShortcut** — `cancel = Q`, bare `q` with hold released → does NOT match (types). (AltTab #5781)
 - **testEditingPrintableWithHoldModifiersMatches** — same key with the hold modifiers re-pressed (`Cmd+Option+Q`) → matches.
 - **testEditingPrintableSpecialCharTypesWhenEventLacksFullHold** — Option-only `Q` (typing `œ`) under a Cmd+Option hold → does NOT match (types).
 - **testEditingPrintableBareKeptWhenNoHoldModifier** — no hold modifier to fall back on → bare arm kept (status quo, never untriggerable).
 - **testEditingPrintableBindingWithCommandModifierMatchesBare** — a Cmd/Ctrl binding (`cancel = Cmd+Q`) is a command, not text → bare arm honored.
-- **testEditingWindowActionTypesBareButTriggersWithHold** — default `closeWindow = W`: bare `w` types; hold+W closes (the generalization of #5781 to the whole when-active set).
+- **testEditingWindowActionTypesBareButTriggersWithHold** — default `closeWindow = W`: bare `w` types; hold+W closes (the generalization of AltTab #5781 to the whole when-active set).
 - **testEditingModifierOnlyShortcutTypesBareButTriggersWithHold** — default `previousWindow = ⇧`: bare Shift uppercases (does not navigate); `⌥⇧` navigates. Modifier-only shortcuts are routed through this kernel from `ATShortcut.modifiersMatch` because they arrive as `flagsChanged`, not keyDown.

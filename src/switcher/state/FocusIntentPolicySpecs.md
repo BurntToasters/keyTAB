@@ -15,7 +15,7 @@ Focusing a window across apps takes two kinds of call, and only one of them fron
 returns without waiting. Two alt-tabs in quick succession are therefore two operations running concurrently:
 they start in order and finish in any order. `raiseWindow` is a raw `AXUIElementPerformAction` against a
 foreign app, bounded only by the process-wide 1s messaging timeout, and the stale-element retry behind it
-(#5586) costs up to 1.25s more — so an operation can stay in flight for seconds against a re-switch the user
+(AltTab #5586) costs up to 1.25s more — so an operation can stay in flight for seconds against a re-switch the user
 performs in ~200ms.
 
 When the older operation's z-order call lands after the newer one's front-switch, the menu bar names the new
@@ -46,7 +46,7 @@ interleave; nothing else in `focus()` moves them apart.
 The window order does not follow the intent: it follows what the OS reports once an operation or a repair
 has run (`WindowServerEvents.readFocusedWindowAfterFocusing`). A repair that re-fronts the wrong window is
 therefore visible in the next switcher as the window the user is actually in, rather than hidden behind an
-order that claims the switch succeeded (#6055).
+order that claims the switch succeeded (AltTab #6055).
 
 ## What is still awaited
 
@@ -70,7 +70,7 @@ the operation does on its way out — the window ends up on top of the one the u
 window's menu bar. Repairing it would take a re-assert scheduled after the animation, which is not this.
 
 Fronting is what `_SLPSSetFrontProcessWithOptions` does, so a superseded operation that got that far must
-still run the cross-Space origin repair (#4507). That step is gated on having fronted, never on being
+still run the cross-Space origin repair (AltTab #4507). That step is gated on having fronted, never on being
 current — bailing out of it would leak the clobber it exists to undo.
 
 ## Test scenarios

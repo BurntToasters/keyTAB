@@ -63,7 +63,7 @@ final class WindowAdmissionResolverTests: XCTestCase {
             evidence: .attention), .reject(.nonWindowRole))
     }
 
-    /// Emacs 29.4's frame as read in #6072. Discovery admits it on the subrole, so focusing it must not
+    /// Emacs 29.4's frame as read in AltTab #6072. Discovery admits it on the subrole, so focusing it must not
     /// remove it: each removal re-added the window at the end of the switching order.
     func testExactAttentionKeepsAStandardWindowWithATextFieldRole() {
         let s = semantic(title: "emacs@host : main.tex", role: kAXTextFieldRole, isMain: true)
@@ -102,7 +102,7 @@ final class WindowAdmissionResolverTests: XCTestCase {
 
     /// ChatGPT's dictation strip once accessibility describes it, which is how it actually arrives: wid at
     /// level 3, 720x84 at the bottom of the screen, `AXWindow`/`AXDialog`, titled "ChatGPT", `AXMain` false
-    /// (measured 2026-09-03). Nothing in that answer says HUD; only where the app put it does (#5565).
+    /// (measured 2026-09-03). Nothing in that answer says HUD; only where the app put it does (AltTab #5565).
     func testChatGptDictationStripIsAuxiliary() {
         let s = semantic(title: "ChatGPT", subrole: kAXDialogSubrole)
         XCTAssertEqual(WindowAdmissionResolver.resolve(physical(width: 720, height: 84, level: 3), s),

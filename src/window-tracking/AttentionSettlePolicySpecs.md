@@ -5,7 +5,7 @@ a deadline and a verdict out. `AttentionEngine` owns the timer and calls this.
 
 ## Why it exists
 
-An app raising all of its windows answers once per window, 29ms apart (#5974, measured). Every answer is
+An app raising all of its windows answers once per window, 29ms apart (AltTab #5974, measured). Every answer is
 true and the user went nowhere — the app puts keys back where they started. Committing each one walked the
 app's whole set to the top of the MRU, seen live. Taking only the LAST answer per process is right for that
 case and for a genuine switch alike, so the rule is "wait until the app stops talking", and it needs nothing
@@ -31,7 +31,7 @@ event in the last 500ms, the answer is programmatic and settles for 200ms. That 
 
 ## Test scenarios
 
-- **testARunOfAnswersCommitsOnceWithTheLastWindow** — #5974's shape: four answers 29ms apart collapse to one
+- **testARunOfAnswersCommitsOnceWithTheLastWindow** — AltTab #5974's shape: four answers 29ms apart collapse to one
   commit, naming the window the run ended on.
 - **testASupersededTimerCommitsNothing** — the timer from an overtaken answer fires and is refused; without
   this the run commits once per member after all.

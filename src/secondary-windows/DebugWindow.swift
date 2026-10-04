@@ -190,7 +190,7 @@ class DebugWindow: NSPanel {
         // whole story: tab-detection decisions used to sit on a separate `--tab-diag` channel that had to be
         // force-enabled here too, because `open --args` drops arguments when KeyTab is already running, so
         // the forced `.debug` made a capture look complete while the tab decisions were silently missing
-        // (#5785). One channel, one switch.
+        // (AltTab #5785). One channel, one switch.
         Logger.minLevel = .debug
         isListening = true
     }

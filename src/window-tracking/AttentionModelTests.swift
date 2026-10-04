@@ -182,7 +182,7 @@ final class AttentionModelTests: XCTestCase {
         XCTAssertNil(state.lastAttendedWindow(999))
     }
 
-    /// #5974's shape: an app raising all its windows emits one true answer per window, 0.6 ms apart, and ends
+    /// AltTab #5974's shape: an app raising all its windows emits one true answer per window, 0.6 ms apart, and ends
     /// on the window it started on. Taking every answer still lands there, which is why the settle needs
     /// nothing guessed in advance and taken back afterwards.
     func testARaiseBurstEndsWhereItStarted() {

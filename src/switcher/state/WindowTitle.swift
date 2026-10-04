@@ -5,7 +5,7 @@ import Foundation
 /// asking about. AppKit then measures that string as a paragraph — `NSCell.cellSize.height` is one font
 /// line height per line — while the whole switcher treats a title as one line. One such window was enough
 /// to make every tile in the grid two or three line-heights taller and push the thumbnails down inside
-/// them (#6010).
+/// them (AltTab #6010).
 ///
 /// Flattening where the model records a title keeps every consumer (layout, search ranges, tooltips,
 /// VoiceOver) on the single-line assumption they all already make.

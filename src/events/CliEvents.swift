@@ -1,3 +1,6 @@
+#if DEBUG
+/// The QA and E2E command port. Debug builds only: a shipped KeyTab exposes no command interface, so no other
+/// process can read window inventory through KeyTab's Accessibility and Screen Recording grants.
 class CliEvents {
     static let portName = "\(App.bundleIdentifier).cli"
 
@@ -351,7 +354,7 @@ class CliServer {
         return WindowThumbnails.capturePixelSize(size, WindowThumbnails.captureScaleFactor(window), false)
     }
 
-    /// The panel-wide numbers every tile is placed from. `labelHeight` is the one #6010 moved: it is meant
+    /// The panel-wide numbers every tile is placed from. `labelHeight` is the one AltTab #6010 moved: it is meant
     /// to be the font's line height and nothing else, so a test can compare it against a run whose titles
     /// hold no line breaks.
     private static func renderedLayout() -> QaLayout? {
@@ -433,7 +436,7 @@ class CliServer {
         /// **The laid-out geometry, so a test can judge the GRID and not just the list.** The tile's own
         /// frame moves when the row height is wrong (titles / appIcons styles), and the thumbnail's origin
         /// inside it moves when only the label metric is wrong (thumbnails style) — which is the shape of
-        /// #6010 and is invisible in every other field here.
+        /// AltTab #6010 and is invisible in every other field here.
         var x: CGFloat
         var y: CGFloat
         var w: CGFloat
@@ -453,7 +456,7 @@ class CliServer {
     /// The screen⇄Space map the `screensToShow: showing KeyTab` filter is judged against
     /// (`Spaces.screenSpacesMap`), plus which screen that filter currently prefers. A window whose
     /// `spaceIds` name no Space of the preferred screen is hidden by that filter, and the two halves
-    /// of that verdict were previously invisible here (#6021).
+    /// of that verdict were previously invisible here (AltTab #6021).
     private struct QaScreen: Codable {
         var uuid: String
         var frame: CGRect
@@ -586,3 +589,4 @@ class CliClient {
         exit(1)
     }
 }
+#endif

@@ -51,7 +51,7 @@ final class WsWindowStateTests: XCTestCase {
         XCTAssertFalse(WsWindowState.isMinimized(raw(tags: 0x0300000100482001)))
     }
 
-    /// The discrimination the whole change rests on: an `orderOut:` window (#5714) and a Space-less
+    /// The discrimination the whole change rests on: an `orderOut:` window (AltTab #5714) and a Space-less
     /// background tab both read this value — ordered OUT, but not minimized. Reading the ordered-out bit as
     /// "minimized" is exactly the conflation that kept minimized on AX for so long.
     func testOrderedOutWindowIsNotMinimized() {

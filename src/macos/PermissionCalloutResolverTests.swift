@@ -1,7 +1,7 @@
 import XCTest
 
 /// Pins exactly when the menubar "KeyTab is running without Screen Recording permissions" callout
-/// shows vs. stays hidden, and which feature(s) it names (see #5623). The callout used to appear
+/// shows vs. stays hidden, and which feature(s) it names (see AltTab #5623). The callout used to appear
 /// whenever the permission was missing and always blamed Thumbnails; it now only appears when the
 /// permission is missing AND the user's settings actually use it (Thumbnails appearance style or the
 /// preview-selected-window overlay), and its copy names whichever of the two are affected.
@@ -39,7 +39,7 @@ final class PermissionCalloutResolverTests: XCTestCase {
     }
 
     /// Neither feature on (Titles/App Icons, Preview off) → nothing depends on the permission. This is
-    /// the issue-#5623 case: no screenshots are ever taken, so the callout must stay hidden.
+    /// the issue-AltTab #5623 case: no screenshots are ever taken, so the callout must stay hidden.
     func testNeitherFeatureClassifiedAsNone() {
         XCTAssertEqual(PermissionCalloutResolver.dependentFeatures(
             usesThumbnails: false, usesPreviews: false), .none)
@@ -78,7 +78,7 @@ final class PermissionCalloutResolverTests: XCTestCase {
     }
 
     /// Permission missing but no feature uses it → HIDE. The user skipped the permission and uses
-    /// neither Thumbnails nor Preview, so nagging them is pointless (the regression #5623 fixes).
+    /// neither Thumbnails nor Preview, so nagging them is pointless (the regression AltTab #5623 fixes).
     func testMissingPermissionHiddenWhenUnused() {
         XCTAssertFalse(PermissionCalloutResolver.shouldShowCallout(
             screenRecordingGranted: false, dependentFeatures: .none))

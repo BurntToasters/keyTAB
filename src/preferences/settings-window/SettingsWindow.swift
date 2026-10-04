@@ -328,7 +328,7 @@ class SettingsWindow: NSWindow {
         // side. Apple's docs say to consult `windowTitlebarLayoutDirection` when using
         // `titlebarAppearsTransparent` with controls under the title bar — so in that case inset the
         // content's top enough to clear the traffic lights. We reuse the sidebar's top inset so the
-        // two panes line up; the lights then float over empty space, like over the sidebar (#5792).
+        // two panes line up; the lights then float over empty space, like over the sidebar (AltTab #5792).
         let contentPaneIsOnTrafficLightSide = App.shared.userInterfaceLayoutDirection != windowTitlebarLayoutDirection
         let rightScrollViewTopInset = contentPaneIsOnTrafficLightSide ? Self.sidebarTopInset : 0
         let rightScrollViewTop = rightScrollView.topAnchor.constraint(equalTo: contentContainer.topAnchor, constant: rightScrollViewTopInset)
@@ -436,7 +436,7 @@ class SettingsWindow: NSWindow {
             sectionTitle.lineBreakMode = .byWordWrapping
             sectionTitle.maximumNumberOfLines = 0
             // `makeText` hardcodes `.left`, which parks this full-width title under the LTR traffic
-            // lights when the app is RTL but the system stays LTR (#5792). Follow the app direction.
+            // lights when the app is RTL but the system stays LTR (AltTab #5792). Follow the app direction.
             sectionTitle.alignment = App.shared.userInterfaceLayoutDirection == .rightToLeft ? .right : .left
             let view = definition.builder()
             return (sectionTitle, view)

@@ -1,7 +1,7 @@
 import Foundation
 
 /// Pure decisions for the menubar "KeyTab is running without Screen Recording permissions" callout
-/// (see #5623): both whether to surface it and which feature(s) it should name.
+/// (see AltTab #5623): both whether to surface it and which feature(s) it should name.
 /// `PermissionCalloutResolver` is callable in tests with no AppKit / Preferences / UserDefaults
 /// dependencies, so we can pin exactly when the callout shows vs. stays hidden and which message it
 /// shows.

@@ -137,7 +137,7 @@ class CustomRecorderControlTestable {
                 guard chordsCollide(newCombo.1, oldCombo.1) else { continue }
                 // The 2 already collided before the edit, so the edit doesn't introduce that collision.
                 // Reporting it blocks an unrelated change, naming a shortcut the user isn't editing and
-                // can only "fix" by sacrificing it (#5455). A saved configuration is never re-validated,
+                // can only "fix" by sacrificing it (AltTab #5455). A saved configuration is never re-validated,
                 // so one written before a validation hole was plugged still carries such a pair.
                 guard !currentCombos.contains(where: { $0.0 == newCombo.0 && chordsCollide($0.1, oldCombo.1) }) else { continue }
                 return oldCombo.0
@@ -176,7 +176,7 @@ enum ShortcutAcceptance: Equatable {
 /// Hard-set Force-Quit chords. macOS reserves these and they cannot be unbound, so KeyTab refuses
 /// to assign them. (`⌘⎋` was previously listed here for Game Overlay; it's been removed because
 /// the cghid event tap in `KeyboardEvents` intercepts at HID level, before Game Overlay's hook —
-/// see #5585.)
+/// see AltTab #5585.)
 struct MacOsShortcuts {
     static let forceQuitApplicationsDialog = Shortcut(code: KeyCode.escape, modifierFlags: [.command, .option], characters: nil, charactersIgnoringModifiers: nil)
     static let forceQuitActiveApp = Shortcut(code: KeyCode.escape, modifierFlags: [.command, .option, .shift], characters: nil, charactersIgnoringModifiers: nil)

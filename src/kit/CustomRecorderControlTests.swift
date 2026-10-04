@@ -71,7 +71,7 @@ final class CustomRecorderControlTests: XCTestCase {
         XCTAssertEqual(CustomRecorderControlTestable.isShortcutAcceptable("nextWindowShortcut", Shortcut(keyEquivalent: "t")!), .accepted)
     }
 
-    /// Issue #5455. The reporter's configuration (from their `defaults read`): S1 = hold ⌘ + press ⎋,
+    /// Issue AltTab #5455. The reporter's configuration (from their `defaults read`): S1 = hold ⌘ + press ⎋,
     /// S2 = hold ⌥ + press `. That already double-assigns ⌘⎋: Cancel is ⎋, and under S1's own ⌘ hold
     /// that is S1's trigger. Nothing re-validates a saved configuration, so the pair sits there. Their
     /// config predates a validation hole being plugged, but note the UI can still produce such a pair:
@@ -174,7 +174,7 @@ final class CustomRecorderControlTests: XCTestCase {
         ControlsTab.shortcuts = ControlsTab.defaultShortcuts
     }
 
-    // Issue #5585: previously, binding holdShortcut to ⌘ was rejected on macOS 26+ because
+    // Issue AltTab #5585: previously, binding holdShortcut to ⌘ was rejected on macOS 26+ because
     // ⌘+cancelShortcut(=⎋) collided with Game Overlay. With the cghid event tap in
     // KeyboardEvents absorbing Esc at HID level (before Game Overlay's hook), we can bind ⌘⎋
     // freely.

@@ -11,7 +11,7 @@ final class AttentionSettlePolicyTests: XCTestCase {
             sequence: IngressSequence(rawValue: sequence))
     }
 
-    /// **#5974, verbatim.** Chrome raises its four windows 29ms apart while already frontmost, answering
+    /// **AltTab #5974, verbatim.** Chrome raises its four windows 29ms apart while already frontmost, answering
     /// once per window, and ends on the window it started on. One commit, naming the last answer.
     func testARunOfAnswersCommitsOnceWithTheLastWindow() {
         var policy = AttentionSettlePolicy()

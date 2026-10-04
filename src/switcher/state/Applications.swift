@@ -22,7 +22,7 @@ class Applications {
     /// CGS keeps a closed wid in its all-Space list for seconds, and some apps (Slack) keep handing back a
     /// live `AXWindow` element for it by brute-force, so the inventory sweep re-acquired the corpse it had
     /// just removed — the window came back for one summon, was flagged phantom on the next, and only then got
-    /// its app's placeholder (#5849). Suppresses the SWEEP only; see `refreshWindowsViaWindowServer`.
+    /// its app's placeholder (AltTab #5849). Suppresses the SWEEP only; see `refreshWindowsViaWindowServer`.
     static var widsConfirmedClosed = Set<CGWindowID>()
     /// Surfaces the inventory sweep could not acquire an AX element for, with the app window-set version it
     /// failed at and how many attempts that situation has spent (`SurfaceAcquisitionPolicy`). Keyed by wid;
@@ -116,7 +116,7 @@ class Applications {
     /// pile up forever, holding a Window + a stale subscription each. So on each refresh, reconcile ONLY the
     /// windows currently flagged phantom (the accumulation candidates — usually none) against authoritative
     /// OS existence, and drop the ones the OS confirms gone. Alive-but-phantom windows (a real window briefly
-    /// between Spaces, or Slack's empty-spaceIds case #5791) still exist, so they're kept and stay correctly
+    /// between Spaces, or Slack's empty-spaceIds case AltTab #5791) still exist, so they're kept and stay correctly
     /// hidden. Bails on query failure — never discard on incomplete data. (yabai sidesteps this race by
     /// observing a window synchronously at create; our discovery is async, so this is the cheap, scoped
     /// backstop — it checks the suspicious few, not the whole list.)
@@ -138,7 +138,7 @@ class Applications {
 
     /// Refresh Space topology + per-window Space/screen membership via SkyLight, OFF the main thread, then
     /// reconcile the open switcher only if something moved. Deliberately NOT inside
-    /// `Windows.updatesBeforeShowing`, where it blocked the show (#5721): it runs ~0.25s after the show,
+    /// `Windows.updatesBeforeShowing`, where it blocked the show (AltTab #5721): it runs ~0.25s after the show,
     /// throttled, and first in its pass so its correction lands before the best-effort window passes.
     /// Capture on main → query off-main → apply on main, like the other cross-thread refreshes here.
     static func syncSpacesState() {
@@ -147,7 +147,7 @@ class Applications {
         let querySequence = Spaces.beginQuery()
         CGSCallScheduler.run {
             let snapshot = Spaces.query(mainScreenUuid, includeWindowMap: true)
-            // #5791: the inverted per-Space enumeration can miss a window (e.g. Slack), leaving it absent from
+            // AltTab #5791: the inverted per-Space enumeration can miss a window (e.g. Slack), leaving it absent from
             // the map → empty spaceIds → flagged phantom → hidden ("No Window"). Backfill any tracked wid the
             // map missed with a per-window CGSCopySpacesForWindows (off-main; only the misses pay, usually none).
             var windowToSpacesMap = snapshot.windowToSpacesMap
@@ -166,7 +166,7 @@ class Applications {
             // macOS 26: wid 0, 1, 999999, UINT32_MAX all answer `[]`), so dead-wid, genuinely-unplaced and
             // failed-read are one value here — and the reducer used to hide the window on all three. A
             // WindowServer row with a Space type is a SECOND read that disagrees, and a window two OS reads
-            // disagree about is not one to hide: the reducer keeps its last known membership (#5954). One
+            // disagree about is not one to hide: the reducer keeps its last known membership (AltTab #5954). One
             // batched IPC, only for the misses — usually none.
             //
             // Deliberately not read as "this window is definitely alive and definitely on a Space". Measured:
@@ -243,11 +243,11 @@ class Applications {
                 // wids still exist, and destroy events don't erase reliably.
                 WindowServerEvents.pruneSubscriptions(allWids)
                 // **Nothing is asked in the dark, and nothing is concluded from it.** A locked screen makes
-                // every app publish zero windows (#6021), so a sweep that runs then acquires nothing at all
+                // every app publish zero windows (AltTab #6021), so a sweep that runs then acquires nothing at all
                 // and spends the surface budget on every window on the machine. That budget is keyed to the
                 // app's window set, which a quiescent background app never moves, so verdicts reached in the
                 // dark outlive the lock and the windows stay icon placeholders once the screen is back
-                // (#6031). Measured 2026-09-13 with the screen locked: every app whose window KeyTab had to
+                // (AltTab #6031). Measured 2026-09-13 with the screen locked: every app whose window KeyTab had to
                 // acquire was a placeholder, while the two it already held elements for were untouched.
                 // Read once, so the whole pass judges against one verdict rather than a flag that can flip
                 // mid-enumeration.
@@ -362,7 +362,7 @@ class Applications {
     /// focus event (in the "focus" bucket) is never clobbered.
     /// `adoptedAsInactiveTab`: this window was found by the inactive-tab brute-force (`discoverInactiveTabs`)
     /// — we already KNOW it's a background tab, so the per-window Space query must not be trusted for it: it
-    /// returns the STALE old Space for a backgrounded tab (the same lie behind the #5830 burst fix), which
+    /// returns the STALE old Space for a backgrounded tab (the same lie behind the AltTab #5830 burst fix), which
     /// made a cold-start adoption flood arrive as visible "on-screen" windows that the tab matcher was then
     /// forbidden to claim — a switcher full of ghost tiles that only the NEXT show's re-query healed (rec15).
     /// Forced Space-less, it arrives hidden like any unclaimed background tab, and the group converges below.
@@ -389,7 +389,7 @@ class Applications {
             // delayed by the app being busy, and one fewer attribute crosses the AX boundary per window.
             let isMinimized = WsWindowState.isMinimized(raw)
             // Resolve the window's REAL Space(s) now, off-main. Window.init defaults spaceIds to the current
-            // Space (it runs on main and must avoid this blocking CGS call, #5721); for an other-Space window
+            // Space (it runs on main and must avoid this blocking CGS call, AltTab #5721); for an other-Space window
             // that default is wrong, and the first post-show syncSpacesState would then correct it → a visible
             // reflow on the first summon (misaligned space numbers / shifted title). Setting it right here makes
             // that later correction a no-op. Skipped for an adopted inactive tab: the query lies for those
@@ -477,7 +477,7 @@ class Applications {
     /// scheduler retries with backoff instead of wrongly concluding the window closed.
     ///
     /// A dead element (`.invalidUIElement`) is NOT proof of a close on its own: some apps silently rebuild a
-    /// window's a11y node, which kills our cached ref while the window lives on (#5586, and the same rebind is
+    /// window's a11y node, which kills our cached ref while the window lives on (AltTab #5586, and the same rebind is
     /// why `Window.focus` retries a raise). So take a second opinion before condemning — ask the app for the
     /// wid again, exactly as discovery would. Measured on macOS 26 (TextEdit): closing a window drops its wid
     /// from `kAXWindows` at once (CGS keeps listing it for seconds), while minimize and app-hide both keep it
@@ -485,7 +485,7 @@ class Applications {
     /// optimistic); found ⇒ our ref was merely stale ⇒ heal it and keep the window.
     ///
     /// Condemning on the weaker test than the one that re-adds the window is what made a live QQ window
-    /// disappear and come back seconds later as a "new" window with no MRU history (#5785).
+    /// disappear and come back seconds later as a "new" window with no MRU history (AltTab #5785).
     ///
     /// The ordered-out edge is not the only way in, because it is not the only way a window dies. A window
     /// CLOSED while it was already ordered out — parked on another Space, or behind an app-hide — emits no
@@ -684,7 +684,7 @@ class Applications {
     private static func confirmAbsentFromApp(wid: CGWindowID, pid: pid_t, reason: String) throws {
         // A locked screen makes every app publish zero windows, so `.absent` here says "the screen is
         // locked", not "the window is gone" (measured on macOS 26: locking condemned every tracked window
-        // 0.7s later, and they stayed gone until the next WindowServer rescan — #6021, which reads as the
+        // 0.7s later, and they stayed gone until the next WindowServer rescan — AltTab #6021, which reads as the
         // switcher listing only the frontmost window after a wake). Nothing can be learned in the dark, so
         // throw and let the scheduler re-ask once the screen is back. Only this app-side route is void; the
         // WindowServer half of `reconcileAxElementEnd` keeps answering while locked.
@@ -764,7 +764,7 @@ class Applications {
     /// **The role read is not optional.** `_AXUIElementGetWindow` answers with the CONTAINING window's id for
     /// a descendant too, and apps do name descendants: Chrome posts `AXTitleChanged` with an `AXStaticText`
     /// whose wid is its window's. Binding that as the window's element would send every later read and AX
-    /// action to a text node. `BruteForceWindowMatch.isTargetWindowRoot` is the same #5849 root check the
+    /// action to a text node. `BruteForceWindowMatch.isTargetWindowRoot` is the same AltTab #5849 root check the
     /// sweep applies to its candidates; the wid half is already proven by the caller, the role half is what
     /// this pays one round trip for, and only for windows that have no element at all.
     static func applyObservedElement(wid: CGWindowID, pid: pid_t, element: AXUIElement, source: String) {
@@ -855,7 +855,7 @@ class Applications {
         // It is also survivable by construction: everything discovery needs is read fresh here, and
         // exact attention arriving inside the gap waits for this wid to have a model object before it
         // commits. The per-app discovery seed covers an already-front app at cold start.
-        // Deliberately before the guards below — a window AX rejects must stay subscribed (#5785).
+        // Deliberately before the guards below — a window AX rejects must stay subscribed (AltTab #5785).
         WindowServerEvents.subscribe(raw.wid)
         // A window kept on WindowServer evidence alone must NOT block its own re-acquisition: it is
         // tracked, so the old "already tracked, nothing to do" guard would leave it unverified and
@@ -976,7 +976,7 @@ class Applications {
                     // member is hidden), so the switcher silently lost a window and the default pick
                     // landed one tile past where the user was aiming.
                     //
-                    // Title matching cannot tell the two apart (#5785: tab titles are not window titles,
+                    // Title matching cannot tell the two apart (AltTab #5785: tab titles are not window titles,
                     // and no reliable tab->window mapping exists), so the on-screen bit is what separates
                     // them. A missed adoption is cheap — the next scan retries — while a wrong one hides a
                     // window the user is looking at.
@@ -1170,7 +1170,7 @@ class Applications {
             }
             // com.apple.universalcontrol always fails subscribeToNotification. We blacklist it to save resources on everyone's machines
             guard bundleIdentifier != "com.apple.universalcontrol" else { return }
-            // classify off-main (process & sysctl IPC), then create on main if it's a real app (#5721).
+            // classify off-main (process & sysctl IPC), then create on main if it's a real app (AltTab #5721).
             // findOrCreate stays synchronous for the rarer AX-event new-pid path (it re-checks the list).
             // `thenMain`, so the verdict is recorded on the thread that owns the table.
             ProcessCallScheduler.isActualApplication(processIdentifier, bundleIdentifier) { isActual in

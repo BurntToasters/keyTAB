@@ -7,24 +7,20 @@ import Cocoa
 // every run, unless KeyTab itself changed.
 //
 // The suite drives it through the CLI port (`CliServer`):
-//   --qa-surfaces        the ids, and the license states each one is worth photographing in
+//   --qa-surfaces        the ids
 //   --qa-look=<l>        light or dark, for the whole app
-//   --qa-license=<s>     trial, expired or pro
 //   --qa-open=<id>       put that surface on screen, closing whatever the previous one left
 //   --qa-shown           the window numbers to photograph, and how many pages of scrolling it holds
 //   --qa-page=<n>        scroll the surface to its n-th page (0-based)
 //   --qa-close           put everything away
 //
 // Whatever would change between two runs is held still, so a difference in the pictures is a difference in
-// KeyTab: the usage numbers are pinned, the update check answers "up to date" without the network, the Pro
-// prompts are marked seen so none schedules itself mid-run, windows open at their default size rather than
-// the one they were last left at, and no text field keeps a blinking caret.
+// KeyTab: the usage numbers are pinned, the update check answers "up to date" without the network, windows
+// open at their default size rather than the one they were last left at, and no text field keeps a blinking
+// caret.
 enum QaSurfaces {
     struct Info: Codable {
         let id: String
-        /// Nil for "all three": most surfaces look the same in every license state, but that is exactly the
-        /// kind of thing the suite is there to notice.
-        let licenses: [String]?
     }
 
     struct Shown: Codable {
@@ -64,7 +60,6 @@ enum QaSurfaces {
 
     private struct Surface {
         let id: String
-        let licenses: [String]?
         /// Surfaces that live in the Settings window keep it open between them, rather than rebuilding it.
         let inSettings: Bool
         let open: () -> Target
@@ -92,7 +87,6 @@ enum QaSurfaces {
         switch parts[0] {
             case "--qa-open": return open(parts[1]) ? CliServer.noOutput : CliServer.error
             case "--qa-look": setLook(parts[1])
-            case "--qa-license": setLicense(parts[1])
             case "--qa-page": page(Int(parts[1]) ?? 0)
             default: return nil
         }
@@ -102,7 +96,7 @@ enum QaSurfaces {
     static func list() -> [Info] {
         observePopovers()
         disableAnimations()
-        return surfaces.map { Info(id: $0.id, licenses: $0.licenses) }
+        return surfaces.map { Info(id: $0.id) }
     }
 
     static func open(_ id: String) -> Bool {
@@ -172,10 +166,6 @@ enum QaSurfaces {
         Menubar.menu.appearance = appearance
     }
 
-    static func setLicense(_ license: String) {
-        _ = license
-    }
-
     static func closeAll(keepSettings: Bool = false) {
         renderGeneration += 1
         settlingGeneration = nil
@@ -206,7 +196,7 @@ enum QaSurfaces {
 
     private static func settingsSurfaces() -> [Surface] {
         ["appearance", "general", "exceptions"].map { section in
-            Surface(id: "settings.\(section)", licenses: nil, inSettings: true) { settings(section) }
+            Surface(id: "settings.\(section)", inSettings: true) { settings(section) }
         }
     }
 
@@ -214,13 +204,13 @@ enum QaSurfaces {
         let segments = ["filtering", "appearance", "ordering"]
         return [false, true].flatMap { gesture in
             segments.enumerated().map { segment, name in
-                Surface(id: "settings.controls.\(gesture ? "gesture" : "shortcut").\(name)", licenses: nil, inSettings: true) {
+                Surface(id: "settings.controls.\(gesture ? "gesture" : "shortcut").\(name)", inSettings: true) {
                     _ = settings("controls")
                     ControlsTab.qaSelect(gesture: gesture, segment: segment)
                     return settings("controls")
                 }
             }
-        } + [Surface(id: "popover.gesture-info", licenses: nil, inSettings: true) {
+        } + [Surface(id: "popover.gesture-info", inSettings: true) {
             _ = settings("controls")
             ControlsTab.qaSelect(gesture: true, segment: 0)
             hoverInfoButton(in: SettingsWindow.shared)
@@ -236,12 +226,12 @@ enum QaSurfaces {
             ("additional-controls", { ControlsTab.showAdditionalControlsSettings() }),
         ]
         return sheets.map { name, show in
-            Surface(id: "sheet.\(name)", licenses: nil, inSettings: true) {
+            Surface(id: "sheet.\(name)", inSettings: true) {
                 _ = settings(nil)
                 show()
                 return Target(windows: { [SettingsWindow.shared?.attachedSheet].compactMap { $0 } })
             }
-        } + [Surface(id: "popover.hide-status-icons-info", licenses: nil, inSettings: true) {
+        } + [Surface(id: "popover.hide-status-icons-info", inSettings: true) {
             _ = settings(nil)
             AppearanceTab.showCustomizeStyleSheet()
             hoverInfoButton(in: SettingsWindow.shared?.attachedSheet)
@@ -251,12 +241,12 @@ enum QaSurfaces {
 
     private static func windowSurfaces() -> [Surface] {
         [
-            Surface(id: "about", licenses: nil, inSettings: false) {
+            Surface(id: "about", inSettings: false) {
                 App.showAboutWindow()
                 return target(AboutWindow.shared) { AboutWindow.shared.flatMap { documentPager($0.contentView as? NSScrollView) } }
             },
-            Surface(id: "permissions", licenses: nil, inSettings: false) { permissions(granted: true) },
-            Surface(id: "permissions.missing", licenses: nil, inSettings: false) { permissions(granted: false) },
+            Surface(id: "permissions", inSettings: false) { permissions(granted: true) },
+            Surface(id: "permissions.missing", inSettings: false) { permissions(granted: false) },
         ]
     }
 
@@ -276,7 +266,7 @@ enum QaSurfaces {
             ("settings-not-saved.unwritable", { PreferencesPersistenceCheck.debugShowDialog(symlinked: false) }),
         ]
         return alerts.map { name, show in
-            Surface(id: "alert.\(name)", licenses: nil, inSettings: false) {
+            Surface(id: "alert.\(name)", inSettings: false) {
                 later(show)
                 return Target()
             }
@@ -287,13 +277,11 @@ enum QaSurfaces {
     /// laptop the notch hides it more often than not.
     private static func menubarSurfaces() -> [Surface] {
         [
-            Surface(id: "menubar.menu", licenses: nil, inSettings: false) {
+            Surface(id: "menubar.menu", inSettings: false) {
                 later { Menubar.popUpMenu() }
                 return Target()
             },
-            // Pro only: once the license lapses, the Pro styles give way to thumbnails, and the suite relaunches
-            // KeyTab once per style to photograph them.
-            Surface(id: "switcher", licenses: nil, inSettings: false) {
+            Surface(id: "switcher", inSettings: false) {
                 App.showUi(0)
                 return target(TilesPanel.shared)
             },

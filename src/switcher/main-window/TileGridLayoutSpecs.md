@@ -14,7 +14,7 @@ much each row moves to be centered, and which appearance size the **auto** setti
 
 The point of the split is that the grid can now be pinned at any width, any tile size, either writing
 direction and any number of tiles, without a screen. Before it, every layout question had to be answered by
-looking at a running switcher, which is why #6010 (a multi-line window title inflating the label height and
+looking at a running switcher, which is why AltTab #6010 (a multi-line window title inflating the label height and
 so every tile's height) shipped in every version from 10 onwards.
 
 ### Coordinates
@@ -73,7 +73,7 @@ Mirrors `TileGridLayoutTests.swift` 1:1.
   same rows, same `maxX` and `maxY` as the LTR case.
 - **testRtlWrapsWhenTheLeadingEdgeWouldPassZero** — the wrap test is the left edge, not the right.
 
-### D. Tile size (the shape of #6010)
+### D. Tile size (the shape of AltTab #6010)
 - **testATallerTileMovesEveryRowDownByTheDifference** — the grid is a pure function of `tileHeight`: adding
   38pt to it (the two extra line heights a three-line title added to `labelHeight`) moves row 1 down by
   exactly 38 and grows `maxY` by 76. This is how one window's title moved every other window's thumbnail.

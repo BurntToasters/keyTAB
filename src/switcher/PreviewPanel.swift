@@ -54,7 +54,7 @@ class PreviewPanel: NSPanel {
 
     /// Order out AND release the displayed frame: the layer would otherwise pin a full-resolution
     /// frame in this static view for the rest of the app's lifetime, defeating the session-scoped
-    /// Preview-frame cache's release-on-hide (#5861).
+    /// Preview-frame cache's release-on-hide (AltTab #5861).
     static func hide() {
         Self.shared.orderOut(nil)
         previewView.releaseImage()

@@ -64,7 +64,7 @@ class TilesView {
     /// and dropping its editability resigns it as first responder, and AppKit answers that by DEACTIVATING
     /// the system text-input context, a synchronous XPC to the input-method services (`CursorUIViewService`,
     /// `CharacterPalette`). Measured 4-7ms on macOS 26.6.2, but it is unbounded: on one user's machine it
-    /// returned only by timing out after 3.0s, and the whole dismissal sat behind it (#5981). Callers run it
+    /// returned only by timing out after 3.0s, and the whole dismissal sat behind it (AltTab #5981). Callers run it
     /// last, behind whatever the user is actually waiting for: the panel hiding, or the re-layout that puts
     /// the unfiltered list back.
     private static func takeTheCaretFromTheField() {
@@ -114,7 +114,7 @@ class TilesView {
     }
 
     /// The show-path twin of `endSearchSession`: making the field first responder ACTIVATES the system
-    /// text-input context, the same synchronous XPC whose deactivation timed out for 3.0s in #5981. It runs
+    /// text-input context, the same synchronous XPC whose deactivation timed out for 3.0s in AltTab #5981. It runs
     /// a runloop turn late so the CoreAnimation transaction that reveals the panel commits first —
     /// `TilesPanel.show()` has only SET alpha at this point, so a stall here would keep the old frame on
     /// screen. Measured under 1ms on macOS 26.6.2; the deferral is for the tail, not the median.
@@ -129,7 +129,7 @@ class TilesView {
     /// panel instead. It normally wins that race by a wide margin (measured 5-9ms, and 77ms on the first
     /// summon of a launch where the main thread is still busy discovering windows), but the user is waiting
     /// for this keystroke, so close the window rather than bet on it. A no-op once the field already has it:
-    /// past that point the selection belongs to the user, and moving it is what broke ⌘A (#6019). See
+    /// past that point the selection belongs to the user, and moving it is what broke ⌘A (AltTab #6019). See
     /// `SearchFieldEditing`.
     static func giveTheFieldTheCaretNow() {
         let intent = SearchFieldEditing.caretIntent(mode: searchMode, fieldOwnsCaret: fieldOwnsTheCaret())
@@ -291,7 +291,7 @@ class TilesView {
     /// else. Measuring it off a tile's own label made it a property of that window's title instead:
     /// `NSCell.cellSize.height` grows by one line height per line break in the string, so a single window
     /// titled with a multi-line string made every tile in the grid that much taller and pushed the
-    /// thumbnails down inside them (#6010). `WindowTitle` keeps such a string out of the model; this keeps
+    /// thumbnails down inside them (AltTab #6010). `WindowTitle` keeps such a string out of the model; this keeps
     /// the metric out of reach of whatever does get in.
     private static let labelHeightProbe = TileTitleView(font: Appearance.font)
 

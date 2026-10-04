@@ -303,7 +303,7 @@ final class KeyboardEventsUtilsTests: XCTestCase {
         ModifierReleaseLog.reset()
     }
 
-    // Issue #5585: Escape (kVK_Escape = 53) reaches the matcher via the cghid event tap in
+    // Issue AltTab #5585: Escape (kVK_Escape = 53) reaches the matcher via the cghid event tap in
     // KeyboardEvents on the real device. These tests exercise the matcher logic that the tap
     // routes into — not the OS event delivery itself.
     func testEscapeFiresCancelShortcutWhileSwitcherActiveWithOptionHeld() throws {

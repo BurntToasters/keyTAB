@@ -1,7 +1,6 @@
 import Cocoa
 import ScreenCaptureKit
 
-@available(macOS 14.0, *)
 class WindowCaptureScreenshots {
     // SCShareableContent.getExcludingDesktopWindows is expensive for the OS; we cache as much as possible.
     // Wrapped in ConcurrentArray because reads and writes happen from different operations on
@@ -37,7 +36,7 @@ class WindowCaptureScreenshots {
     }
 
     /// `fullRes: false` = thumbnail-scale captures, delivered to `Window.thumbnail`.
-    /// `fullRes: true` = full-resolution Preview frames, delivered to the session's capped cache (#5861).
+    /// `fullRes: true` = full-resolution Preview frames, delivered to the session's capped cache (AltTab #5861).
     static func oneTimeScreenshots(_ windowsToScreenshot: [Window], _ source: RefreshCausedBy, prioritizedIds: Set<CGWindowID>? = nil, fullRes: Bool = false) {
         // Snapshot Window state on the main thread before hopping to screenshotsQueue. Windows.byWindowId,
         // Window.size, Window.screenId, Screens.all, and NSScreen.preferred are plain (lock-free) dictionaries
@@ -190,18 +189,18 @@ class WindowCaptureScreenshots {
             let filter = SCContentFilter(desktopIndependentWindow: scWindow)
             // Through the gate, not merely counted: these APIs are ASYNCHRONOUS, so the `screenshotsQueue`
             // slot frees the moment the request is handed to the OS, and a show of 60 windows fired 60
-            // simultaneous requests — the burst #5861 blames for wedging replayd machine-wide.
+            // simultaneous requests — the burst AltTab #5861 blames for wedging replayd machine-wide.
             ActiveWindowCaptures.run { finish in
                 guard source != .refreshOnlyThumbnailsAfterShowUi || SwitcherSession.isActive else {
                     finish()
                     return
                 }
                 // captureSampleBuffer spins up a short-lived capture stream per call; on some macOS 26 machines that
-                // churn leaks WindowServer memory until the session is force-logged-out (#5786), and the per-call
-                // replayd attribution work can wedge screenshots machine-wide under bursts (#5861). captureScreenshot
+                // churn leaks WindowServer memory until the session is force-logged-out (AltTab #5786), and the per-call
+                // replayd attribution work can wedge screenshots machine-wide under bursts (AltTab #5861). captureScreenshot
                 // avoids the churn but fails (SCStreamError -3811) on fullscreen windows whose Space is inactive, so
                 // that one case stays on captureSampleBuffer. Its CGImage copy (vs a shared IOSurface) is acceptable
-                // even at full resolution now that Preview frames are fetched lazily, a few per session (#5861).
+                // even at full resolution now that Preview frames are fetched lazily, a few per session (AltTab #5861).
                 if #available(macOS 26.0, *), !request.isFullscreen {
                     captureScreenshot(filter, config, window, source, request.fullRes, finish)
                 } else {
@@ -299,7 +298,6 @@ class WindowCaptureScreenshotsPrivateApi {
     }
 }
 
-@available(macOS 12.3, *)
 extension SCStreamConfiguration {
     // size/scaleFactor are snapshotted on the main thread by the caller; we do not touch Window state here
     // (Window properties are mutated on main and would race with this background work).
@@ -332,7 +330,7 @@ extension CMSampleBuffer {
 }
 
 /// **The gate on in-flight window captures**, and the counter `main.swift` drains at quit (macOS pops
-/// permission dialogs for a capture still outstanding when the process dies, #5106).
+/// permission dialogs for a capture still outstanding when the process dies, AltTab #5106).
 ///
 /// It became a gate because the ScreenCaptureKit path is ASYNCHRONOUS: `SCScreenshotManager` hands the
 /// request to the OS and returns, freeing its `screenshotsQueue` slot at once, so the 8-wide queue bounded
@@ -348,7 +346,7 @@ class ActiveWindowCaptures {
     /// closes drops what was never sent.
     private static let maxInFlight = 2
     private static let maxWaiting = 256
-    /// A capture the OS never answers must not hold its slot for the life of the session: #5861 has replayd
+    /// A capture the OS never answers must not hold its slot for the life of the session: AltTab #5861 has replayd
     /// wedging machine-wide under bursts, which is exactly when a lost callback is likeliest and exactly when
     /// the remaining slots matter most. Generous, because a slow capture is not a lost one — this is the
     /// pathological case only, and it matches the drain budget `makeSureAllCapturesAreFinished` allows.

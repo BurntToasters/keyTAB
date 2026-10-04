@@ -66,7 +66,7 @@ struct TrackedWindow: Equatable {
     /// Genuine OS evidence like `lastLeftSpaceId`, not an annotation, so the kernel projection forwards it.
     ///
     /// It is what separates a background TAB from a window that merely lost its Space membership, which is a
-    /// distinction geometry alone cannot make and which #5954 turned on. Measured on macOS 26 by building a
+    /// distinction geometry alone cannot make and which AltTab #5954 turned on. Measured on macOS 26 by building a
     /// real tab group: the background tab reads ordered-OUT with `spaceTypeMask` 0 and no CGS Space, while
     /// its selected sibling and an unrelated window both read ordered-IN, `spaceTypeMask` 1, with a Space.
     /// So an on-screen window is never somebody's background tab, whatever the Space query says about it.
@@ -117,7 +117,7 @@ struct TrackedWindow: Equatable {
     /// `now`, never a time we invent). 0 = never seen focused, which sorts behind every window that was.
     /// Stored rather than derived because it is the one thing that survives a LATE report: a window
     /// discovered 80ms after its order-in, or any event we could only apply once the wid was tracked, is
-    /// placed by WHEN IT HAPPENED instead of when we got around to it (#5785, WeChat landing last).
+    /// placed by WHEN IT HAPPENED instead of when we got around to it (AltTab #5785, WeChat landing last).
     var focusedAt: TimeInterval = 0
     /// DERIVED from `focusedAt` by `recomputeFocusRanks` — the dense MRU rank every reader still speaks
     /// (0 = most recent), so kernels, the switcher's selection and `--focusUsingLastFocusOrder` are unchanged.
@@ -607,7 +607,7 @@ struct TrackedWindowState: Equatable {
     ///
     /// What differs is LATE news: a signal we could only apply after the fact slots in behind whatever the OS
     /// focused in the meantime, instead of jumping to the front (wrong — it steals a front the user has
-    /// already left) or landing at the back (wrong — #5785's WeChat window, discovered 80ms late, went last).
+    /// already left) or landing at the back (wrong — AltTab #5785's WeChat window, discovered 80ms late, went last).
     ///
     /// STRICTLY older news is refused: a report about T1 cannot undo what the OS said at T2 > T1.
     /// Returns the wids to re-render — this one, plus every window whose rank moved.
@@ -692,7 +692,7 @@ struct TrackedWindowState: Equatable {
 
     /// One line per window REMOVAL, naming the path that condemned it. Several paths can remove a window, and
     /// without this a capture shows one simply vanishing from the tile dump and reappearing later as a fresh
-    /// discovery, with no way to tell which path ran (#5785). Carries the facts that
+    /// discovery, with no way to tell which path ran (AltTab #5785). Carries the facts that
     /// separate a real close from a false verdict: its MRU slot and Space (both lost by the removal, which is
     /// why a re-discovered window comes back at the wrong position) and whether it was grouped or held.
     func removalLog(_ wid: CGWindowID, reason: String) -> String {
@@ -793,10 +793,10 @@ struct TrackedWindowState: Equatable {
     /// came to the front: an Electron app reopened from the Dock stayed flagged until some later show
     /// happened to re-read it. Summoning the switcher in that gap hid the very window the user had just
     /// focused, which both spawned a windowless placeholder for its app and pushed the default selection one
-    /// window too far (#5849).
+    /// window too far (AltTab #5849).
     ///
     /// This is genuine evidence, not a guess, so it clears the latch exactly as a Space delta does — the
-    /// #5714 "never clears a phantom" invariant governs the SYNCHRONOUS re-derivation, not new evidence.
+    /// AltTab #5714 "never clears a phantom" invariant governs the SYNCHRONOUS re-derivation, not new evidence.
     /// Returns whether a real window just un-phantomed, so the caller can drop the stale placeholder.
     mutating func clearPhantomOnFocus(_ wid: CGWindowID) -> Bool {
         guard let i = windowIndex(wid) else { return false }
@@ -819,7 +819,7 @@ struct WsWindowSnapshot: Equatable {
     /// applies the staleness rule, not the caller.
     var isMinimized: Bool = false
     /// WindowServer compositing alpha, on the batched query KeyTab already issues. `0` is one of the two
-    /// phantom families EXACTLY (Outlook reminders, #5170/#5448), where every other route to it is an
+    /// phantom families EXACTLY (Outlook reminders, AltTab #5170/#5448), where every other route to it is an
     /// inference — and it is the family AX cannot see at all, since such a window is listed as an ordinary
     /// `AXStandardWindow`. Defaults to 1 (opaque) so a fixture that does not care decides nothing.
     var alpha: Float = 1
@@ -879,7 +879,7 @@ enum ReducerInput: Equatable {
     /// It exists because CGS answers a non-NULL EMPTY array for a wid it has no record of (measured: 0, 1,
     /// 999999, UINT32_MAX), so "this window is on no Space" and "there is no such window" are the same value
     /// coming back. Such a window keeps the last membership CGS itself reported, which beats both wiping it
-    /// (hidden with no recovery path, #5954) and inventing a Space for it (a fabricated fact other rules read
+    /// (hidden with no recovery path, AltTab #5954) and inventing a Space for it (a fabricated fact other rules read
     /// as truth). Empty for every window in the ordinary case.
     case spacesSynced(windowToSpaces: [CGWindowID: [UInt64]], queried: Set<CGWindowID>,
                       answered: Set<CGWindowID>,

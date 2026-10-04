@@ -3,7 +3,7 @@ import Cocoa
 class RunningApplicationsEvents {
     private static var appsObserver: NSKeyValueObservation!
     // Many short-lived helper processes (e.g. `*.CompileAppleScript`) launch and quit within ~80ms.
-    // Eagerly tracking each is a wasted Application init + deinit, sometimes ~1/sec (#5721). We defer tracking
+    // Eagerly tracking each is a wasted Application init + deinit, sometimes ~1/sec (AltTab #5721). We defer tracking
     // a newly-launched app by this delay and skip it if it's already gone, so transient helpers cost nothing.
     // This applies ONLY to apps that appear during continuous monitoring; the initial bulk discovery
     // (`addInitialRunningApplications`) is added immediately.
@@ -36,7 +36,7 @@ class RunningApplicationsEvents {
     ///
     /// Liveness is asked of the kernel (`pid_t.isAlive`), not of `isTerminated`: that flag lags the
     /// removal announcement by seconds, and a process admitted after its removal was already processed
-    /// is never removed again (#6051, `ProcessLivenessTests`).
+    /// is never removed again (AltTab #6051, `ProcessLivenessTests`).
     private static func debounceThenAddRunningApplications(_ launched: [NSRunningApplication]) {
         DispatchQueue.main.asyncAfter(deadline: .now() + newAppDebounce) {
             let stillAlive = launched.filter { $0.processIdentifier.isAlive() }

@@ -4,7 +4,7 @@ import Foundation
 ///
 /// KeyTab stores prefs via `UserDefaults`/`CFPreferences`, which `cfprefsd` brokers. cfprefsd keeps values
 /// in memory and flushes them to `~/Library/Preferences/<suite>.plist` on its own schedule, so a setting can
-/// look applied in-process yet never reach disk and silently reset on the next launch (issue #5790). Two
+/// look applied in-process yet never reach disk and silently reset on the next launch (issue AltTab #5790). Two
 /// concrete, observable conditions guarantee non-persistence on every supported macOS:
 ///   - the plist is a SYMLINK — dotfile-sync tools (Mackup, chezmoi, …) replace it with a link into a synced
 ///     folder, and cfprefsd does not persist through a symlinked preferences file;

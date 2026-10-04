@@ -12,7 +12,7 @@ struct ShortcutSnapshot: Equatable {
 /// takes the configured shortcuts plus the set of hold-shortcut modifier flags currently in effect,
 /// returns disjoint disable/enable sets.
 ///
-/// Issue #5653: the previous in-place implementation in `ControlsTab.toggleNativeCommandTabIfNeeded`
+/// Issue AltTab #5653: the previous in-place implementation in `ControlsTab.toggleNativeCommandTabIfNeeded`
 /// used `nativeHotkeys.first { … }`, which made the classification depend on Swift dictionary
 /// iteration order. When a single shortcut matched multiple predicates (e.g. ⌘⇥ matches both
 /// `.commandTab` exactly *and* `.commandShiftTab` via `combinedModifiersMatch` when a ⌘⇧

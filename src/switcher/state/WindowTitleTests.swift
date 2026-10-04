@@ -2,7 +2,7 @@ import XCTest
 import Cocoa
 
 /// Pins `WindowTitle.singleLine`, the flattening `Window.bestEffortTitle` puts every title through so the
-/// model never holds a line break (#6010). Group E measures a real `NSTextField` cell, which is the AppKit
+/// model never holds a line break (AltTab #6010). Group E measures a real `NSTextField` cell, which is the AppKit
 /// behaviour the rest of the suite is reasoning about rather than a property of our own code.
 ///
 /// Groups: A no-op · B break becomes a separator · C whitespace around the break · D breaks at the edges ·
