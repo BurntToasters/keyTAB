@@ -73,6 +73,7 @@ export function sha256File(filePath) {
 
 function walk(directory) {
   if (!fs.existsSync(directory)) return [];
+  if (!fs.statSync(directory).isDirectory()) return [directory];
   return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
     if ([".build", ".swiftpm", ".DS_Store"].includes(entry.name)) return [];
     const absolute = path.join(directory, entry.name);
