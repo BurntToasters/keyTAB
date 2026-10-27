@@ -15,8 +15,6 @@
 	<string>6.0</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
-	<key>CFBundleIconFile</key>
-	<string>app.icns</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>GPL-3.0-only; no warranty</string>
 	<key>LSApplicationCategoryType</key>

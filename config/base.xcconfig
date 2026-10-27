@@ -7,6 +7,7 @@ MACOSX_DEPLOYMENT_TARGET = 14.0
 SWIFT_VERSION = 5.8 // xcode 14.2 translates this to 5.0; xcode 16.2 as 5.8
 SWIFT_TREAT_WARNINGS_AS_ERRORS = YES
 INFOPLIST_FILE = Info.plist
+ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon // resources/icons/app/AppIcon.icon; actool writes CFBundleIconName/CFBundleIconFile and a flattened AppIcon.icns for macOS 14-15
 CODE_SIGN_ENTITLEMENTS = KeyTab.entitlements
 FRAMEWORK_SEARCH_PATHS[config=*] = $(inherited) /System/Library/PrivateFrameworks // for SkyLight.framework
 LD_RUNPATH_SEARCH_PATHS = @executable_path/../Frameworks // load embedded frameworks at runtime; Xcode's SPM machinery adds the absolute PackageFrameworks path automatically before this, which is fine in Debug and stale-but-harmless in Release on customer machines

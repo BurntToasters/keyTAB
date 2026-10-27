@@ -12,8 +12,10 @@ const knownPlaceholderHashes = new Set([
 ]);
 
 export function releaseArtworkReady(base = root) {
-  const iconFiles = ["resources/icons/app/app.icns", "resources/icons/app/app.iconset/icon_128x128.png", "resources/icons/app/app.iconset/icon_32x32@2x.png", "resources/icons/app/app.iconset/icon_512x512@2x.png"];
-  if (!iconFiles.every((file) => fs.existsSync(path.join(base, file)))) return false;
+  const icon = "resources/icons/app/AppIcon.icon";
+  const assets = path.join(base, icon, "Assets");
+  if (!fs.existsSync(path.join(base, icon, "icon.json")) || !fs.existsSync(assets)) return false;
+  const iconFiles = [path.join(icon, "icon.json"), ...fs.readdirSync(assets).map((file) => path.join(icon, "Assets", file))];
   return artworkHashesReady(iconFiles.map((file) => sha256File(path.join(base, file))));
 }
 

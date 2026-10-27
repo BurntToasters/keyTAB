@@ -21,9 +21,11 @@ way unselected tiles do in the switcher.
 
 ## Assets
 
-All brand assets are generated from code, so they can be reviewed in diffs and regenerated exactly:
+The app icon is authored in Icon Composer; the menubar icons are generated from code, so they can be reviewed in
+diffs and regenerated exactly:
 
-- `node scripts/assets/generate-icon.mjs` writes `resources/icons/app/app.iconset` and `app.icns`.
+- `resources/icons/app/AppIcon.icon` is an Icon Composer file. Edit it in Icon Composer; the build compiles it into
+  `Assets.car` (Liquid Glass on macOS 26 and newer) and a flattened `AppIcon.icns` for macOS 14 and 15.
 - `node scripts/assets/generate-menubar-icons.mjs` writes `resources/icons/menubar/menubar-{0,1,2}.pdf`:
   outlined and filled template glyphs, which macOS tints for light and dark menubars, and the colored glyph.
 

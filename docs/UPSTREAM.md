@@ -5,7 +5,7 @@ KeyTab is a fork of [AltTab](https://github.com/lwouis/alt-tab-macos). This page
 Rules that every resolved hunk must follow:
 
 - The paywall never returns. Licensing, trials, purchase and upgrade UI, Pro-only gates, telemetry, AppCenter, feedback and `src/api` stay out. Formerly paid features stay enabled for everyone.
-- KeyTab identity wins: the name `KeyTab`, bundle identifier `run.rosie.keytab`, repository `BurntToasters/KeyTab`, KeyTab's app icon (`resources/icons/app/app.icns`) and its three menubar icons (`menubar-0/1/2.pdf`). Upstream issue references are written `AltTab #NNNN`.
+- KeyTab identity wins: the name `KeyTab`, bundle identifier `run.rosie.keytab`, repository `BurntToasters/KeyTab`, KeyTab's app icon (`resources/icons/app/AppIcon.icon`) and its three menubar icons (`menubar-0/1/2.pdf`). Upstream issue references are written `AltTab #NNNN`.
 - The CLI and QA code (`CliEvents`, `CliServer`, `CliClient`, `Qa*`) stays inside `#if DEBUG`.
 - Do not import upstream migrations that assume AltTab version numbers in `preferencesVersion`. KeyTab preferences are separate from AltTab.
 

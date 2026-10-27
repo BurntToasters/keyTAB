@@ -17,7 +17,7 @@ class App: NSApplication {
     static let licence = "GPL-3.0-only; no warranty"
     static let repository = "https://github.com/BurntToasters/KeyTab"
     static let issues = "\(repository)/issues"
-    static let appIconReps = CGImage.allNamed("app.icns")
+    static let appIconReps = CGImage.allNamed("AppIcon.icns")
     static let appIcon: CGImage = appIconReps.max { $0.width < $1.width }!
 
     override class var shared: App { super.shared as! App }
