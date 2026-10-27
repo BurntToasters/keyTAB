@@ -127,7 +127,7 @@ function continueRelease() {
   const assets = [zip, ...feeds, checksums];
   assets.push(...assets.map(signGpg));
   ghRun(["release", "upload", info.tag, "--repo", repository, "--clobber", ...assets]);
-  console.log(`release:mac:continue: draft uploaded (${assets.map(path.basename).join(", ")})`);
+  console.log(`release:mac:continue: draft uploaded (${assets.map((asset) => path.basename(asset)).join(", ")})`);
 }
 
 function publish() {
