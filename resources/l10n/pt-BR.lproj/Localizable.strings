@@ -5,7 +5,7 @@
 "A little time." = "Um tempo.";
 "About %@" = "Sobre o %@";
 "Accessibility" = "Acessibilidade";
-"Acknowledgments are unavailable." = "Acknowledgments are unavailable.";
+"Acknowledgments are unavailable." = "Os agradecimentos não estão disponíveis.";
 "Active app" = "App ativo";
 "Active screen" = "Tela ativa";
 "Add a pattern" = "Adicionar um padrão";
@@ -94,7 +94,7 @@
 "Keep holding %@ then press %@" = "Continue segurando %@ e pressione %@";
 "KeyTab is ready" = "O KeyTab está pronto";
 "KeyTab is running without Screen Recording permissions. %@ won’t show." = "O KeyTab está em execução sem permissão de Gravação de Tela. %@ não serão exibidas.";
-"KeyTab on GitHub" = "KeyTab on GitHub";
+"KeyTab on GitHub" = "KeyTab no GitHub";
 "KeyTab preferences file is a symlink. macOS doesn’t support symlink for preferences. Please use a valid file instead of a symlink here:" = "O arquivo de preferências do KeyTab é um link simbólico. O macOS não oferece suporte a links simbólicos para preferências. Use um arquivo válido em vez de um link simbólico aqui:";
 "KeyTab preferences file isn’t writable by your account. Please fix ownership and permissions of the file here:" = "O arquivo de preferências do KeyTab não pode ser gravado pela sua conta. Corrija o proprietário e as permissões do arquivo aqui:";
 "KeyTab requires some permissions" = "O KeyTab precisa de algumas permissões";

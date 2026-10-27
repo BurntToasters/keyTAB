@@ -5,6 +5,7 @@
 ### Bug Fixes
 
 * The update window shows what changed instead of loading the GitHub release page.
+* "KeyTab on GitHub" and the acknowledgments fallback message are translated into every supported language.
 
 ## 0.1.2
 

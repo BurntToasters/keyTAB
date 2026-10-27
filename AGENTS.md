@@ -62,7 +62,7 @@
 - Releases require Developer ID signing for team `FYJZP8B2KG`, universal `arm64 x86_64` output, hardened runtime, notarization, stapling, Gatekeeper assessment, Sparkle EdDSA signatures, SHA-256 checksums, and detached GPG signatures.
 - Never publish or mutate a GitHub release unless the user explicitly requests that external action. Running `npm run release:mac` (or its `ssh`/`resume` variants) is that request: it publishes the release and verifies it is live. Agents must not run it on their own initiative.
 - Write each release's notes in its `## <version>` section of `changelog.md` before releasing; preflight fails on an empty section, and the section becomes the GitHub release notes. Do not add `(unreleased)` or other suffixes to the heading.
-- Keep public release blocked until a KeyTab Sparkle key, a GPG key, the canonical public repository, matching public source tag, and signed native verification are all available.
+- Every release needs the KeyTab Sparkle key, the GPG key, the public canonical repository, and a matching public source tag; preflight and `release:verify:published` check them.
 
 ## Testing
 
