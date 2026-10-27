@@ -18,12 +18,8 @@ class App: NSApplication {
     static let repository = "https://github.com/BurntToasters/KeyTab"
     static let issues = "\(repository)/issues"
     static let appIconReps = CGImage.allNamed("app.icns")
+    static let appIcon: CGImage = appIconReps.max { $0.width < $1.width }!
 
-    static func appIcon(for size: NSSize) -> CGImage {
-        let scale = NSScreen.main?.backingScaleFactor ?? 2.0
-        let scaled = NSSize(width: size.width * scale, height: size.height * scale)
-        return CGImage.bestMatch(appIconReps, for: scaled)
-    }
     override class var shared: App { super.shared as! App }
     static var repositoryAction: Selector { #selector(App.openRepository) }
     static var isTerminating = false
@@ -35,8 +31,7 @@ class App: NSApplication {
     // periphery:ignore
     static var sparkleDelegate: SparkleDelegate?
     static var updaterController: SPUStandardUpdaterController?
-    // don't queue multiple delayed rebuildUi() calls
-    private static var delayedDisplayScheduled = 0
+    private static var delayedDisplayWork: DispatchWorkItem?
     private static let switcherUiRepaintCoalescer = RepaintCoalescer()
 
     override init() {
@@ -61,7 +56,11 @@ class App: NSApplication {
         // we use -n to open a new instance, to avoid calling applicationShouldHandleReopen
         // we use Bundle.main.bundlePath in case of multiple KeyTab versions on the machine
         printStackTrace()
-        Process.launchedProcess(launchPath: "/usr/bin/open", arguments: ["-n", Bundle.main.bundlePath])
+        var arguments = ["-n", Bundle.main.bundlePath]
+        #if DEBUG
+        if QaLifecycle.enabled { arguments += ["--args"] + QaLifecycle.restartArguments }
+        #endif
+        Process.launchedProcess(launchPath: "/usr/bin/open", arguments: arguments)
         App.shared.terminate(nil)
     }
 
@@ -70,20 +69,24 @@ class App: NSApplication {
         endHideUi()
     }
 
-    /// The part of the dismissal the user can see. `focusSelectedWindow` runs it before asking for the
-    /// focus, so the two things the user is waiting for are both out before any bookkeeping.
-    /// Returns false when the switcher was already hidden.
-    private static func beginHideUi(_ keepPreview: Bool) -> Bool {
+    /// The part of the dismissal the user can see, with the focus the user is waiting for, so both are out
+    /// before any bookkeeping. Returns false when the switcher was already hidden.
+    private static func beginHideUi(_ keepPreview: Bool, focusing window: Window? = nil) -> Bool {
         MainThreadStall.step()
         Logger.debug { "active:\(SwitcherSession.isActive)" }
         guard SwitcherSession.current != nil else { return false } // already hidden
+        DismissalInput.begin()
         SwitcherSession.current = nil
         // The badge read only runs while a session is open, so once this one closes its quiet period has no
         // next call left to throttle: all it can still do is delay the FIRST read of the next session by up
         // to a second. An app that cleared its badge in between was drawn with the badge it had cleared for
         // that whole second (QA DB-02).
         Applications.dockBadgeThrottler.reset()
-        hideTilesPanelWithoutChangingKeyWindow()
+        if let window {
+            window.focus(TilesPanel.shared.orderOutOnceFronted())
+        } else {
+            hideTilesPanelWithoutChangingKeyWindow()
+        }
         if !keepPreview {
             PreviewPanel.hide()
         }
@@ -94,15 +97,21 @@ class App: NSApplication {
     /// `TilesView.endSearchSession` can stall on the OS text-input services (AltTab #5981).
     private static func endHideUi() {
         MainThreadStall.step()
-        // Two event-server round trips (`tapIsEnabled`, then `tapEnable`), measured at up to 8ms on
-        // macOS 26.6.2. Behind the focus request rather than in front of it: the tap's callback already
-        // passes Esc through once `SwitcherSession.isActive` is false, so nothing absorbs a key in the gap.
-        KeyboardEvents.updateEscapeAbsorptionTap() // session closed: stop tapping keyDown (AltTab #5766)
         UsageStats.resetSession()
-        TilesView.endSearchSession()
         ContextMenuEvents.toggle(false)
-        CursorEvents.toggle(false)
         TrackpadEvents.reset()
+        OnboardingPopover.switcherWasDismissed()
+        TilesPanel.shared.whenOrderedOut(finishHideUi)
+    }
+
+    private static func finishHideUi() {
+        MainThreadStall.step()
+        // Two event-server round trips (`tapIsEnabled`, then `tapEnable`), measured at up to 8ms on
+        // macOS 26.6.2. Behind the focus request rather than in front of it: the tap's callback passes Esc
+        // through once `SwitcherSession.isActive` is false. The local monitor discards keys still sent here.
+        KeyboardEvents.updateEscapeAbsorptionTap() // session closed: stop tapping keyDown (AltTab #5766)
+        TilesView.endSearchSession()
+        CursorEvents.toggle(false)
         Tooltips.hideAll()
         MainMenu.toggle(true)
     }
@@ -137,10 +146,6 @@ class App: NSApplication {
         NSWorkspace.shared.open(URL(string: repository)!)
     }
 
-    @objc static func showFeedbackPanel() {
-        NSWorkspace.shared.open(URL(string: issues)!)
-    }
-
     @objc static func showDebugWindow() {
         initializeDebugWindowIfNeeded()
         showSecondaryWindow(DebugWindow.shared!)
@@ -166,6 +171,7 @@ class App: NSApplication {
     }
 
     static func showSecondaryWindow(_ window: NSWindow) {
+        DismissalInput.cancel()
         NSScreen.updatePreferred()
         App.shared.activate(ignoringOtherApps: true)
         window.makeKeyAndOrderFront(nil)
@@ -197,6 +203,21 @@ class App: NSApplication {
         if PermissionsWindow.shared == nil { _ = PermissionsWindow() }
     }
 
+    /// A new user's unfinished first launch resumes the onboarding popover. The popover leads
+    /// into Settings once the shortcut was used; regranting permissions alone does not replay it.
+    #if DEBUG
+    static func replayFirstLaunchForQa() {
+        endFirstLaunchWithPopoverOrSettings()
+    }
+    #endif
+
+    private static func endFirstLaunchWithPopoverOrSettings() {
+        guard !Preferences.settingsWindowShownOnFirstLaunch, OnboardingPopover.show() else {
+            showSettingsWindowOnFirstLaunchIfNeeded()
+            return
+        }
+    }
+
     @discardableResult
     private static func showSettingsWindowOnFirstLaunchIfNeeded() -> Bool {
         guard !Preferences.settingsWindowShownOnFirstLaunch else { return false }
@@ -204,17 +225,21 @@ class App: NSApplication {
         return true
     }
 
+    private static func showAndCenterSettingsWindowOnFirstLaunch() {
+        showAndCenterSettingsWindow()
+        Preferences.markSettingsWindowShownOnFirstLaunch()
+    }
+
     /// `showSettingsWindow()` relies on a saved autosave frame to position the window. On first
     /// launch there's no saved frame, and `showSecondaryWindow`'s fallback centering doesn't always
     /// stick (the window has been observed at the lower-left corner). Force a center pass after
     /// showing so the user sees the window in the middle of the screen.
-    private static func showAndCenterSettingsWindowOnFirstLaunch() {
+    static func showAndCenterSettingsWindow() {
         showSettingsWindow()
         if let window = SettingsWindow.shared {
             NSScreen.preferred.repositionPanel(window)
             window.center()
         }
-        Preferences.markSettingsWindowShownOnFirstLaunch()
     }
 
     static func showPermissionsWindow() {
@@ -248,16 +273,12 @@ class App: NSApplication {
 
     static func focusSelectedWindow(_ selectedWindow: Window?) {
         MainThreadStall.step()
-        guard beginHideUi(true) else { return } // already hidden
         let missionControl = MissionControl.state()
-        if let window = selectedWindow, missionControl == .inactive || missionControl == .showDesktop {
-            window.focus()
-            if Preferences.cursorFollowFocus == .always || (
-                Preferences.cursorFollowFocus == .differentScreen && (Spaces.screenSpacesMap.first { $0.value.contains { space in window.spaceIds.contains(space) } })?.key != NSScreen.active()?.cachedUuid()) {
-                moveCursorToSelectedWindow(window)
-            }
-        } else {
-            PreviewPanel.hide()
+        let window = missionControl == .inactive || missionControl == .showDesktop ? selectedWindow : nil
+        guard beginHideUi(window != nil, focusing: window) else { return } // already hidden
+        if let window, Preferences.cursorFollowFocus == .always || (
+            Preferences.cursorFollowFocus == .differentScreen && (Spaces.screenSpacesMap.first { $0.value.contains { space in window.spaceIds.contains(space) } })?.key != NSScreen.active()?.cachedUuid()) {
+            moveCursorToSelectedWindow(window)
         }
         endHideUi()
     }
@@ -305,6 +326,8 @@ class App: NSApplication {
 
     static func showUiOrCycleSelection(_ shortcutIndex: Int, _ forceDoNothingOnRelease_: Bool) {
         MainThreadStall.step()
+        if !SwitcherSession.isActive { DismissalInput.cancel() }
+        OnboardingPopover.switcherWasSummoned()
         let session = SwitcherSession.current ?? {
             let new = SwitcherSession()
             // The window set as it stood at the press. Only something ABSENT from it can be a newcomer that
@@ -318,6 +341,8 @@ class App: NSApplication {
         Logger.debug { "isFirstSummon:\(session.isFirstSummon) shortcutIndex:\(shortcutIndex)" }
         UsageStats.recordTrigger(shortcutIndex)
         if session.isFirstSummon || shortcutIndex != session.shortcutIndex {
+            delayedDisplayWork?.cancel()
+            delayedDisplayWork = nil
             NSScreen.updatePreferred()
             let isLaunchSummon = isVeryFirstSummon
             if isVeryFirstSummon {
@@ -351,13 +376,13 @@ class App: NSApplication {
             if displayDelay == DispatchTimeInterval.milliseconds(0) {
                 buildUiAndShowPanel()
             } else {
-                delayedDisplayScheduled += 1
-                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + displayDelay) { () -> () in
-                    if delayedDisplayScheduled == 1 {
-                        buildUiAndShowPanel(true)
-                    }
-                    delayedDisplayScheduled -= 1
+                let work = DispatchWorkItem { [weak session] in
+                    guard let session, SwitcherSession.current === session else { return }
+                    delayedDisplayWork = nil
+                    buildUiAndShowPanel(true)
                 }
+                delayedDisplayWork = work
+                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + displayDelay, execute: work)
             }
         } else {
             cycleSelection(.leading)
@@ -390,6 +415,14 @@ class App: NSApplication {
         KeyRepeatTimer.startRepeatingKeyNextWindow()
         let prioritizedIds = TilesView.windowIdsInViewport()
         WindowThumbnails.refreshAsync(Windows.list, .refreshOnlyThumbnailsAfterShowUi, prioritizedIds: prioritizedIds)
+        #if DEBUG
+        let shownSession = SwitcherSession.current
+        // CoreAnimation cannot commit the first frame until this main-runloop turn ends.
+        DispatchQueue.main.async { [weak shownSession] in
+            guard let shownSession, SwitcherSession.current === shownSession else { return }
+            Logger.debug { "show[firstFrameReady]" }
+        }
+        #endif
     }
 
     static func checkIfShortcutsShouldBeDisabled(_ activeWindow: Window?, _ activeApp: Application?) {
@@ -435,6 +468,9 @@ class App: NSApplication {
         Appearance.update()
         TilesPanel.updateMaxPossibleThumbnailSize()
         TilesPanel.updateMaxPossibleAppIconSize()
+        // Discovery starts as soon as Accessibility is granted, so windows found while the permissions window
+        // still waited on Screen Recording fetched their app icon at size zero, and got none
+        Set(Windows.list.map { $0.application }).forEach { $0.fetchAppIcon() }
         Menubar.initialize()
         MainMenu.create()
         _ = TilesPanel()
@@ -482,27 +518,34 @@ class App: NSApplication {
             updaterDelegate: App.sparkleDelegate!,
             userDriverDelegate: nil)
         #if DEBUG
-        if !Preferences.qaPristine {
+        if !Preferences.qaPristine && !QaLifecycle.enabled {
             DispatchQueue.main.asyncAfter(deadline: .now() + 30) { App.updaterController?.startUpdater() }
         }
         #else
         DispatchQueue.main.asyncAfter(deadline: .now() + 30) { App.updaterController?.startUpdater() }
         #endif
         PreferencesEvents.initialize()
+        #if DEBUG
         BenchmarkRunner.startIfNeeded()
-        showSettingsWindowOnFirstLaunchIfNeeded()
+        #endif
+        endFirstLaunchWithPopoverOrSettings()
         if pendingShowSettingsWindow {
             pendingShowSettingsWindow = false
             showSettingsWindow()
         }
         #if DEBUG
-        QAMenu.shared = QAMenu()
-        QAMenu.shared?.orderFront(nil)
-        if QAMenu.openSettingsOnLaunch { App.showSettingsWindow() }
-        if QAMenu.graphEnabled { DebugMenu.setEnabled(true) }
+        if !QAMenu.suppressed {
+            QAMenu.shared = QAMenu()
+            QAMenu.shared?.orderFront(nil)
+            if QAMenu.openSettingsOnLaunch { App.showSettingsWindow() }
+            if QAMenu.graphEnabled { DebugMenu.setEnabled(true) }
+        }
         #endif
         SearchDiscoveryHint.shared.initialize()
         UsageStats.prune()
+        #if DEBUG
+        if QaLifecycle.enabled { QaLifecycle.finishedLaunching = true; QaLifecycle.launchCount += 1 }
+        #endif
         Logger.info { "Finished launching KeyTab" }
     }
 }
@@ -512,6 +555,9 @@ extension App: NSApplicationDelegate {
         App.shared.disableRelaunchOnLogin()
         Logger.initialize()
         MainThreadStall.observe()
+        #if DEBUG
+        MainThreadWatchdog.start()
+        #endif
         Logger.info { "Launching KeyTab \(App.version)" }
         // Create the background queues first, before anything that can pump the main run loop re-entrantly
         // (the "move to /Applications" modal below, the WindowServer tap's discovery). Window.init reads
@@ -519,6 +565,12 @@ extension App: NSApplicationDelegate {
         // if a queued discovery block drains re-entrantly before this runs, it traps on the nil queue (AltTab #5819).
         // preStart just allocates queues and depends on nothing, so it's safe at the very top.
         BackgroundWork.preStart()
+        #if DEBUG
+        if QaLifecycle.enabled {
+            BackgroundWork.cliEventsThread = BackgroundWork.BackgroundThreadWithRunLoop("cliMessages", .userInteractive)
+            CliEvents.observe()
+        }
+        #endif
         // Same reasoning as the queues above: a preference the user never changed lives only in the
         // registration domain, so reading one before `registerDefaults()` traps on the force-unwrap in
         // `CachedUserDefaults.getThenConvertOrReset`. The "move to /Applications" modal below drains the

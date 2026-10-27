@@ -16,10 +16,18 @@ giving either source universal authority.
    `AXDialog` and its sidebar as `AXStandardWindow`, the same subroles every ordinary AppKit window carries.
    The gate binds exact attention too, because an app key-focuses its own HUD through `kAXFocusedWindow`
    exactly as a real window does, so gating only discovery would delay the surface by one focus event.
+   Below the ordinary level is the desktop's layer, and nothing vouches for a surface there, not even
+   `kAXMain`: QSpace Pro's replacement desktop is marked main once an icon on it is selected (AltTab #6125).
 4. Exact attention makes a parentless, admissibly-placed surface a destination even when AX is absent or
    unconventional, but it cannot override an auxiliary subrole or a role that is not a window. It never
    refuses what discovery admits: Emacs 29.4 reports its frames as role `AXTextField` with subrole
    `AXStandardWindow`, and they stay destinations when focused.
+   A fullscreen window's toolbar is the exception for an undescribed surface: AppKit hosts it in a window of
+   its own at the top of the screen, which accessibility does not list, and attention names it when the user
+   clicks into it (Chrome's, AltTab #6094). An undescribed surface ordered in, overlapping a described fullscreen
+   window of the same app on a shown Space, with a frame of its own, represents that window. The surface's own
+   Space type is not required: AppKit's auxiliary windows read a different mask on a fullscreen Space.
+   A native tab shares the window's frame exactly, and a Split View neighbour does not overlap it.
 5. Floating/system-dialog subroles are auxiliary. AppKit can mark a floating panel `kAXMain`; that does not
    turn the panel into a switch destination.
 6. A non-auxiliary AXWindow marked `kAXMain` is a destination.

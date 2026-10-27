@@ -2,7 +2,7 @@
 
 ## Project identity
 
-- KeyTab is a free, GPL-3.0-only fork of AltTab v11.8.0. KeyTab modifications began August 2026 from AltTab v11.4.4. The product name is `KeyTab`, the bundle identifier is `run.rosie.keytab`, and the canonical repository is `BurntToasters/KeyTab`.
+- KeyTab is a free, GPL-3.0-only fork of AltTab v11.10.1. KeyTab modifications began August 2026 from AltTab v11.4.4. The product name is `KeyTab`, the bundle identifier is `run.rosie.keytab`, and the canonical repository is `BurntToasters/KeyTab`.
 - Keep KeyTab preferences, login-item registration, TCC permissions, and Sparkle state separate from AltTab. Never read or migrate AltTab defaults.
 - Keep all formerly paid AltTab functionality free and persistent. Do not add license keys, trials, tiers, purchase UI, feature gates, downgrade behavior, telemetry, AppCenter, feedback APIs, or sponsor branding.
 - Runtime networking is limited to Sparkle update checks. Help, feedback, source, issue, and release links must point to the KeyTab GitHub repository.

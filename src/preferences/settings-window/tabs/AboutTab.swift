@@ -9,13 +9,13 @@ class AboutTab {
         let appIcon = LightImageView()
         appIcon.translatesAutoresizingMaskIntoConstraints = false
         let appIconSize = NSSize(width: 128, height: 128)
-        appIcon.updateContents(.cgImage(App.appIcon(for: appIconSize)), appIconSize)
+        appIcon.updateContents(.cgImage(App.appIcon), appIconSize)
         appIcon.fit(128, 128)
         let appText = StackView([
             BoldLabel(App.name),
             NSTextField(wrappingLabelWithString: NSLocalizedString("Version", comment: "") + " \(App.version) (\(App.build))"),
             NSTextField(wrappingLabelWithString: App.licence),
-            NSTextField(wrappingLabelWithString: "KeyTab is a modified fork of AltTab v11.8.0 by Louis Pontoise and contributors; KeyTab modifications began August 2026 from AltTab v11.4.4; not affiliated with or endorsed by the upstream project."),
+            NSTextField(wrappingLabelWithString: "KeyTab is a modified fork of AltTab v11.10.1 by Louis Pontoise and contributors; KeyTab modifications began August 2026 from AltTab v11.4.4; not affiliated with or endorsed by the upstream project."),
             HyperlinkLabel(NSLocalizedString("Source code", comment: ""), App.repository),
         ], .vertical)
         appText.spacing = GridView.interPadding / 2

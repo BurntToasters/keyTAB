@@ -12,6 +12,11 @@ struct UsageStats {
     private static let maxAge: TimeInterval = 365 * 24 * 3600
     private static let flushDelay: TimeInterval = 5
     private static let allKeys = ["triggers", "searches"]
+    private static let countFormatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        return formatter
+    }()
     private(set) static var searchRecordedThisSession = false
 
     /// `writeQueue`-owned. Nil value = not loaded from `UserDefaults` yet.
@@ -26,6 +31,14 @@ struct UsageStats {
 
     static func recordTrigger(_ shortcutIndex: Int) {
         record("triggers")
+        if shortcutIndex > 0 && shortcutIndex < Preferences.maxShortcutCount {
+            record("triggersExtraShortcuts")
+            SearchDiscoveryHint.shared.extraShortcutWasUsed()
+        }
+        let style = Preferences.effectiveAppearanceStyle(shortcutIndex)
+        if style == .appIcons { record("triggersAppIcons") }
+        if style == .titles { record("triggersTitles") }
+        if Preferences.effectiveAppearanceSize(shortcutIndex) == .auto { record("triggersAutoSize") }
     }
 
     static func recordSearchIfFirst() {
@@ -44,6 +57,14 @@ struct UsageStats {
         }
     }
 
+    static func loadPreviousExtraShortcut(_ completion: @escaping (Bool?) -> Void) {
+        writeQueue.async {
+            let raw = defaults.object(forKey: "triggersExtraShortcuts")
+            let used = raw == nil ? false : (raw as? [Int]).map { !$0.isEmpty }
+            DispatchQueue.main.async { completion(used) }
+        }
+    }
+
     static func resetSession() {
         searchRecordedThisSession = false
     }
@@ -51,6 +72,10 @@ struct UsageStats {
     static func count(_ key: String, since date: Date) -> Int {
         let threshold = Int(date.timeIntervalSince1970)
         return getTimestamps(key).count { $0 >= threshold }
+    }
+
+    static func formatCount(_ n: Int) -> String {
+        countFormatter.string(from: NSNumber(value: n)) ?? "\(n)"
     }
 
     static func prune() {

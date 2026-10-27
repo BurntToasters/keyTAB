@@ -121,8 +121,8 @@ class ControlsTab {
         gestureEditorView = makeGestureEditor()
 
         let shortcutsView = makeShortcutsView()
-        let additionalControlsButton = NSButton(title: NSLocalizedString("Additional controls…", comment: ""), target: self, action: #selector(showAdditionalControlsSettings))
-        let shortcutsButton = NSButton(title: NSLocalizedString("Shortcuts when active…", comment: ""), target: self, action: #selector(showShortcutsSettings))
+        let additionalControlsButton = NSButton(title: NSLocalizedString("Additional controls", comment: "") + "…", target: self, action: #selector(showAdditionalControlsSettings))
+        let shortcutsButton = NSButton(title: NSLocalizedString("Shortcuts when active", comment: "") + "…", target: self, action: #selector(showShortcutsSettings))
         let tools = StackView([additionalControlsButton, shortcutsButton], .horizontal)
         let view = TableGroupSetView(originalViews: [shortcutsView], toolsViews: [tools], padding: 0, bottomPadding: 0, othersAlignment: .leading, toolsAlignment: .trailing)
 
@@ -462,7 +462,7 @@ class ControlsTab {
         // Recycle the row instances: grow/shrink the pool to `count`, creating new `SidebarListRow`s
         // only when the count actually increases. Reusing instances avoids rebuilding the
         // label/observer machinery on every refresh (this runs on +/- clicks, recorder edits,
-        // input-source changes, and the pro-lock observer). The search index is re-published below
+        // and input-source changes). The search index is re-published below
         // regardless, so added/removed rows stay correct.
         while shortcutRows.count < count {
             shortcutRows.append(makeShortcutRow(index: shortcutRows.count))
@@ -885,15 +885,15 @@ class ControlsTab {
     }
 
     /// The prompt both conflict detectors raise: unassign whatever holds the shortcut, or cancel
-    /// (Esc). `true` means the user chose to unassign.
-    static func confirmUnassigningConflict(_ informativeText: String) -> Bool {
+    /// (Esc). `true` means the user chose to unassign. It is a sheet on `window`, which defaults to Settings.
+    static func confirmUnassigningConflict(_ informativeText: String, in window: NSWindow? = SettingsWindow.shared) -> Bool {
         let alert = NSAlert()
         alert.alertStyle = .warning
         alert.messageText = NSLocalizedString("Conflicting shortcut", comment: "")
         alert.informativeText = informativeText
         alert.addButton(withTitle: NSLocalizedString("Unassign existing shortcut and continue", comment: "")).setAccessibilityFocused(true)
         alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "")).keyEquivalent = "\u{1b}"
-        return alert.runModal() == .alertFirstButtonReturn
+        return alert.runAttached(to: window) == .alertFirstButtonReturn
     }
 
     /// An action's name must not be split across lines by the alert's own wrapping.

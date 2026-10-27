@@ -23,6 +23,14 @@ the resulting actions.
 - Switching directly from one shortcut slot to another is handled.
 - **Escape**: while the switcher is active (e.g. Option held), Escape fires the cancel shortcut; when the
   switcher is closed, Escape does nothing (KeyTab doesn't swallow it).
+- Dismissal ends logical session state immediately, but postpones AppKit and event-tap cleanup until
+  the panel has released the keyboard, including when focus or a fade is still pending. A new summon
+  cancels stale cleanup; its preference refresh uses the new session's state. Golden Gate scenarios
+  S-20 through S-23 check that typing resumes after the selected window has focus.
+- Once dismissal starts, KeyTab silently discards keys still delivered to its panel, including a key that
+  itself settles a delayed shortcut release. It neither acts on those keys nor sends them to the target.
+  Keys that macOS delivers to another app are outside KeyTab's local monitor. A new summon or a KeyTab
+  secondary window ends the dismissal state so their own input works normally.
 
 ## Test scenarios
 
@@ -39,6 +47,8 @@ Mirrors `KeyboardEventsTests.swift` 1:1.
 - **testInputLogDoesNotClaimAKeyDownFromBeforeRegistrationChanged** — input observed while a shortcut was unregistered cannot commit a later gesture.
 - **testInputLogDoesNotLetALateKeyDownPoisonTheNextGesture** — a passive-tap key-down that arrives after Carbon claimed it is consumed instead of shifting every later pairing.
 - **testInputLogIgnoresAutoRepeatsSoAHeldTabDoesNotShiftLaterPairs** — a held Tab's OS auto-repeats are not logged (Carbon never reports them), so two pairs delayed after the hold still each pair with their own release.
+- **testInputLogForgetsAKeyDownCarbonNeverReportedSoLaterPairsStayAligned** — a press the passive tap saw but Carbon never reported (another app swallowed it, the front app had hotkeys off, it stopped the screensaver) is forgotten, so the next alt-tab does not pair with its release and close on its own (AltTab #6091).
+- **testInputLogOldExpiryCannotForgetAPressAfterRegistrationChanged** — a delayed expiry from the previous registration cannot remove a new press after the log is reset.
 - **testInputLogDropsAnUnmatchedClaimAtTheGestureRelease** — if the passive tap never supplies a key-down, its unmatched Carbon claim expires with that physical gesture.
 - **testInputLogRecordsOnlySwitchingChordsSoTypingCannotEvictADelayedHotkey** — key-downs that are not a registered switching chord are never recorded, so shifted typing during a stall neither fills the log nor evicts the hotkey's own key-down.
 - **testInputLogMatchesTheChordWithCapsLockLit** — Caps Lock in the tap's flags does not stop a hotkey pairing with its physical key-down.

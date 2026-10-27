@@ -1,6 +1,6 @@
 # KeyTab notices
 
-KeyTab is a modified fork of AltTab v11.8.0 by Louis Pontoise and contributors; KeyTab modifications began August 2026 from AltTab v11.4.4; not affiliated with or endorsed by the upstream project.
+KeyTab is a modified fork of AltTab v11.10.1 by Louis Pontoise and contributors; KeyTab modifications began August 2026 from AltTab v11.4.4; not affiliated with or endorsed by the upstream project.
 
 AltTab source and contributor history: <https://github.com/lwouis/alt-tab-macos>
 

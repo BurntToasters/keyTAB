@@ -12,11 +12,13 @@ and upstream merges can check against it.
 - **Pass 3**, 2026-10-04, against `25da2aa`. Ran the first CI build in this repository's history that got past
   compilation, and used its compiler output as a source of findings. Also covered merge leftovers, dead code,
   Debug-only symbol leakage into Release, and the brand artwork.
+- **Pass 4**, 2026-10-27. Updated from AltTab 11.8.0 to 11.10.1, then re-audited the merged tree: paywall residue,
+  dropped declarations, Xcode project integrity, localization completeness, runtime network surface.
 
 Off-macOS limits: all passes ran on a host without Xcode, so `npm run test:all` and `ai/build.sh` were not run
 there. Swift changes are validated by CI on `main`: the Xcode 26 test gate, the Debug build and, since pass 3, an
-unsigned Release compile. Node tests and
-`npm run validate` pass. Nothing below is evidence of notarization, Gatekeeper, Sparkle update installation, Space
+unsigned Release compile. Pass 4 also ran without Xcode, so its Swift changes are unverified until CI compiles them.
+Node tests and `npm run validate` pass. Nothing below is evidence of notarization, Gatekeeper, Sparkle update installation, Space
 or multi-display behavior, Intel behavior, or macOS 26 behavior.
 
 ## Fixed
@@ -44,6 +46,15 @@ or multi-display behavior, Intel behavior, or macOS 26 behavior.
 | F20 | 3 | Dead code from the removed feedback and crash-report features: `DebugProfile`, its `Bash` helper, a menubar Pro badge layer, and unused helpers and symbol cases. | Removed, along with their project references. |
 | F21 | 3 | The menubar glyphs were AltTab's artwork (pass 1 M4). The first KeyTab app icon was a placeholder. | New brand: a row of window tiles in which the selected tile is a keycap with ⇥, on amber to ember. The app icon and all three menubar variants are generated from code (`scripts/assets/`). `docs/BRAND.md` records the concept and palette. |
 | F15 | 2 | The "AltTab runtime branding" validation matched any line with a quote, so comments containing quotes failed it. | `swiftRuntimeBrandingLines` checks only Swift string-literal content outside `//` comments, with tests. |
+| F22 | 4 | KeyTab was on AltTab 11.8.0, and the owner's older builds misbehave on macOS 27.2. | Merged AltTab 11.10.1 (window tracking, focus order, tabs, thumbnails, keyboard-handling and macOS 27 fixes; guided first-launch setup; vector illustrations; -Osize). Upstream wove the Pro trial into the new onboarding popover, search-discovery bubble, QA lifecycle tooling, menubar badge and launch sequence; all of it was removed and every formerly paid feature stays free. |
+| F23 | 4 | The settings illustrations were HEIC screenshots containing Apple's Sonoma wallpaper and the Finder icon (M4). | Replaced by upstream's vector SVG sources compiled into `resources/native-illustrations`. The Pro comparison scenes are not shipped. |
+| F24 | 4 | The Xcode project held 50 references to files that no longer exist, and nothing checked the project file without Xcode. | Removed them; `validate.mjs` now fails on dangling file references, Swift files missing from the project or from every Sources phase, undefined or duplicate object IDs, and conflict markers (`scripts/tests/project.test.mjs`). |
+| F25 | 4 | Upstream's preference migrations key on AltTab version numbers. KeyTab stamps its own version (1.0.0), so they would rerun on every launch. | Not imported; KeyTab keeps stamping `preferencesVersion` only. |
+| F26 | 4 | Upstream added legacy menubar icon choices backed by artwork KeyTab doesn't ship. | Not imported. |
+| F27 | 4 | Test assertion messages containing "AltTab" failed the branding scan. | Reworded. |
+| F28 | 4 | M9, telemetry recorded in Release. | Recording entry points are no-ops outside Debug. |
+| F29 | 4 | The search hint's speech-bubble tail pointed at the removed Pro mascot. | Plain rounded bubble. |
+| F30 | 4 | No upstream sync procedure (M5) and no KeyTab changelog (M6). | `docs/UPSTREAM.md`; a KeyTab 1.0.0 section at the top of `changelog.md`. |
 
 ## Open findings
 
@@ -58,26 +69,15 @@ or multi-display behavior, Intel behavior, or macOS 26 behavior.
 - **H4 — Native verification of F6 (blocked on owner).** Run `npm run release:mac` on a Mac with the Developer ID,
   then install an older signed build and let Sparkle update it. Confirm that `Autoupdate` launches (Sparkle's
   installer validates the helpers' signatures against the host app).
+- **H5 — The 11.10.1 merge has not been compiled yet.** Open a pull request to `main` so CI (Xcode 26) runs the test
+  gate, the Debug build and the unsigned Release compile, and fix whatever it reports before tagging 1.0.0.
 
 ### Medium
 
-- **M4 — The settings illustrations carry third-party artwork.** `resources/illustrations/*.heic` are AltTab-era
-  screenshots of the switcher. They show no AltTab branding, but they do include Apple's Sonoma wallpaper and the
-  Finder icon, which upstream could not license under GPL-3.0. Re-shoot them from KeyTab on a Mac over a neutral
-  or KeyTab-palette background with KeyTab-owned sample windows, then update `docs/ASSET_LICENSES.md`.
-- **M5 — No upstream sync procedure.** Add `docs/UPSTREAM.md`. It should cover how to diff upstream tags and which
-  paths are always dropped (`src/pro`, `src/api`, AppCenter, the license URL scheme, release-build CLI exposure).
-  It should run `npm run validate` plus the residue greps, prefix new upstream issue numbers as `AltTab #`, and
-  update the base version together in `NOTICE.md`, `README.md`, `AboutTab.swift`, `AGENTS.md` and
-  `validate.mjs`.
-- **M6 — KeyTab has no changelog of its own.** `changelog.md` is upstream history kept for provenance. Add a
-  KeyTab section for KeyTab releases.
+- **M4 — The new illustrations embed two photographs (Mount Fuji, a bowl of ramen) whose provenance upstream does not document.** Confirm their licence with upstream or replace them (edit the SVGs, then run `python3 scripts/assets/compile_illustrations.py`) before the first public release.
 - **M8 — Vendored helper re-signing at vendor time.** `vendor/scripts/update_sparkle.sh` still re-signs the
   helpers with whatever Developer ID is in the keychain. That was AltTab's maintainer last time. Since F6 re-signs
   at release, the next Sparkle update should sign them with KeyTab's identity, or leave them ad hoc.
-- **M9 — Tracking telemetry still records in Release builds**, into a bounded in-memory ring (`TelemetryRing`)
-  that only the Debug-only `--qa-telemetry` command drains. It is local and capped, with no network, but it is
-  wasted work. Gate the recorder's entry points under `#if DEBUG` or a cheap static flag.
 
 ### Low
 
@@ -90,6 +90,8 @@ or multi-display behavior, Intel behavior, or macOS 26 behavior.
   issues.
 - **L8 — The branding scan does not see multi-line (`"""`) string content.** Text inside those blocks is not
   checked for "AltTab". Extend `swiftRuntimeBrandingLines` if new multi-line user-facing strings appear.
+- **L9 — Two strings have no translations:** 'KeyTab on GitHub' and 'Acknowledgments are unavailable.' They show
+  in English in every language.
 
 ## Verified clean (pass 2)
 

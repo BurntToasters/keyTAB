@@ -1,67 +1,15 @@
-# Search discovery hint
+# Search and extra-shortcut discovery
 
-The nonactivating panel says “Press S to search your windows.” using the configured Search shortcut.
-It contains no badge or modifier tutorial. Its close button permanently disables this hint;
-the same preference is available in Controls → Shortcuts When Active, including through settings search.
-Re-enabling the preference does not erase previous use, exposure count, or cooldown.
-The shortcut appears as an inline, noninteractive keycap: 24 × 24 pt for S, widened for custom
-combinations. It has no editing, focus, or accessibility action; the complete sentence remains its spoken label.
+One local, nonactivating child panel belongs to one switcher session. The bubble introduces a benefit headline and a separate keyboard instruction. It is placed above the switcher on its actual screen, within the visible frame. When the switcher leaves no room above it, the bubble overlaps the switcher's bottom edge instead; nothing appears only when the bubble is larger than the screen. The window preview is ordered below the switcher and never affects placement. The pointer over the bubble does not hover, select or middle-click-close the tile beneath it. It never resizes the switcher or takes keyboard focus.
 
-## Eligibility and frequency
+Discovery is free for everyone. The existing Search history is the shared budget: at most three exposures, 72 hours apart. No independent budget is added for shortcuts. Unknown adoption history is ineligible. The existing showSearchHint preference suppresses both tips. Each feature stops after actual use. Dismissal disables discovery. Preview mode writes nothing.
 
-- At least 8 filtered window targets, after tab/app grouping; windowless applications do not count.
-  Minimized, hidden, other-Space and other-screen windows count only when the current filters show them.
-- No previous search, hint refusal, active search, missing/conflicting shortcut, visible permission UI,
-  modal window or open context menu.
-- Historical use loads asynchronously once; unknown/malformed history suppresses the hint. Any known
-  search permanently marks it used, including a search made before the history callback completes.
-  Existing usage timestamps only cover their retained 365-day history.
-- One opportunity per switcher session, 1 second after the turn revealing the panel. Navigation in
-  the last 500 ms skips that opportunity; it is not rescheduled. The visible-frame timestamp is not
-  observable here: the anchor is the completed show turn, not a claim of WindowServer presentation.
-- Maximum 3 actual exposures, at least 72 hours apart. A future last-exposure date suppresses the hint
-  until the cooldown elapses; missing dates with nonzero counts never reset the limit.
-- Entering Search hides it for the session. First nonempty text marks it used permanently, aligned
-  with UsageStats (spaces count too; this is not a successful-search metric).
+Search requires at least eight relevant windows, inactive Search, and a configured key that has a representation on the current keyboard and does not conflict with the current interaction. Extra-shortcut discovery requires at least two relevant active-app windows and another app, a configured extra slot targeting the active app, the same other window filters, the same hold modifiers, and no conflicting key. It names the actual active app. It never assumes Option or the grave key is configured.
 
-## Presentation and lifecycle
+The global next-window matcher permits switching to another indexed shortcut during the same session. Only the newly active slot's release action can commit the selected window. Both production-shaped bindings and same-session identity are tested.
 
-- One reusable panel with the switcher's own background (frosted, or Liquid Glass on macOS 26+) and
-  corner radius capped at half its height, normally 470 × 44 pt. Wrapped translations/shortcuts grow
-  vertically on narrow screens. Follows the switcher's effective light/dark theme, not the app theme.
-- Centred 8 pt above the switcher, otherwise below; clipped to neither screen nor menu/Dock area.
-  Uses the actual screen's visible frame including negative origins. No room or preview overlap means
-  no hint. The switcher itself is never moved or resized for this panel.
-- First window work happens after the switcher appears. Hide its alpha alongside dismissal/search;
-  defer window ordering/removal until a later turn. Session identity fences delayed presentation and
-  old cleanup cannot hide a new session's hint. Displayed hints keep their own eligibility after the
-  exposure count is incremented, so the third exposure does not immediately disappear.
-- Search, closure, shortcut changes and menus cancel the opportunity for this session.
-  Inventory/layout, preview, screen and accessibility changes revalidate or dismiss it.
-- Never key/main, no key equivalents, no automatic accessibility announcement. The static label speaks
-  the readable shortcut; close is an accessible 24 × 24 button and accepts a click without activation.
-  The system background honours reduced transparency; no animation; increased contrast adds a border.
-  The close button shows a round highlight while hovered.
-- The switcher's accessibility children include the hint group. Its pointer gesture bypasses the
-  switcher's outside-click dismissal, including a drag released outside the hint.
-- No network, no window-title/query storage, no polling. Only local use/exposure metadata is persisted.
+Presentation waits one second and a 500ms navigation quiet period. Menus, modal UI, the Permissions and Settings windows, active Search and screen lock block it. Dismissal, preference changes, screen/Space changes and adoption cancel it. Rendering and ordering are deferred past the switcher's visible work; no polling, server requests or telemetry are introduced.
 
-## Tests
+SearchDiscoveryTests cover history migration, shared cooldown/cap, per-feature adoption, keyboard labels, preview isolation, click/drag routing, geometry and light/dark/high-contrast native rendering. The period counter elsewhere describes a started search; it does not claim a successful result.
 
-In Debug builds, QA Menu → Show search hint next session arms a preview for the next switcher
-session. Hold the switcher open for one second without navigating. The preview bypasses the window
-threshold, previous searches, the enabled preference, exposure cap and cooldown. It still requires
-a usable Search shortcut, space on screen, no active search, and no competing prompt/menu/modal UI.
-It uses the real panel and lifecycle; displaying or closing it changes neither history nor preferences.
-The preview is consumed by that session, even if dismissed before display. Search itself retains its
-normal usage tracking. The QA action is unavailable in Release builds.
-
-`SearchDiscoveryTests` checks thresholds, unknown and racing history,
-refusals/competing UI, cooldown boundaries/clock rollback, exposure cap, cancelled/replaced sessions,
-navigation timing, multi-screen geometry/preview collisions, custom shortcuts, wrapping, theme contrast,
-the shared switcher background, close-button hover, nonactivation, pointer gestures and accessible dismissal using the actual AppKit component without presenting it.
-The native light/dark snapshots are retained as test attachments. Shortcut symbols use ShortcutRecorder's
-current-layout transformer, while the spoken label uses its readable representation.
-
-Interactive VoiceOver navigation and live window-ordering latency still require manual QA; offscreen
-component tests do not establish those properties on all supported macOS versions.
+The bubble reuses the switcher's effect kind and appearance, including system transparency accessibility behavior. The bubble is a single closed rounded rectangle with no tail. It takes the full panel width. Width hugs measured text up to 560 points and the screen limit; AppKit measures wrapped label height including the keycap attachment. RTL mirrors the spacing. The material is reused until its kind changes, and presentation remains deferred outside the switcher's critical path.

@@ -34,7 +34,7 @@ enum Symbols: String {
 }
 
 extension NSImage {
-    static func fromSymbol(_ symbol: Symbols, pointSize: CGFloat, rotated180: Bool = false) -> NSImage {
+    static func fromSymbol(_ symbol: Symbols, pointSize: CGFloat, rotated180: Bool = false, margin: CGFloat = 0) -> NSImage {
         let image = NSImage()
         image.isTemplate = true
         return image
@@ -101,7 +101,7 @@ class Appearance {
 // Minimal stubs so `TableGroupView.swift` / `SidebarList.swift` compile in the test target without
 // dragging in `AppearanceTab` (which `IllustratedImageThemeView` lives in) or the full
 // `SettingsWindow`. Tests never instantiate these — they only need the symbols to resolve.
-enum SettingsWindow {
+class SettingsWindow: NSWindow {
     static let contentWidth = CGFloat(700)
 }
 
@@ -126,8 +126,6 @@ func caTransaction(_ body: () -> Void) {
 // compile. The tests never inspect these values, only that they resolve.
 extension NSColor {
     class var systemAccentColor: NSColor { .controlAccentColor }
-    class var tableBorderColor: NSColor { .gridColor }
-    class var tableBackgroundColor: NSColor { .windowBackgroundColor }
     class var tableSeparatorColor: NSColor { .gridColor }
     class var tableHoverColor: NSColor { .selectedControlColor }
 }

@@ -2,9 +2,12 @@
 /// The QA and E2E command port. Debug builds only: a shipped KeyTab exposes no command interface, so no other
 /// process can read window inventory through KeyTab's Accessibility and Screen Recording grants.
 class CliEvents {
+    private static var listening = false
     static let portName = "\(App.bundleIdentifier).cli"
 
     static func observe() {
+        guard !listening else { return }
+        listening = true
         var context = CFMessagePortContext(version: 0, info: nil, retain: nil, release: nil, copyDescription: nil)
         if let messagePort = CFMessagePortCreateLocal(nil, portName as CFString, handleEvent, &context, nil),
            let source = CFMessagePortCreateRunLoopSource(nil, messagePort, 0) {
@@ -101,13 +104,26 @@ class CliServer {
                 }
             )
         }
+        #if DEBUG
         if rawValue == "--qa-state" {
             return qaState()
         }
-        #if DEBUG
         if rawValue.hasPrefix("--qa-defer-repaints=") {
             let ms = Int(rawValue.dropFirst("--qa-defer-repaints=".count)) ?? 0
             App.deferRepaintsForQa(min(5000, max(0, ms)))
+            return noOutput
+        }
+        if rawValue == "--qa-hold-focus-verification" {
+            FocusIntents.shared.holdNextVerificationForQa()
+            return noOutput
+        }
+        if rawValue == "--qa-resume-focus-verification" {
+            FocusIntents.shared.resumeVerificationForQa()
+            return noOutput
+        }
+        if rawValue.hasPrefix("--qa-delay-focus-verification=") {
+            let milliseconds = Int(rawValue.dropFirst("--qa-delay-focus-verification=".count)) ?? 0
+            FocusIntents.shared.delayNextVerificationForQa(milliseconds)
             return noOutput
         }
         if rawValue == "--qa-refuse-next-focus" {
@@ -123,7 +139,6 @@ class CliServer {
         if let reply = QaSurfaces.command(rawValue) {
             return reply
         }
-        #endif
         // The provider timeline, drained rather than read: each record is reported exactly once, so a test
         // gets the events of its own session and not the whole run's backlog. The harness writes them out as
         // NDJSON (`TrackingTelemetryNdjson`).
@@ -164,6 +179,7 @@ class CliServer {
             Logger.info { "QAMARK \(mark)" }
             return noOutput
         }
+        #endif
         if rawValue.hasPrefix("--focus="),
            let id = CGWindowID(rawValue.dropFirst("--focus=".count)), let window = (Windows.list.first { $0.cgWindowId == id }) {
             window.focus()
@@ -194,6 +210,7 @@ class CliServer {
         return error
     }
 
+    #if DEBUG
     /// Read-only snapshot of everything the switcher would decide, without showing the UI. Exists for the
     /// automated runs: a live assertion oracle that costs one IPC round-trip instead of
     /// parsing debug logs or screenshotting tiles. Mutates nothing — `shown` is computed into a local, not
@@ -204,22 +221,7 @@ class CliServer {
         let visibleSpaceIds = Spaces.visibleSpaces
         let windows = Windows.list.enumerated().map { (i, w) -> QaWindow in
             let wid = w.cgWindowId
-            let shown = WindowFilterResolver.shouldShow(
-                w.state, w.application.state,
-                onlyFrontmostApp: filters.appsToShow == .active,
-                excludeFrontmostApp: filters.appsToShow == .nonActive,
-                hideHidden: filters.showHiddenWindows == .hide,
-                hideWindowless: filters.showWindowlessApps == .hide,
-                hideFullscreen: filters.showFullscreenWindows == .hide,
-                hideMinimized: filters.showMinimizedWindows == .hide,
-                onlyVisibleSpaces: filters.spacesToShow == .visible,
-                onlyNonVisibleSpaces: filters.spacesToShow == .nonVisible,
-                onlyPreferredScreen: filters.screensToShow == .showingKeyTab,
-                separateTabs: filters.groupTabs == .separateWindows,
-                frontmostPid: frontmostPid,
-                visibleSpaceIds: visibleSpaceIds,
-                exceptions: filters.exceptions,
-                isOnPreferredScreen: w.isOnScreen(NSScreen.preferred))
+            let shown = Windows.shouldShowTheUser(w, filters)
             return QaWindow(
                 index: i,
                 wid: wid,
@@ -235,6 +237,8 @@ class CliServer {
                 tabCount: w.tabCount,
                 phantom: w.isPhantom,
                 phantomLatch: w.cgsPhantomLatch,
+                orderedIn: w.isOrderedIn,
+                alpha: w.alpha,
                 held: wid.map { Windows.windowsHeldVisibleForTab.contains($0) } ?? false,
                 fullscreen: w.isFullscreen,
                 fullscreenMirrored: w.isFullscreenMirrored,
@@ -268,6 +272,7 @@ class CliServer {
             at: Date().timeIntervalSince1970,
             frontmostPid: frontmostPid,
             frontmostApp: NSWorkspace.shared.frontmostApplication?.localizedName,
+            pidUnderCursor: filters.pidUnderCursor,
             currentSpaceId: Spaces.currentSpaceId,
             currentSpaceIndex: Spaces.currentSpaceIndex,
             visibleSpaceIds: visibleSpaceIds,
@@ -289,7 +294,8 @@ class CliServer {
             windows: windows,
             tiles: renderedTiles(),
             layout: renderedLayout(),
-            tracking: TrackingTelemetryRecorder.state.summary())
+            tracking: TrackingTelemetryRecorder.state.summary(),
+            pendingWork: AXCallScheduler.shared.pendingCallCount + CGSCallScheduler.pendingCallCount)
     }
 
     private static func windowControlsWid() -> CGWindowID? {
@@ -327,8 +333,11 @@ class CliServer {
                 spaceIcon: icons[StatusIconsView.spaceIdx].visible,
                 dockLabel: badge.isHidden ? nil : badge.text,
                 dockLabelAccessibility: badge.isHidden ? nil : badge.accessibilityLabel(),
+                dockLabelHeight: badge.isHidden ? nil : badge.frame.height,
+                appIconHeight: view.appIcon.frame.height,
                 thumbnailPixelSize: window.thumbnail?.size(),
                 expectedThumbnailPixelSize: expectedThumbnailPixelSize(window),
+                thumbnailSize: view.thumbnail.isHidden ? nil : view.thumbnail.frame.size,
                 x: frame.origin.x, y: frame.origin.y, w: frame.size.width, h: frame.size.height,
                 thumbY: view.thumbnail.frame.origin.y, labelY: view.label.frame.origin.y,
                 row: window.rowIndex ?? -1,
@@ -348,9 +357,10 @@ class CliServer {
     /// The pixel size a thumbnail capture of this window should measure right now, from the same
     /// `capturePixelSize` the capture request is configured with. Reported next to the size the last
     /// capture actually came back with, so a harness can judge the capture path without knowing the
-    /// thumbnail-scale arithmetic.
+    /// thumbnail-scale arithmetic. Sized from the area the last capture covered, which a sheet hanging past
+    /// the window makes larger than the window (`CaptureArea`).
     private static func expectedThumbnailPixelSize(_ window: Window) -> CGSize? {
-        guard let size = window.size else { return nil }
+        guard let size = window.thumbnailArea?.size else { return nil }
         return WindowThumbnails.capturePixelSize(size, WindowThumbnails.captureScaleFactor(window), false)
     }
 
@@ -375,6 +385,9 @@ class CliServer {
         var at: TimeInterval
         var frontmostPid: pid_t?
         var frontmostApp: String?
+        /// The app the "App under the cursor" scope resolved, as of the press when the switcher is open. Nil
+        /// under any other scope.
+        var pidUnderCursor: pid_t?
         var currentSpaceId: UInt64
         var currentSpaceIndex: Int
         var visibleSpaceIds: [UInt64]
@@ -406,6 +419,10 @@ class CliServer {
         var layout: QaLayout?
         /// provider health and the last committed attention decision (`TrackingTelemetryState`)
         var tracking: TrackingTelemetrySummary
+        /// AX and CGS calls not answered yet. A launch scan finds a window before it has read what kind of
+        /// window it is, so a window list that stopped changing is not yet a complete model; the reads still
+        /// out are counted here. Their answers are applied on main after the count drops.
+        var pendingWork: Int
     }
 
     private struct QaTelemetryDrain: Codable {
@@ -427,12 +444,19 @@ class CliServer {
         /// (`TileView.getAccessibilityTextForBadge`).
         var dockLabel: String?
         var dockLabelAccessibility: String?
+        /// The badge's drawn height next to the app icon's, so a test can judge the badge against the icon it sits on.
+        var dockLabelHeight: CGFloat?
+        var appIconHeight: CGFloat
         /// The pixel size of the window's last accepted capture (nil: never captured, so the tile shows the
         /// app icon), and the size a capture should come back with now (nil: no window geometry). The
         /// ScreenCaptureKit path is configured with the second, so the two differ by at most a pixel or two
         /// when the capture path works.
         var thumbnailPixelSize: CGSize?
         var expectedThumbnailPixelSize: CGSize?
+        /// The thumbnail as drawn on the tile, in points (nil: thumbnails hidden in this style). Its shape
+        /// should be the capture's: a tile shaped after the window alone while the capture also holds an
+        /// overflowing sheet shows the picture squashed or beside an empty band.
+        var thumbnailSize: CGSize?
         /// **The laid-out geometry, so a test can judge the GRID and not just the list.** The tile's own
         /// frame moves when the row height is wrong (titles / appIcons styles), and the thumbnail's origin
         /// inside it moves when only the label metric is wrong (thumbnails style) — which is the shape of
@@ -492,6 +516,9 @@ class CliServer {
         var tabCount: Int
         var phantom: Bool
         var phantomLatch: Bool
+        /// The two WindowServer facts the phantom verdict reads, as last recorded.
+        var orderedIn: Bool
+        var alpha: Float
         var held: Bool
         var fullscreen: Bool
         var fullscreenMirrored: Bool
@@ -511,6 +538,7 @@ class CliServer {
         var size: CGSize?
         var axHash: Int?
     }
+    #endif
 
     private struct JsonWindowList: Codable {
         var windows: [JsonWindow]
@@ -548,9 +576,14 @@ class CliClient {
     static func detectCommand() -> String? {
         let args = CommandLine.arguments
         if args.count == 2 && !args[1].starts(with: "--logs=") {
-            if args[1] == "--list" || args[1] == "--detailed-list" || args[1] == "--qa-state" || args[1] == "--qa-telemetry" || args[1] == "--hide" || args[1].hasPrefix("--qa-mark=") || args[1].hasPrefix("--focus=") || args[1].hasPrefix("--focusUsingLastFocusOrder=") || args[1].hasPrefix("--show=") {
+            if args[1] == "--list" || args[1] == "--detailed-list" || args[1] == "--hide" || args[1].hasPrefix("--focus=") || args[1].hasPrefix("--focusUsingLastFocusOrder=") || args[1].hasPrefix("--show=") {
                 return args[1]
             }
+            #if DEBUG
+            if args[1] == "--qa-state" || args[1] == "--qa-telemetry" || args[1].hasPrefix("--qa-mark=") {
+                return args[1]
+            }
+            #endif
         }
         return nil
     }

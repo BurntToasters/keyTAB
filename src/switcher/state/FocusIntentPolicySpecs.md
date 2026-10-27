@@ -58,6 +58,19 @@ LEFT, so fronting it walks that window to the top of the order until the real an
 181ms at the 75th percentile, measured over a full pass) and then leaves it sitting one tile from the next
 summon's default pick.
 
+The read itself can be too early. The focus calls return before the app has moved its key window, so a read
+that lands first names the window being left, exactly like the cached answer. An answer naming another window
+of the awaited app is therefore asked again, up to three times 100ms apart, and believed only if it persists:
+then it is a switch that did not take (AltTab #6055). Measured in a macOS 27 VM (2026-10-04): the read 7ms after the
+switch named Finder's previous window and left it second in the order, above the window the user came from.
+
+A busy app can also run out the read's 250ms cap. That is not an answer: the activation has already deferred to
+this read, and an app that recovers posts no focus change of its own, so dropping it left the order on the
+window the user came from until something else made the app speak. The read is asked again with the
+scheduler's backoff (200ms, 1s, 2s, then every 5s), within its 60-second retry budget. Measured in a macOS 27 VM
+(2026-10-21) with Finder stopped for 5s after an alt-tab: the read timed out and the order never moved; with
+the read asked again, it landed on the first try after Finder resumed.
+
 Nothing else in KeyTab may act on a switch it has not heard back about. A second alt-tab that beats the
 answer finds the order unmoved and picks the same window again, which is what the user sees on screen
 anyway: two switches into the same window rather than a toggle KeyTab cannot yet know it owes.
@@ -72,6 +85,32 @@ window's menu bar. Repairing it would take a re-assert scheduled after the anima
 Fronting is what `_SLPSSetFrontProcessWithOptions` does, so a superseded operation that got that far must
 still run the cross-Space origin repair (AltTab #4507). That step is gated on having fronted, never on being
 current — bailing out of it would leak the clobber it exists to undo.
+
+## Verifying the result
+
+The live QA setup holds verification before its snapshot with `--qa-hold-focus-verification`, poses and
+witnesses the covering window, then releases it with `--qa-resume-focus-verification`. These Debug-only
+controls preserve the production snapshot and repair guards; they prevent the test's cover from arriving
+after the one-shot check. The separate execution delay tests a native switch while a repair is queued.
+
+A switch can report success at every step and still leave the previous app's window over the target (AltTab #6064).
+In the reporter's captures (macOS 26.6.2, Zoom, Finder, Terminal) the target app was front and the raise had
+returned success, yet another app's window stayed above the target from +30ms to +150ms after the switch, and
+nothing moved it on its own. A second raise brought the target forward every time.
+
+So 150ms after the operation, KeyTab reads the on-screen order once. It raises the target again when the same
+intent is still current, the target's app is still front, and a visible normal-level window from another app
+overlaps the target from above. It repeats only the raise: the front-switch has visibly landed, and the
+key-window click is not something to post twice. A correct order, a newer focus request, another app in
+front, a transparent or floating window, a window that does not overlap, or one of the target app's own
+windows leaves the switch alone. Immediately before the delayed raise executes, a bounded read must still
+name the target as the focused window of the frontmost app. Native clicks and Cmd-Tab do not create an
+KeyTab generation, so the generation alone is insufficient. An unknown focused window or an execution
+more than one second after verification was scheduled cancels the repair. The freshly read element is
+raised once; there is no stale-element retry that could outlive that check.
+
+`testDeferredRaiseRequiresTheSameNativeFocusAtExecution` covers native app/window changes and unknown
+focus. `testDeferredRaiseStopsAfterTheDeadlineOrANewerKeyTab` covers delayed and superseded work.
 
 ## Test scenarios
 
@@ -100,5 +139,23 @@ current — bailing out of it would leak the clobber it exists to undo.
   everything pending stops, and no wid is re-asserted because none was named.
 - **testASwitchIsAwaitedUntilItsOwnAppAnswers** — only the app the switch aimed at can say where it landed, so
   a read about anyone else leaves the wait standing.
+- **testAnAnswerNamingAnotherWindowOfTheAwaitedAppIsAskedAgain** — the read beat the app to its own key
+  change and names the window being left; the target itself is believed at once.
+- **testAnAnswerThatPersistsThroughTheRereadsIsBelieved** — AltTab #6055: a switch that did not take keeps naming the
+  window that kept focus, and after the rereads that is what the order shows.
+- **testOnlyAnAnswerAboutTheAwaitedSwitchIsAskedAgain** — another app, an app with no answer, nothing awaited,
+  or a wait past the horizon: the answer is taken as it is.
+- **testFocusedWindowReadPropagatesOnlyBusyErrors** — a read cut short by the cap preserves the exact busy
+  error for the scheduler; other errors become no window, and successful answers (including nil) are preserved.
+  This unit test does not execute the scheduler's retries or macOS focus delivery.
 - **testAnUnansweredSwitchStopsBeingAwaitedAtTheHorizon** — an operation that bailed before its read never
   answers, and the wait expires rather than holding every later activation of that app.
+- **testCurrentTargetCoveredByAnotherAppNeedsARaise** — the captured failure: the target app is front while
+  another app's overlapping window remains above its target.
+- **testCorrectZOrderNeedsNoRaise** — the ordinary successful switch pays no second Accessibility call.
+- **testSupersededOrNoLongerFrontTargetNeedsNoRaise** — a delayed verification cannot undo a newer user
+  action.
+- **testATargetMissingFromTheScreenNeedsNoRaise** — a target the on-screen list does not show (a Space
+  transition still animating) is not evidence of a covered window.
+- **testNonCoveringAndTransparentWindowsNeedNoRaise** — unrelated windows, invisible overlays, floating
+  windows and the target app's own windows are not mistaken for a failed switch.
