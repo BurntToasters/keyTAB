@@ -2,8 +2,8 @@
   "name": "keytab",
   "private": true,
   "type": "module",
-  "version": "0.1.1",
-  "buildNumber": 2,
+  "version": "0.1.2",
+  "buildNumber": 3,
   "license": "GPL-3.0-only",
   "engines": {
     "node": ">=22.12"
@@ -21,8 +21,8 @@
     "release:prepare": "node scripts/release.mjs prepare",
     "release:session:verify": "node scripts/release-session.mjs verify",
     "release:mac:continue": "npm run release:session:verify && node scripts/release.mjs continue",
-    "release:mac:resume": "npm run release:preflight && npm run release:mac:continue",
-    "release:mac": "npm run release:preflight && npm run release:prepare && npm run release:mac:continue",
+    "release:mac:resume": "npm run release:preflight && npm run release:mac:continue && npm run release:publish && npm run release:verify:published",
+    "release:mac": "npm run release:preflight && npm run release:prepare && npm run release:mac:continue && npm run release:publish && npm run release:verify:published",
     "mac:ssh:keychain": "bash scripts/mac-keychain-ssh.sh",
     "release:mac:ssh": "npm run mac:ssh:keychain && npm run release:mac",
     "release:mac:ssh:resume": "npm run mac:ssh:keychain && npm run release:mac:resume",

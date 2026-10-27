@@ -18,9 +18,9 @@ export function expectedPackageLock(current, version) {
 }
 
 export function expectedChangelog(current, version) {
-  if (new RegExp(`^## \\[?${version.replaceAll(".", "\\.")}\\b`, "m").test(current)) return current;
+  if (new RegExp(`^## \\[?${version.replaceAll(".", "\\.")}(?:\\]|\\s|$)`, "m").test(current)) return current;
   if (!current.startsWith(changelogTitle)) fail(`changelog.md must start with "${changelogTitle.trim()}".`);
-  return `${changelogTitle}## ${version} (unreleased)\n\n${current.slice(changelogTitle.length)}`;
+  return `${changelogTitle}## ${version}\n\n${current.slice(changelogTitle.length)}`;
 }
 
 function versionTargets(base) {

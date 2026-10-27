@@ -4,7 +4,8 @@ import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { buildRelease } from "./build.mjs";
 import { appcastFilename, writeAppcast } from "./lib/appcast.mjs";
-import { ensureDirectory, output, repository, root, run, sha256File, versionInfo } from "./lib/core.mjs";
+import { releaseNotes } from "./lib/changelog.mjs";
+import { ensureDirectory, output, repository, repositoryUrl, root, run, sha256File, versionInfo } from "./lib/core.mjs";
 import { runPreflight, sparkleCredentialSources } from "./release-preflight.mjs";
 import { createSession, verifySession } from "./release-session.mjs";
 
@@ -127,6 +128,9 @@ function continueRelease() {
   const assets = [zip, ...feeds, checksums];
   assets.push(...assets.map(signGpg));
   ghRun(["release", "upload", info.tag, "--repo", repository, "--clobber", ...assets]);
+  const notes = path.join(path.dirname(zip), "RELEASE_NOTES.md");
+  fs.writeFileSync(notes, releaseNotes(info));
+  ghRun(["release", "edit", info.tag, "--repo", repository, "--notes-file", notes]);
   console.log(`release:mac:continue: draft uploaded (${assets.map((asset) => path.basename(asset)).join(", ")})`);
 }
 
@@ -144,8 +148,11 @@ function publish() {
   console.log(`release:publish: ok (${info.tag})`);
 }
 
-function verifyPublished() {
+async function verifyPublished() {
   const info = versionInfo();
+  const release = JSON.parse(ghOutput(["release", "view", info.tag, "--repo", repository, "--json", "isDraft,isPrerelease"]));
+  if (release.isDraft) throw new Error(`${info.tag} is still a draft`);
+  if (release.isPrerelease !== (info.channel === "beta")) throw new Error(`${info.tag} prerelease flag does not match the ${info.channel} channel`);
   const temp = fs.mkdtempSync(path.join(os.tmpdir(), "keytab-release-"));
   try {
     ghRun(["release", "download", info.tag, "--repo", repository, "--dir", temp]);
@@ -167,10 +174,22 @@ function verifyPublished() {
     const signature = xml.match(/sparkle:edSignature="([^"]+)"/)?.[1];
     if (!signature) throw new Error("published appcast has no archive signature");
     verifySparkleArchive(zip, signature);
+    await verifyLiveFeed(info);
     console.log(`release:verify:published: ok (${info.tag})`);
   } finally {
     fs.rmSync(temp, { recursive: true, force: true });
   }
+}
+
+/// Fetches the feed URL installed copies poll (SparkleDelegate.feedURLString) and waits for GitHub to serve this build.
+async function verifyLiveFeed(info, attempts = 6) {
+  const url = `${repositoryUrl}/releases/latest/download/${appcastFilename(info.channel)}`;
+  for (let attempt = 1; attempt <= attempts; attempt++) {
+    const response = await fetch(url, { cache: "no-store" });
+    if (response.ok && (await response.text()).includes(`sparkle:version>${info.buildNumber}<`)) return;
+    if (attempt < attempts) await new Promise((resolve) => setTimeout(resolve, 10_000));
+  }
+  throw new Error(`${url} does not offer build ${info.buildNumber} yet; installed copies will not see ${info.tag}`);
 }
 
 if (process.argv[1] && pathToFileURL(path.resolve(process.argv[1])).href === import.meta.url) {
@@ -179,7 +198,7 @@ if (process.argv[1] && pathToFileURL(path.resolve(process.argv[1])).href === imp
     if (action === "prepare") prepare();
     else if (action === "continue") continueRelease();
     else if (action === "publish") publish();
-    else if (action === "verify-published") verifyPublished();
+    else if (action === "verify-published") await verifyPublished();
     else throw new Error("Usage: release.mjs prepare|continue|publish|verify-published");
   } catch (error) {
     console.error(`release: FAILED:\n${error.message}`);

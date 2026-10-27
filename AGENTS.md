@@ -38,7 +38,7 @@
 ## Node scripts and configuration
 
 - Use Node.js 22.12 or newer and ESM for build, validation, versioning, packaging, and release automation.
-- `package.json` is authoritative for semantic `version` and numeric `buildNumber`. After changing either, run `npm run sync-version` and commit what it updates: `config/version.xcconfig`, `package-lock.json`, and a new `## <version> (unreleased)` section in `changelog.md` when none exists. The unit-test target reads the same `config/version.xcconfig`.
+- `package.json` is authoritative for semantic `version` and numeric `buildNumber`. After changing either, run `npm run sync-version` and commit what it updates: `config/version.xcconfig`, `package-lock.json`, and a new `## <version>` section in `changelog.md` when none exists. The unit-test target reads the same `config/version.xcconfig`. Raise `buildNumber` with every release; Sparkle offers only higher build numbers, and preflight enforces it.
 - Keep `.env` gitignored. Add new supported variables to `.env.example`, validation, tests, and `docs/RELEASING.md` together.
 - Shell environment variables override `.env`. Never commit credentials, private keys, tokens, passphrases, or keychain passwords.
 - Keep sensitive values out of command arguments and unrelated child-process environments. Sparkle private keys and GPG passphrases must use standard input. GitHub tokens may be forwarded only to `gh` commands.
@@ -60,7 +60,8 @@
 - Stable releases come from `main`; `-beta.n` releases come from `beta`. Beta publishing remains blocked until the first stable release (`v0.1.0`) is public.
 - A resume command may reuse only an unexpired 24-hour session matching version, build, commit, source and project hashes, architecture, toolchain, clean pushed branch, and successful `test:all` proof.
 - Releases require Developer ID signing for team `FYJZP8B2KG`, universal `arm64 x86_64` output, hardened runtime, notarization, stapling, Gatekeeper assessment, Sparkle EdDSA signatures, SHA-256 checksums, and detached GPG signatures.
-- Never publish or mutate a GitHub release unless the user explicitly requests that external action.
+- Never publish or mutate a GitHub release unless the user explicitly requests that external action. Running `npm run release:mac` (or its `ssh`/`resume` variants) is that request: it publishes the release and verifies it is live. Agents must not run it on their own initiative.
+- Write each release's notes in its `## <version>` section of `changelog.md` before releasing; preflight fails on an empty section, and the section becomes the GitHub release notes. Do not add `(unreleased)` or other suffixes to the heading.
 - Keep public release blocked until a KeyTab Sparkle key, a GPG key, the canonical public repository, matching public source tag, and signed native verification are all available.
 
 ## Testing

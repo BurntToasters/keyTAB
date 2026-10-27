@@ -1,6 +1,13 @@
 # KeyTab changelog
 
-## 0.1.1 (unreleased)
+## 0.1.2
+
+### Bug Fixes
+
+* The About window links to the GPL-3.0 license text for the running version.
+* Settings and permission illustrations use original vector art in place of two stock photos whose license was unknown.
+
+## 0.1.1
 
 ### Bug Fixes
 
