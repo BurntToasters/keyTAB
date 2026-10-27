@@ -51,7 +51,8 @@
 - Preserve unrelated user changes in the dirty worktree. Never reset or overwrite work outside the requested scope.
 - Run focused tests while developing, then run `npm run test:all` for the full local gate.
 - After implementing a change, inspect `ai/build.sh`, copy its commands exactly, and run them. `ai/build.sh` currently uses the canonical `npm run build:debug` command.
-- Do not treat automated tests as proof of notarization, stapling, Gatekeeper acceptance, update installation, multi-display or Space behavior, Intel behavior, or macOS 26 behavior. Report those checks separately.
+- Do not treat automated tests as proof of notarization, stapling, Gatekeeper acceptance, update installation, multi-display or Space behavior, or macOS 26 behavior. Report those checks separately.
+- Intel Macs are deprecated, build-only support: releases stay universal and must compile for `x86_64`, but Intel behavior is not tested or verified. Do not add Intel-specific code paths or ask for Intel testing.
 - CI must remain tests, validation, and unsigned compile smoke only on `main` and `beta`. Do not add signing secrets, publishing, release creation, or repository writeback.
 
 ## Release safety

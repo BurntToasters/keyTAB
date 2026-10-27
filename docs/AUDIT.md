@@ -82,7 +82,7 @@ or multi-display behavior, Intel behavior, or macOS 26 behavior.
 - **L4 — Vendored dependencies have no update signal.** Check Sparkle releases at least every quarter and before
   each KeyTab release.
 - **L5 — Resolved in 0.1.3.** CI moved to `macos-26`: on `macos-15`, `actool` crashes compiling the Icon Composer
-  `AppIcon.icon`, which failed every CI run since 0.1.1. Intel stays a manual release check.
+  `AppIcon.icon`, which failed every CI run since 0.1.1. Intel is build-only support and is not tested.
 - **L6 — Nine inherited `TODO`s**, including what to do when the Debug CLI port is already taken. Triage them into
   issues.
 - **L8 — The branding scan does not see multi-line (`"""`) string content.** Text inside those blocks is not

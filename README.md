@@ -2,7 +2,7 @@
 
 KeyTab is a free, open-source macOS window switcher. It brings Windows-style window switching to macOS while preserving the complete AltTab v11.10.1 feature set without paid tiers, trials, license keys, telemetry, or feature gates.
 
-- macOS 14 or newer
+- macOS 14 or newer on Apple Silicon. Intel Macs get a universal build but are deprecated and untested.
 - AppKit and Swift 5.8-compatible source
 - Bundle identifier: `run.rosie.keytab`
 - Source and releases: <https://github.com/BurntToasters/KeyTab>
