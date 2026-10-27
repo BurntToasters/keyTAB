@@ -1,6 +1,6 @@
 # Releasing KeyTab
 
-`package.json` owns the semantic `version` and numeric `buildNumber`. Run `npm run sync-version` and commit what it updates: `config/version.xcconfig`, `package-lock.json`, and a new `## <version> (unreleased)` section in `changelog.md` when none exists. The unit-test target reads the same `config/version.xcconfig` after changing either value. Stable versions use `main`; versions ending in `-beta.n` use `beta`.
+`package.json` owns the semantic `version` and numeric `buildNumber`. Raise `buildNumber` with every release: Sparkle offers an update only when its build number is higher than the installed one, and preflight rejects a build number that is not higher than every released tag's. After changing either value, run `npm run sync-version` and commit what it updates: `config/version.xcconfig` (also read by the unit-test target), `package-lock.json`, and a new `## <version>` section in `changelog.md` when none exists. Stable versions use `main`; versions ending in `-beta.n` use `beta`.
 
 ## One-time Sparkle setup
 
@@ -44,13 +44,15 @@ Do not put the Sparkle public key in `.env`. Commit the public key as `SPARKLE_P
 
 Node scripts remove private key material, GPG passphrases, keychain passwords, and GitHub token variables from child-process environments by default. Sparkle and GPG secrets travel only through standard input; `gh` reads authentication from its credential store.
 
-`npm run release:mac:ssh` unlocks the login keychain, verifies the canonical public repository, clean pushed branch and credentials, runs `test:all` once, records a source and toolchain-bound 24-hour session, and continues through the signed universal build and draft upload. `release:mac:ssh:resume` reuses only a still-valid matching session.
+`npm run release:mac:ssh` unlocks the login keychain, verifies the canonical public repository, clean pushed branch and credentials, runs `test:all` once, records a source and toolchain-bound 24-hour session, and continues through the signed universal build, draft upload, publishing and live verification. `release:mac:ssh:resume` reuses only a still-valid matching session.
 
 ## Publishing
 
 Release signing is inside-out and never uses `--deep`: Sparkle's `Autoupdate` and `Updater.app`, then `Sparkle.framework`, then `KeyTab.app` (the only target that receives `KeyTab.entitlements`). Release validation rejects any Mach-O in the bundle that is not signed by team `FYJZP8B2KG`, including the vendored helpers, which are committed with upstream's signature.
 
-The draft contains the notarized and stapled `KeyTab-<version>.zip`, its Sparkle-signed appcast (plus the `appcast-beta.xml` copy on stable releases), `SHA256SUMS`, and detached armored GPG signatures for each file. Run `npm run release:publish` only after native smoke tests. Then run `npm run release:verify:published` to download and verify the public artifacts.
+The draft contains the notarized and stapled `KeyTab-<version>.zip`, its Sparkle-signed appcast (plus the `appcast-beta.xml` copy on stable releases), `SHA256SUMS`, and detached armored GPG signatures for each file. The draft's notes are the version's `## <version>` section of `changelog.md` plus a GPL source notice; preflight fails when that section is missing or empty.
+
+`npm run release:mac` then publishes the draft (`release:publish`) and runs `release:verify:published`, which confirms the release is no longer a draft, downloads and verifies every public artifact, and waits until `releases/latest/download/appcast.xml`, the feed installed copies poll, offers the new build. To stop at the draft for manual smoke tests, run `npm run release:preflight && npm run release:prepare && npm run release:mac:continue`, then `npm run release:publish` and `npm run release:verify:published` yourself.
 
 Stable updates use `appcast.xml`. Beta updates use `appcast-beta.xml`; publishing a beta mirrors that feed onto the latest stable release so the stable `/latest/download/` URL can serve it. Every stable release also ships a GPG-signed copy of its `appcast.xml` as `appcast-beta.xml`, so beta installs keep resolving a feed (and are offered the stable build) after a new stable release becomes `/latest/`. That copy is not listed in `SHA256SUMS` because a later beta publish replaces it. Beta publishing remains blocked until a public stable release, starting with `v0.1.0`, exists.
 

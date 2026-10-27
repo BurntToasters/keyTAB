@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { expectedBranch, output, repository, repositoryUrl, root, run, teamId, versionInfo } from "./lib/core.mjs";
+import { releaseNotes } from "./lib/changelog.mjs";
 import { validateWorkspace } from "./validate.mjs";
 
 const escapedRepository = repository.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -33,6 +34,18 @@ export function betaReleaseAllowed(version, stableTags) {
   return !version.includes("-beta.") || stableTags.some((tag) => !tag.includes("-beta."));
 }
 
+/// Sparkle offers an update only when its CFBundleVersion is higher than the installed one.
+export function buildNumberFailures(buildNumber, releasedBuilds) {
+  return Object.entries(releasedBuilds).filter(([, build]) => build >= buildNumber)
+    .map(([tag, build]) => `buildNumber ${buildNumber} must be higher than ${tag}'s ${build}, or Sparkle will not offer the update`);
+}
+
+function releasedBuildNumbers(currentTag) {
+  const tags = optional("git", ["tag", "--list", "v*"])?.split(/\s+/).filter((tag) => tag && tag !== currentTag) ?? [];
+  return Object.fromEntries(tags.map((tag) => [tag, Number(JSON.parse(optional("git", ["show", `${tag}:package.json`]) ?? "{}").buildNumber)])
+    .filter(([, build]) => Number.isSafeInteger(build)));
+}
+
 export function sparkleCredentialSources(environment = process.env) {
   return ["KEYTAB_SPARKLE_ACCOUNT", "KEYTAB_SPARKLE_PRIVATE_KEY_FILE", "KEYTAB_SPARKLE_PRIVATE_KEY"].filter((name) => environment[name]);
 }
@@ -57,11 +70,13 @@ export function runPreflight({ release = false } = {}) {
     draftTarget: optional("gh", ["api", `repos/${repository}/releases/tags/${info.tag}`, "--jq", ".target_commitish"]),
   };
   failures.push(...validateRepositoryState(state));
+  failures.push(...buildNumberFailures(info.buildNumber, releasedBuildNumbers(info.tag)));
   const stableTags = optional("gh", ["release", "list", "--repo", repository, "--json", "tagName,isDraft", "--jq", ".[] | select(.isDraft == false) | .tagName"])?.split(/\s+/).filter(Boolean) ?? [];
   if (!betaReleaseAllowed(info.version, stableTags)) failures.push("beta publishing is blocked until a stable release is public");
   if (release) {
     if (!process.env.KEYTAB_NOTARY_PROFILE) failures.push("KEYTAB_NOTARY_PROFILE is required");
     if (!process.env.KEYTAB_GPG_KEY) failures.push("KEYTAB_GPG_KEY is required");
+    try { releaseNotes(info); } catch (error) { failures.push(error.message); }
     const sparkleSources = sparkleCredentialSources();
     if (sparkleSources.length !== 1) failures.push("configure exactly one of KEYTAB_SPARKLE_ACCOUNT, KEYTAB_SPARKLE_PRIVATE_KEY_FILE, or KEYTAB_SPARKLE_PRIVATE_KEY");
     if (process.env.KEYTAB_SPARKLE_PRIVATE_KEY_FILE && !fs.existsSync(path.resolve(root, process.env.KEYTAB_SPARKLE_PRIVATE_KEY_FILE))) failures.push("KEYTAB_SPARKLE_PRIVATE_KEY_FILE does not exist");

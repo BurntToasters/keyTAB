@@ -105,6 +105,7 @@
 "Language Change" = "Språkändring";
 "Large" = "Stor";
 "Later" = "Senare";
+"License" = "Licens";
 "Light" = "Ljus";
 "macOS reserves ⌘⌥⎋, ⌘⌥⇧⎋, and ⌘⌥⇧⌃⎋ for Force Quit and they cannot be unbound. KeyTab cannot use them.\n\nYour change would assign one of these to: %@." = "macOS reserverar ⌘⌥⎋, ⌘⌥⇧⎋ och ⌘⌥⇧⌃⎋ för Tvinga att avsluta och de kan inte frigöras. KeyTab kan inte använda dem.\n\nDin ändring skulle tilldela ett av dessa till: %@.";
 "Medium" = "Mellan";
@@ -209,7 +210,6 @@
 "Vim keys" = "Vim-tangenter";
 "Vim keys already assigned to other actions:\n%@" = "Vim-tangenter är redan tilldelade andra åtgärder:\n%@";
 "Visible Spaces" = "Synliga skrivbord";
-"Website" = "Webbplats";
 "Weekend recipes" = "Helgrecept";
 "When disabled, avoids the macOS purple screen-recording indicator, and avoids flickers when playing DRM video. Thumbnails will be less up-to-date." = "När inaktiverad undviks macOS lila skärminspelningsindikator och flimmer vid uppspelning av DRM-video. Miniatyrer blir mindre uppdaterade.";
 "When fullscreen" = "När i helskärm";

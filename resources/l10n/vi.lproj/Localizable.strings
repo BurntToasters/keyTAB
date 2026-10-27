@@ -105,6 +105,7 @@
 "Language Change" = "Thay đổi ngôn ngữ";
 "Large" = "Lớn";
 "Later" = "Để sau";
+"License" = "Giấy phép";
 "Light" = "Sáng";
 "macOS reserves ⌘⌥⎋, ⌘⌥⇧⎋, and ⌘⌥⇧⌃⎋ for Force Quit and they cannot be unbound. KeyTab cannot use them.\n\nYour change would assign one of these to: %@." = "macOS dành riêng ⌘⌥⎋, ⌘⌥⇧⎋, và ⌘⌥⇧⌃⎋ cho Buộc thoát và không thể gỡ bỏ. KeyTab không thể sử dụng chúng.\n\nThay đổi của bạn sẽ gán một trong số đó cho: %@.";
 "Medium" = "Trung bình";
@@ -209,7 +210,6 @@
 "Vim keys" = "Phím Vim";
 "Vim keys already assigned to other actions:\n%@" = "Phím Vim đã được gán cho các hành động khác:\n%@";
 "Visible Spaces" = "Không gian hiển thị";
-"Website" = "Trang web";
 "Weekend recipes" = "Món ngon";
 "When disabled, avoids the macOS purple screen-recording indicator, and avoids flickers when playing DRM video. Thumbnails will be less up-to-date." = "Khi tắt, tránh chỉ báo ghi màn hình màu tím của macOS và tránh nhấp nháy khi phát video DRM. Hình thu nhỏ sẽ ít được cập nhật hơn.";
 "When fullscreen" = "Khi toàn màn hình";
