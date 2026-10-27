@@ -8,4 +8,6 @@ KeyTab source and corresponding release source: <https://github.com/BurntToaster
 
 KeyTab, including the inherited AltTab code and KeyTab modifications, is distributed under GPL-3.0-only. There is no warranty. The complete license is in `LICENCE.md`. Every distributed binary must correspond to a public KeyTab tag containing the complete source, build scripts, vendored dependency source, modification history, and notices used to produce it.
 
+Copyright © 2026 BurntToasters and KeyTab contributors. Portions copyright © 2019–2026 Louis Pontoise and AltTab contributors.
+
 Copyright remains with Louis Pontoise, the AltTab contributors, the KeyTab contributors, and the authors of the third-party components identified in `THIRD_PARTY_NOTICES.md` and their source headers.

@@ -1,6 +1,6 @@
 # KeyTab changelog
 
-## 1.0.0 (unreleased)
+## 0.1.0 (unreleased)
 
 First KeyTab release. KeyTab is a free, GPL-3.0-only fork of AltTab, based on AltTab 11.10.1.
 
@@ -12,6 +12,9 @@ First KeyTab release. KeyTab is a free, GPL-3.0-only fork of AltTab, based on Al
 * Illustrations redrawn as vector art, and a smaller download.
 * Every feature that was paid in AltTab is free and enabled for everyone. There are no license keys, trials or purchase prompts.
 * Updates are delivered with Sparkle from the KeyTab GitHub releases.
+* New KeyTab app icon, with Liquid Glass on macOS 26 and newer.
+* The About window credits the KeyTab and upstream AltTab contributors and translators.
+* Builds with the macOS 27.1 SDK.
 
 # AltTab upstream history (provenance)
 

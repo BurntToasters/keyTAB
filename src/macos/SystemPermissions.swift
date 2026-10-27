@@ -267,58 +267,16 @@ class ScreenRecordingPermission {
 
     // note: shows the system prompt if there's no permission
     private static func isGrantedOnSomeDisplay() -> Bool? {
-        if #available(macOS 12.3, *) {
-            return checkWithSCShareableContent()
-        } else {
-            let mainDisplayID = CGMainDisplayID()
-            let mainResult = checkWithCGDisplayStream(mainDisplayID)
-            var unknown = mainResult == nil
-            if mainResult == true {
-                return true
-            }
-            // maybe the main screen can't produce a CGDisplayStream, but another screen can
-            // a positive on any screen must mean that the permission is granted; we try on the other screens
-            for screen in NSScreen.screens {
-                if let id = screen.number(), id != mainDisplayID {
-                    let result = checkWithCGDisplayStream(id)
-                    unknown = unknown || result == nil
-                    if result == true {
-                        return true
-                    }
-                }
-            }
-            return unknown ? nil : false
-        }
-    }
-
-    @available(macOS 12.3, *)
-    private static func checkWithSCShareableContent() -> Bool? {
         return runWithTimeout { completion in
             SCShareableContent.getExcludingDesktopWindows(true, onScreenWindowsOnly: false) { shareableContent, error in
                 // this callback runs on a GCD queue, not on the thread that called getWithCompletionHandler
-                if #available(macOS 14.0, *), let shareableContent, error == nil {
+                if let shareableContent, error == nil {
                     BackgroundWork.screenshotsQueue.addOperation {
                         WindowCaptureScreenshots.cachedSCWindows.withLock { $0 = shareableContent.windows }
                     }
                 }
                 completion(error != nil ? false : (shareableContent != nil))
             }
-        }
-    }
-
-    private static func checkWithCGDisplayStream(_ id: CGDirectDisplayID) -> Bool? {
-        return runWithTimeout { completion in
-            // this initializer can actually block for a while
-            // it's undocumented but has been proven by spindumps shared by AltTab users
-            let displayStream = CGDisplayStream(
-                dispatchQueueDisplay: id,
-                outputWidth: 1,
-                outputHeight: 1,
-                pixelFormat: Int32(kCVPixelFormatType_32BGRA),
-                properties: nil,
-                queue: .global()
-            ) { _, _, _, _ in }
-            completion(displayStream != nil)
         }
     }
 

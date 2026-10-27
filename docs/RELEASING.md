@@ -1,6 +1,6 @@
 # Releasing KeyTab
 
-`package.json` owns the semantic `version` and numeric `buildNumber`. Run `npm run sync-version` and commit `config/version.xcconfig` after changing either value. Stable versions use `main`; versions ending in `-beta.n` use `beta`.
+`package.json` owns the semantic `version` and numeric `buildNumber`. Run `npm run sync-version` and commit what it updates: `config/version.xcconfig`, `package-lock.json`, and a new `## <version> (unreleased)` section in `changelog.md` when none exists. The unit-test target reads the same `config/version.xcconfig` after changing either value. Stable versions use `main`; versions ending in `-beta.n` use `beta`.
 
 ## One-time Sparkle setup
 
@@ -52,7 +52,7 @@ Release signing is inside-out and never uses `--deep`: Sparkle's `Autoupdate` an
 
 The draft contains the notarized and stapled `KeyTab-<version>.zip`, its Sparkle-signed appcast (plus the `appcast-beta.xml` copy on stable releases), `SHA256SUMS`, and detached armored GPG signatures for each file. Run `npm run release:publish` only after native smoke tests. Then run `npm run release:verify:published` to download and verify the public artifacts.
 
-Stable updates use `appcast.xml`. Beta updates use `appcast-beta.xml`; publishing a beta mirrors that feed onto the latest stable release so the stable `/latest/download/` URL can serve it. Every stable release also ships a GPG-signed copy of its `appcast.xml` as `appcast-beta.xml`, so beta installs keep resolving a feed (and are offered the stable build) after a new stable release becomes `/latest/`. That copy is not listed in `SHA256SUMS` because a later beta publish replaces it. Beta publishing remains blocked until public stable `v1.0.0` exists.
+Stable updates use `appcast.xml`. Beta updates use `appcast-beta.xml`; publishing a beta mirrors that feed onto the latest stable release so the stable `/latest/download/` URL can serve it. Every stable release also ships a GPG-signed copy of its `appcast.xml` as `appcast-beta.xml`, so beta installs keep resolving a feed (and are offered the stable build) after a new stable release becomes `/latest/`. That copy is not listed in `SHA256SUMS` because a later beta publish replaces it. Beta publishing remains blocked until a public stable release, starting with `v0.1.0`, exists.
 
 Every binary release must use a public tag containing the complete corresponding GPL source, build scripts, vendored sources, provenance, and dependency notices. CI has read-only repository permission and performs only validation, tests, and an unsigned compile smoke build.
 

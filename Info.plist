@@ -16,7 +16,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>GPL-3.0-only; no warranty</string>
+	<string>Copyright © 2026 BurntToasters and KeyTab contributors. Portions copyright © 2019–2026 Louis Pontoise and AltTab contributors. GPL-3.0-only; no warranty.</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.utilities</string>
 

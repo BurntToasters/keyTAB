@@ -30,7 +30,7 @@ function optional(command, args) {
 }
 
 export function betaReleaseAllowed(version, stableTags) {
-  return !version.includes("-beta.") || stableTags.includes("v1.0.0");
+  return !version.includes("-beta.") || stableTags.some((tag) => !tag.includes("-beta."));
 }
 
 export function sparkleCredentialSources(environment = process.env) {
@@ -58,7 +58,7 @@ export function runPreflight({ release = false } = {}) {
   };
   failures.push(...validateRepositoryState(state));
   const stableTags = optional("gh", ["release", "list", "--repo", repository, "--json", "tagName,isDraft", "--jq", ".[] | select(.isDraft == false) | .tagName"])?.split(/\s+/).filter(Boolean) ?? [];
-  if (!betaReleaseAllowed(info.version, stableTags)) failures.push("beta publishing is blocked until stable v1.0.0 is public");
+  if (!betaReleaseAllowed(info.version, stableTags)) failures.push("beta publishing is blocked until a stable release is public");
   if (release) {
     if (!process.env.KEYTAB_NOTARY_PROFILE) failures.push("KEYTAB_NOTARY_PROFILE is required");
     if (!process.env.KEYTAB_GPG_KEY) failures.push("KEYTAB_GPG_KEY is required");

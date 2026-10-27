@@ -14,7 +14,7 @@ class App: NSApplication {
     static let name = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as! String
     static let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
     static let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String
-    static let licence = "GPL-3.0-only; no warranty"
+    static let copyright = Bundle.main.object(forInfoDictionaryKey: "NSHumanReadableCopyright") as! String
     static let repository = "https://github.com/BurntToasters/KeyTab"
     static let issues = "\(repository)/issues"
     static let appIconReps = CGImage.allNamed("AppIcon.icns")

@@ -1,3 +1,7 @@
+## KeyTab contributors
+
+[BurntToasters](https://github.com/BurntToasters)
+
 ## Upstream AltTab contributors
 
 This list is retained as modification provenance for the AltTab v11.10.1 source used by KeyTab. KeyTab modifications began August 2026 from AltTab v11.4.4. The upstream contributor graph is at <https://github.com/lwouis/alt-tab-macos/graphs/contributors>.

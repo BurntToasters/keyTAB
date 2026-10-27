@@ -2,7 +2,7 @@ import Cocoa
 
 class AcknowledgmentsTab {
     static func makeContentView(columnWidth: CGFloat = 240, shouldFit: Bool = true, verticallyStacked: Bool = false) -> NSView {
-        let sectionNames = ["acknowledgments"]
+        let sectionNames = ["acknowledgments", "contributors"]
         let textViews: [NSTextView] = sectionNames.map { makeTextView($0, columnWidth) }
         let content: NSView
         if verticallyStacked {

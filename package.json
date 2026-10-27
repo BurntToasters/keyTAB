@@ -2,7 +2,7 @@
   "name": "keytab",
   "private": true,
   "type": "module",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "buildNumber": 1,
   "license": "GPL-3.0-only",
   "engines": {
