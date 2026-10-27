@@ -20,4 +20,4 @@ CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES
 DEAD_CODE_STRIPPING = YES
 OTHER_LDFLAGS = $(inherited) -weak_framework ScreenCaptureKit // SDK 26 header bug: a stray `;` between API_AVAILABLE and `@interface SCScreenshotConfiguration` detaches the annotation, so the class ref links strongly and dyld aborts at launch on any macOS below 26
 #include "version.xcconfig"
-SPARKLE_PUBLIC_KEY =
+SPARKLE_PUBLIC_KEY = 8aIb7qlAkoiZZBU6JSkvauDZMOgtGXIf0E2wdhNLT+g=
