@@ -1,5 +1,12 @@
 # KeyTab repository guidance
 
+## Critical - Never Modify This Section (all others below this one, an AGENT is allowed to modify)
+
+- NEVER write unit tests after you write code. 
+- Highly prefer E2E tests as the sole testing mechanism. Use them to verify complex features work. At the end of E2E tests, produce a verifiable and repeatable artifact. 
+- If you must test a system in isolation, FIRST write all the ways it could fail, THEN write the code.
+- If you are an agent, do not add yourself as a co-author to commits.
+
 ## Project identity
 
 - KeyTab is a free, GPL-3.0-only fork of AltTab v11.10.1. KeyTab modifications began August 2026 from AltTab v11.4.4. The product name is `KeyTab`, the bundle identifier is `run.rosie.keytab`, and the canonical repository is `BurntToasters/KeyTab`.
