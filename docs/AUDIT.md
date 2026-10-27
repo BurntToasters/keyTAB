@@ -60,15 +60,11 @@ or multi-display behavior, Intel behavior, or macOS 26 behavior.
 
 ### High
 
-- **H3 — Release prerequisites (blocked on owner).**
-  - `SPARKLE_PUBLIC_KEY` is empty in `config/base.xcconfig`. Follow "One-time Sparkle setup" in
-    `docs/RELEASING.md`.
-  - The KeyTab GPG key, notary profile and Developer ID identity for team `FYJZP8B2KG` must be supplied.
-  - The repository must be public.
-  - `node scripts/validate.mjs --release` fails only on the Sparkle key.
-- **H4 — Native verification of F6 (blocked on owner).** Run `npm run release:mac` on a Mac with the Developer ID,
-  then install an older signed build and let Sparkle update it. Confirm that `Autoupdate` launches (Sparkle's
-  installer validates the helpers' signatures against the host app).
+- **H3 — Resolved before 0.1.0.** The Sparkle key, GPG key, notary profile and Developer ID identity are in place,
+  the repository is public, and `release:preflight` passes.
+- **H4 — Native verification of F6 (in progress).** The published 0.1.2 bundle's `Autoupdate`, `Updater.app` and
+  `Sparkle.framework` are signed by `FYJZP8B2KG` with the hardened runtime, and an installed 0.1.1 was offered 0.1.2.
+  Confirm that installing the update completes and relaunches KeyTab 0.1.2.
 - **H5 — Resolved before 0.1.0.** The 11.10.1 merge compiled only after removing a dead `CGDisplayStream` path, making
   `TrackingTelemetry` types available to Release, and correcting four merged tests that had never run.
 
@@ -85,13 +81,14 @@ or multi-display behavior, Intel behavior, or macOS 26 behavior.
   `security` tool, so keep the release host single-user.
 - **L4 — Vendored dependencies have no update signal.** Check Sparkle releases at least every quarter and before
   each KeyTab release.
-- **L5 — CI runs only on `macos-15` arm64.** Adding a `macos-26` job is cheap. Intel stays a manual release check.
+- **L5 — Resolved in 0.1.3.** CI moved to `macos-26`: on `macos-15`, `actool` crashes compiling the Icon Composer
+  `AppIcon.icon`, which failed every CI run since 0.1.1. Intel stays a manual release check.
 - **L6 — Nine inherited `TODO`s**, including what to do when the Debug CLI port is already taken. Triage them into
   issues.
 - **L8 — The branding scan does not see multi-line (`"""`) string content.** Text inside those blocks is not
   checked for "AltTab". Extend `swiftRuntimeBrandingLines` if new multi-line user-facing strings appear.
-- **L9 — Two strings have no translations:** 'KeyTab on GitHub' and 'Acknowledgments are unavailable.' They show
-  in English in every language.
+- **L9 — Resolved in 0.1.3.** 'KeyTab on GitHub' and 'Acknowledgments are unavailable.' are translated into every
+  supported language.
 
 ## Verified clean (pass 2)
 
