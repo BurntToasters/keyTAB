@@ -69,12 +69,12 @@ or multi-display behavior, Intel behavior, or macOS 26 behavior.
 - **H4 — Native verification of F6 (blocked on owner).** Run `npm run release:mac` on a Mac with the Developer ID,
   then install an older signed build and let Sparkle update it. Confirm that `Autoupdate` launches (Sparkle's
   installer validates the helpers' signatures against the host app).
-- **H5 — The 11.10.1 merge has not been compiled yet.** Open a pull request to `main` so CI (Xcode 26) runs the test
-  gate, the Debug build and the unsigned Release compile, and fix whatever it reports before tagging 1.0.0.
+- **H5 — Resolved before 0.1.0.** The 11.10.1 merge compiled only after removing a dead `CGDisplayStream` path, making
+  `TrackingTelemetry` types available to Release, and correcting four merged tests that had never run.
 
 ### Medium
 
-- **M4 — The new illustrations embed two photographs (Mount Fuji, a bowl of ramen) whose provenance upstream does not document.** Confirm their licence with upstream or replace them (edit the SVGs, then run `python3 scripts/assets/compile_illustrations.py`) before the first public release.
+- **M4 — Resolved in 0.1.2.** The illustrations embedded two photographs (Mount Fuji, a bowl of ramen) whose provenance upstream does not document, and they shipped in 0.1.0 and 0.1.1. Every placement is now original vector art; `resources/native-illustrations/` holds no JPEGs.
 - **M8 — Vendored helper re-signing at vendor time.** `vendor/scripts/update_sparkle.sh` still re-signs the
   helpers with whatever Developer ID is in the keychain. That was AltTab's maintainer last time. Since F6 re-signs
   at release, the next Sparkle update should sign them with KeyTab's identity, or leave them ad hoc.
