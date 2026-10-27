@@ -1,6 +1,12 @@
 # KeyTab changelog
 
-## 0.1.0 (unreleased)
+## 0.1.1 (unreleased)
+
+### Bug Fixes
+
+* The download contains `KeyTab.app` instead of an app named after its version, such as `KeyTab-0.1.0.app`.
+
+## 0.1.0 (2026-10-27)
 
 First KeyTab release. KeyTab is a free, GPL-3.0-only fork of AltTab, based on AltTab 11.10.1.
 
@@ -17,6 +23,9 @@ First KeyTab release. KeyTab is a free, GPL-3.0-only fork of AltTab, based on Al
 * Builds with the macOS 27.1 SDK.
 
 # AltTab upstream history (provenance)
+
+<details>
+<summary>AltTab release notes up to 11.10.1, the version KeyTab is based on</summary>
 
 ## [11.10.1](https://github.com/lwouis/alt-tab-macos/compare/v11.10.0...v11.10.1) (2026-10-23)
 
@@ -4052,3 +4061,5 @@ Of course there is no free lunch, so this approach has its own issues. However f
 
 * documented the project and reduced image sizes ([930c82d](https://github.com/lwouis/alt-tab-macos/commit/930c82d))
 * mvp ([be59936](https://github.com/lwouis/alt-tab-macos/commit/be59936))
+
+</details>

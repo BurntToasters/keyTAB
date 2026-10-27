@@ -58,7 +58,7 @@ export function buildRelease() {
   const { version } = versionInfo();
   const releaseRoot = path.join(root, "dist/release-build");
   const derivedData = path.join(releaseRoot, "DerivedData");
-  const app = path.join(root, "dist", `KeyTab-${version}.app`);
+  const app = path.join(root, "dist", "KeyTab.app");
   const zip = path.join(root, "dist", `KeyTab-${version}.zip`);
   fs.rmSync(releaseRoot, { recursive: true, force: true });
   fs.rmSync(app, { recursive: true, force: true });
