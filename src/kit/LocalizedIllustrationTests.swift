@@ -82,11 +82,21 @@ final class LocalizedIllustrationTests: XCTestCase {
 
     func testAppearanceAndDirectionChangeTheRenderedIllustration() throws {
         let drawer = try IllustrationDrawer(directory: resources)
-        let light = try rendered(XCTUnwrap(drawer.image("settings-titles"))).representation(using: .png, properties: [:])
-        let dark = try rendered(XCTUnwrap(drawer.image("settings-titles", dark: true))).representation(using: .png, properties: [:])
-        let rtl = try rendered(XCTUnwrap(drawer.image("settings-titles", rightToLeft: true))).representation(using: .png, properties: [:])
+        let ltr = try rendered(XCTUnwrap(drawer.image("permission-recording"))).representation(using: .png, properties: [:])
+        let rtl = try rendered(XCTUnwrap(drawer.image("permission-recording", rightToLeft: true))).representation(using: .png, properties: [:])
+        XCTAssertNotEqual(ltr, rtl)
+        // No shipped artwork declares data-dark-fill, so dark text colors are checked on a minimal scene.
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        let scene: [String: Any] = ["version": 1, "paths": [], "gradients": [], "scenes": ["label": ["root": 0, "size": [100, 60]]],
+            "nodes": [["children": [1]], ["text": "Aa", "x": 10, "y": 45, "fontSize": 40, "fill": [0, 0, 0, 1], "darkFill": [1, 0, 0, 1]]]]
+        try PropertyListSerialization.data(fromPropertyList: scene, format: .binary, options: 0)
+            .write(to: directory.appendingPathComponent("scenes.plist"))
+        let labels = try IllustrationDrawer(directory: directory)
+        let light = try rendered(XCTUnwrap(labels.image("label"))).representation(using: .png, properties: [:])
+        let dark = try rendered(XCTUnwrap(labels.image("label", dark: true))).representation(using: .png, properties: [:])
         XCTAssertNotEqual(light, dark)
-        XCTAssertNotEqual(light, rtl)
     }
 
     func testImageCacheSeparatesBundleAppearanceDirectionAndOverrides() throws {

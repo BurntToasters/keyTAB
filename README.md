@@ -9,7 +9,7 @@ KeyTab is a free, open-source macOS window switcher. It brings Windows-style win
 
 ## Build and test
 
-Install Xcode 26 or newer (KeyTab builds against the macOS 26 SDK while still running on macOS 14) and Node.js 22.12 or newer, then run:
+Install Xcode 26 or newer (KeyTab builds against the macOS 26 and 27 SDKs while still running on macOS 14; Xcode 26 is also the minimum for the Icon Composer app icon) and Node.js 22.12 or newer, then run:
 
 ```sh
 npm run workspace:bootstrap
@@ -21,15 +21,17 @@ npm run build:debug
 
 ## Release safety
 
-Release commands validate the canonical repository, branch, clean and pushed commit, source/version synchronization, 24-hour preparation proof, signing identities, universal architecture, notarization, Sparkle EdDSA signatures, SHA-256 checksums, and detached GPG signatures. Publishing remains blocked until KeyTab-specific Sparkle and GPG keys are supplied.
+Release commands validate the canonical repository, branch, clean and pushed commit, source/version synchronization, 24-hour preparation proof, signing identities, universal architecture, notarization, Sparkle EdDSA signatures, SHA-256 checksums, and detached GPG signatures. Publishing requires the KeyTab Sparkle and GPG keys described in [docs/RELEASING.md](docs/RELEASING.md).
 
 Copy `.env.example` to `.env` for local signing credentials. See [docs/RELEASING.md](docs/RELEASING.md) for the release commands, credential options, channel behavior, and manual native checks.
 
 ## Brand
 
-The icon, menubar glyphs and palette are described in [docs/BRAND.md](docs/BRAND.md) and generated from code in `scripts/assets/`.
+The icon, menubar glyphs and palette are described in [docs/BRAND.md](docs/BRAND.md). The app icon is an Icon Composer file, `resources/icons/app/AppIcon.icon`; the menubar glyphs are generated from code in `scripts/assets/`.
 
 ## License and provenance
+
+Copyright © 2026 BurntToasters and KeyTab contributors. Portions copyright © 2019–2026 Louis Pontoise and AltTab contributors.
 
 KeyTab is licensed under `GPL-3.0-only`; see [LICENCE.md](LICENCE.md), [NOTICE.md](NOTICE.md), and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 

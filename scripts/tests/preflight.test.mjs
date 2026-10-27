@@ -27,9 +27,10 @@ test("a stable release keeps the beta feed resolvable from the latest release", 
   assert.deepEqual(feedFilenames("beta"), ["appcast-beta.xml"]);
 });
 
-test("beta requires public 1.0.0 and draft target is exact", () => {
-  assert.equal(betaReleaseAllowed("1.1.0-beta.1", []), false);
-  assert.equal(betaReleaseAllowed("1.1.0-beta.1", ["v1.0.0"]), true);
+test("beta requires a public stable release and draft target is exact", () => {
+  assert.equal(betaReleaseAllowed("0.2.0-beta.1", []), false);
+  assert.equal(betaReleaseAllowed("0.2.0-beta.1", ["v0.2.0-beta.0"]), false);
+  assert.equal(betaReleaseAllowed("0.2.0-beta.1", ["v0.1.0"]), true);
   assert.deepEqual(expectedDraftTarget({ tag: "v1.1.0-beta.1", version: "1.1.0-beta.1", channel: "beta" }, "abc"), { tag: "v1.1.0-beta.1", target: "abc", title: "KeyTab 1.1.0-beta.1", prerelease: true });
   assert.equal(betaMirrorTarget("beta", "v1.0.0"), "v1.0.0");
   assert.equal(betaMirrorTarget("stable", "v1.0.0"), null);
