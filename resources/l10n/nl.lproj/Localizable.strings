@@ -5,7 +5,7 @@
 "A little time." = "Even tijd.";
 "About %@" = "Over %@";
 "Accessibility" = "Toegankelijkheid";
-"Acknowledgments are unavailable." = "Acknowledgments are unavailable.";
+"Acknowledgments are unavailable." = "Dankbetuigingen zijn niet beschikbaar.";
 "Active app" = "Actieve app";
 "Active screen" = "Actief scherm";
 "Add a pattern" = "Patroon toevoegen";
@@ -94,7 +94,7 @@
 "Keep holding %@ then press %@" = "Houd %@ ingedrukt en druk op %@";
 "KeyTab is ready" = "KeyTab is klaar";
 "KeyTab is running without Screen Recording permissions. %@ won’t show." = "KeyTab werkt zonder toegang voor Schermopname. %@ worden niet weergegeven.";
-"KeyTab on GitHub" = "KeyTab on GitHub";
+"KeyTab on GitHub" = "KeyTab op GitHub";
 "KeyTab preferences file is a symlink. macOS doesn’t support symlink for preferences. Please use a valid file instead of a symlink here:" = "Het voorkeurenbestand van KeyTab is een symbolische koppeling. macOS ondersteunt geen symbolische koppelingen voor voorkeuren. Gebruik hier een geldig bestand in plaats van een symbolische koppeling:";
 "KeyTab preferences file isn’t writable by your account. Please fix ownership and permissions of the file here:" = "Het voorkeurenbestand van KeyTab is niet beschrijfbaar voor je account. Herstel hier de eigenaar en de rechten van het bestand:";
 "KeyTab requires some permissions" = "KeyTab heeft enkele toestemmingen nodig";

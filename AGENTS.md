@@ -51,7 +51,8 @@
 - Preserve unrelated user changes in the dirty worktree. Never reset or overwrite work outside the requested scope.
 - Run focused tests while developing, then run `npm run test:all` for the full local gate.
 - After implementing a change, inspect `ai/build.sh`, copy its commands exactly, and run them. `ai/build.sh` currently uses the canonical `npm run build:debug` command.
-- Do not treat automated tests as proof of notarization, stapling, Gatekeeper acceptance, update installation, multi-display or Space behavior, Intel behavior, or macOS 26 behavior. Report those checks separately.
+- Do not treat automated tests as proof of notarization, stapling, Gatekeeper acceptance, update installation, multi-display or Space behavior, or macOS 26 behavior. Report those checks separately.
+- Intel Macs are deprecated, build-only support: releases stay universal and must compile for `x86_64`, but Intel behavior is not tested or verified. Do not add Intel-specific code paths or ask for Intel testing.
 - CI must remain tests, validation, and unsigned compile smoke only on `main` and `beta`. Do not add signing secrets, publishing, release creation, or repository writeback.
 
 ## Release safety
@@ -62,7 +63,7 @@
 - Releases require Developer ID signing for team `FYJZP8B2KG`, universal `arm64 x86_64` output, hardened runtime, notarization, stapling, Gatekeeper assessment, Sparkle EdDSA signatures, SHA-256 checksums, and detached GPG signatures.
 - Never publish or mutate a GitHub release unless the user explicitly requests that external action. Running `npm run release:mac` (or its `ssh`/`resume` variants) is that request: it publishes the release and verifies it is live. Agents must not run it on their own initiative.
 - Write each release's notes in its `## <version>` section of `changelog.md` before releasing; preflight fails on an empty section, and the section becomes the GitHub release notes. Do not add `(unreleased)` or other suffixes to the heading.
-- Keep public release blocked until a KeyTab Sparkle key, a GPG key, the canonical public repository, matching public source tag, and signed native verification are all available.
+- Every release needs the KeyTab Sparkle key, the GPG key, the public canonical repository, and a matching public source tag; preflight and `release:verify:published` check them.
 
 ## Testing
 

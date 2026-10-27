@@ -5,7 +5,7 @@
 "A little time." = "เวลาเล็กน้อย";
 "About %@" = "เกี่ยวกับ %@";
 "Accessibility" = "การช่วยการเข้าถึง";
-"Acknowledgments are unavailable." = "Acknowledgments are unavailable.";
+"Acknowledgments are unavailable." = "ไม่สามารถแสดงกิตติกรรมประกาศได้";
 "Active app" = "แอปที่ทำงานอยู่";
 "Active screen" = "หน้าจอที่ทำงานอยู่";
 "Add a pattern" = "เพิ่มรูปแบบ";
@@ -94,7 +94,7 @@
 "Keep holding %@ then press %@" = "กด %@ ค้างไว้ แล้วกด %@";
 "KeyTab is ready" = "KeyTab พร้อมแล้ว";
 "KeyTab is running without Screen Recording permissions. %@ won’t show." = "KeyTab กำลังทำงานโดยไม่มีสิทธิ์การบันทึกหน้าจอ %@จะไม่แสดง";
-"KeyTab on GitHub" = "KeyTab on GitHub";
+"KeyTab on GitHub" = "KeyTab บน GitHub";
 "KeyTab preferences file is a symlink. macOS doesn’t support symlink for preferences. Please use a valid file instead of a symlink here:" = "ไฟล์การตั้งค่าของ KeyTab เป็นลิงก์สัญลักษณ์ macOS ไม่รองรับลิงก์สัญลักษณ์สำหรับการตั้งค่า โปรดใช้ไฟล์ที่ถูกต้องแทนลิงก์สัญลักษณ์ที่นี่:";
 "KeyTab preferences file isn’t writable by your account. Please fix ownership and permissions of the file here:" = "ไฟล์การตั้งค่าของ KeyTab ไม่สามารถเขียนได้ด้วยบัญชีของคุณ โปรดแก้ไขเจ้าของและสิทธิ์ของไฟล์ที่นี่:";
 "KeyTab requires some permissions" = "KeyTab ต้องการสิทธิ์บางอย่าง";

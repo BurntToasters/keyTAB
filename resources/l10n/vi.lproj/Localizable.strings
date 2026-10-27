@@ -5,7 +5,7 @@
 "A little time." = "Một lát.";
 "About %@" = "Giới thiệu về %@";
 "Accessibility" = "Trợ năng";
-"Acknowledgments are unavailable." = "Acknowledgments are unavailable.";
+"Acknowledgments are unavailable." = "Không thể hiển thị lời cảm ơn.";
 "Active app" = "Ứng dụng đang hoạt động";
 "Active screen" = "Màn hình đang hoạt động";
 "Add a pattern" = "Thêm một mẫu";
@@ -94,7 +94,7 @@
 "Keep holding %@ then press %@" = "Tiếp tục giữ %@ rồi nhấn %@";
 "KeyTab is ready" = "KeyTab đã sẵn sàng";
 "KeyTab is running without Screen Recording permissions. %@ won’t show." = "KeyTab đang chạy mà không có quyền Ghi màn hình. %@ sẽ không hiển thị.";
-"KeyTab on GitHub" = "KeyTab on GitHub";
+"KeyTab on GitHub" = "KeyTab trên GitHub";
 "KeyTab preferences file is a symlink. macOS doesn’t support symlink for preferences. Please use a valid file instead of a symlink here:" = "Tệp cài đặt của KeyTab là một liên kết tượng trưng. macOS không hỗ trợ liên kết tượng trưng cho cài đặt. Vui lòng dùng một tệp hợp lệ thay cho liên kết tượng trưng tại đây:";
 "KeyTab preferences file isn’t writable by your account. Please fix ownership and permissions of the file here:" = "Tệp cài đặt của KeyTab không thể ghi bằng tài khoản của bạn. Vui lòng sửa chủ sở hữu và quyền của tệp tại đây:";
 "KeyTab requires some permissions" = "KeyTab cần một số quyền";

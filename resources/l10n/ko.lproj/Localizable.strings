@@ -5,7 +5,7 @@
 "A little time." = "조금의 시간.";
 "About %@" = "%@ 정보";
 "Accessibility" = "손쉬운 사용";
-"Acknowledgments are unavailable." = "Acknowledgments are unavailable.";
+"Acknowledgments are unavailable." = "감사의 글을 표시할 수 없습니다.";
 "Active app" = "활성화된 앱";
 "Active screen" = "활성화된 화면";
 "Add a pattern" = "패턴 추가";
@@ -94,7 +94,7 @@
 "Keep holding %@ then press %@" = "%@을(를) 누른 상태에서 %@을(를) 누르세요";
 "KeyTab is ready" = "KeyTab 준비 완료";
 "KeyTab is running without Screen Recording permissions. %@ won’t show." = "KeyTab이 화면 녹화 권한 없이 실행 중입니다. %@이(가) 표시되지 않습니다.";
-"KeyTab on GitHub" = "KeyTab on GitHub";
+"KeyTab on GitHub" = "GitHub의 KeyTab";
 "KeyTab preferences file is a symlink. macOS doesn’t support symlink for preferences. Please use a valid file instead of a symlink here:" = "KeyTab 환경설정 파일이 심볼릭 링크입니다. macOS는 환경설정에 심볼릭 링크를 지원하지 않습니다. 여기에서 심볼릭 링크 대신 올바른 파일을 사용하십시오:";
 "KeyTab preferences file isn’t writable by your account. Please fix ownership and permissions of the file here:" = "KeyTab 환경설정 파일을 사용자 계정에서 쓸 수 없습니다. 여기에서 파일의 소유자와 권한을 수정하십시오:";
 "KeyTab requires some permissions" = "KeyTab에 몇 가지 권한이 필요합니다";
