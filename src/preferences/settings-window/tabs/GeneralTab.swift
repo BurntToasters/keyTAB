@@ -25,14 +25,14 @@ class GeneralTab {
         checkForUpdates.onAction = { control in checkForUpdatesNow(control) }
         for i in 0..<MenubarIconPreference.allCases.count {
             let image = NSImage.initCopy("menubar-\(i)")
-            image.isTemplate = i < 2
+            image.isTemplate = MenubarIconPreference.allCases[i].isTemplate
             image.size = NSSize(width: 22, height: 22)
             menubarIconDropdown!.item(at: i)!.image = image
         }
         let cell = menubarIconDropdown!.cell! as! NSPopUpButtonCell
         cell.bezelStyle = .regularSquare
         cell.arrowPosition = .arrowAtBottom
-        cell.imagePosition = .imageOverlaps
+        cell.imagePosition = .imageOnly
         let captureWindowsInBackground = TableGroupView.Row(leftTitle: NSLocalizedString("Capture windows in the background", comment: ""),
             subTitle: NSLocalizedString("When disabled, avoids the macOS purple screen-recording indicator, and avoids flickers when playing DRM video. Thumbnails will be less up-to-date.", comment: ""),
             rightViews: [LabelAndControl.makeSwitch("captureWindowsInBackground")])
@@ -52,7 +52,7 @@ class GeneralTab {
         exportButton.onAction = { _ in exportSettings() }
         let importButton = NSButton(title: NSLocalizedString("Import settings…", comment: ""), target: nil, action: nil)
         importButton.onAction = { _ in importSettings() }
-        let resetButton = NSButton(title: NSLocalizedString("Reset settings and restart…", comment: ""), target: nil, action: nil)
+        let resetButton = NSButton(title: NSLocalizedString("Reset settings and restart", comment: "") + "…", target: nil, action: nil)
         resetButton.bezelStyle = .rounded
         resetButton.hasDestructiveAction = true
         resetButton.onAction = { _ in resetPreferences() }
@@ -82,7 +82,8 @@ class GeneralTab {
         cancelButton.keyEquivalent = "\u{1b}" // Escape
         let resetButton = alert.addButton(withTitle: NSLocalizedString("Reset settings and restart", comment: ""))
         resetButton.hasDestructiveAction = true
-        if alert.runModal() == .alertSecondButtonReturn {
+        alert.present(attachedTo: SettingsWindow.shared) {
+            guard $0 == .alertSecondButtonReturn else { return }
             Preferences.resetAll()
             App.restart()
         }
@@ -99,20 +100,22 @@ class GeneralTab {
         let panel = NSSavePanel()
         panel.nameFieldStringValue = "\(App.bundleIdentifier).plist"
         panel.allowedContentTypes = [.propertyList]
-        guard panel.runModal() == .OK, let url = panel.url else { return }
-        NSDictionary(dictionary: Preferences.all).write(to: url, atomically: true)
+        presentPanel(panel) { NSDictionary(dictionary: Preferences.all).write(to: $0, atomically: true) }
     }
 
     private static func importSettings() {
         let panel = NSOpenPanel()
         panel.allowedContentTypes = [.propertyList]
         panel.allowsMultipleSelection = false
-        guard panel.runModal() == .OK, let url = panel.url else { return }
+        presentPanel(panel) { importSettings(from: $0) }
+    }
+
+    private static func importSettings(from url: URL) {
         guard let dict = NSDictionary(contentsOf: url) as? [String: Any] else {
             let alert = NSAlert()
             alert.alertStyle = .critical
             alert.messageText = NSLocalizedString("Failed to import settings", comment: "")
-            alert.runModal()
+            alert.present(attachedTo: SettingsWindow.shared) { _ in }
             return
         }
         let filtered = dict.filter { Preferences.ownedKeys.contains($0.key) }
@@ -126,9 +129,20 @@ class GeneralTab {
         alert.addButton(withTitle: NSLocalizedString("Restart Now", comment: ""))
         let laterButton = alert.addButton(withTitle: NSLocalizedString("Later", comment: ""))
         laterButton.keyEquivalent = "\u{1b}" // Escape
-        if alert.runModal() == .alertFirstButtonReturn {
-            App.restart()
+        alert.present(attachedTo: SettingsWindow.shared) {
+            if $0 == .alertFirstButtonReturn { App.restart() }
         }
+    }
+
+    /// Attached to Settings when it is on screen, like this tab's alerts. The choice is handled on the next turn,
+    /// once the panel has left, so an alert that follows can take its place as the sheet.
+    private static func presentPanel(_ panel: NSSavePanel, _ onChoice: @escaping (URL) -> Void) {
+        let handle = { (response: NSApplication.ModalResponse) in
+            guard response == .OK, let url = panel.url else { return }
+            DispatchQueue.main.async { onChoice(url) }
+        }
+        guard let settings = SettingsWindow.shared, settings.isVisible else { return handle(panel.runModal()) }
+        panel.beginSheetModal(for: settings, completionHandler: handle)
     }
 
     // periphery:ignore:parameters sender - LabelAndControl callback signature
@@ -142,8 +156,8 @@ class GeneralTab {
         alert.addButton(withTitle: NSLocalizedString("Restart Now", comment: ""))
         let laterButton = alert.addButton(withTitle: NSLocalizedString("Later", comment: ""))
         laterButton.keyEquivalent = "\u{1b}" // Escape
-        if alert.runModal() == .alertFirstButtonReturn {
-            App.restart()
+        alert.present(attachedTo: SettingsWindow.shared) {
+            if $0 == .alertFirstButtonReturn { App.restart() }
         }
     }
 }

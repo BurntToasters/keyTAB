@@ -42,7 +42,7 @@ function swiftStringLiterals(line) {
 
 export function swiftRuntimeBrandingLines(source) {
   return source.split("\n").flatMap((line, index) => {
-    if (line.includes("modified fork of AltTab v11.8.0")) return [];
+    if (line.includes("modified fork of AltTab v11.10.1")) return [];
     return swiftStringLiterals(line).some((literal) => literal.includes("AltTab")) ? [index + 1] : [];
   });
 }
@@ -98,6 +98,135 @@ function scanText(filePaths, pattern, label, failures, allowed = () => false) {
   }
 }
 
+const pbxTokens = /\s+|\/\/[^\n]*|\/\*[\s\S]*?\*\/|"((?:\\.|[^"\\])*)"|([A-Za-z0-9_$./:+\-]+)|([\s\S])/g;
+const pbxObjectId = /^[0-9A-Z]{24}$/;
+const pbxOptionalFiles = ["config/local.xcconfig"];
+
+export function parsePbxproj(text) {
+  const tokens = [...text.matchAll(pbxTokens)].flatMap((match) => {
+    if (match[1] !== undefined) return [{ value: match[1] }];
+    if (match[2] !== undefined) return [{ value: match[2] }];
+    if (match[3] !== undefined) return [{ value: match[3], punctuation: true }];
+    return [];
+  });
+  const duplicateKeys = [];
+  let index = 0;
+  const isPunctuation = (value) => tokens[index]?.punctuation === true && tokens[index].value === value;
+  const expect = (value) => {
+    if (!isPunctuation(value)) throw new Error(`pbxproj: expected "${value}" at token ${index} (${tokens[index]?.value ?? "end of file"})`);
+    index++;
+  };
+  const parseValue = () => {
+    if (isPunctuation("{")) {
+      index++;
+      const dictionary = {};
+      while (!isPunctuation("}")) {
+        if (index >= tokens.length) throw new Error("pbxproj: unterminated dictionary");
+        const key = tokens[index++].value;
+        expect("=");
+        if (Object.hasOwn(dictionary, key)) duplicateKeys.push(key);
+        dictionary[key] = parseValue();
+        expect(";");
+      }
+      index++;
+      return dictionary;
+    }
+    if (isPunctuation("(")) {
+      index++;
+      const list = [];
+      while (!isPunctuation(")")) {
+        if (index >= tokens.length) throw new Error("pbxproj: unterminated list");
+        list.push(parseValue());
+        if (isPunctuation(",")) index++;
+      }
+      index++;
+      return list;
+    }
+    if (index >= tokens.length) throw new Error("pbxproj: unexpected end of file");
+    return tokens[index++].value;
+  };
+  const document = parseValue();
+  if (index !== tokens.length) throw new Error(`pbxproj: trailing content at token ${index}`);
+  return { document, duplicateKeys };
+}
+
+function pbxReferencedIds(value, visit) {
+  if (typeof value === "string") {
+    if (pbxObjectId.test(value)) visit(value);
+  } else if (Array.isArray(value)) {
+    for (const item of value) pbxReferencedIds(item, visit);
+  } else if (value && typeof value === "object") {
+    for (const item of Object.values(value)) pbxReferencedIds(item, visit);
+  }
+}
+
+export function checkPbxproj(text, { base = root, swiftFiles = [], optionalFiles = pbxOptionalFiles } = {}) {
+  const failures = [];
+  if (/^(<<<<<<<|=======|>>>>>>>)/m.test(text)) failures.push("pbxproj: conflict marker remains");
+  let parsed;
+  try {
+    parsed = parsePbxproj(text);
+  } catch (error) {
+    return [...failures, error.message];
+  }
+  for (const key of new Set(parsed.duplicateKeys)) failures.push(`pbxproj: duplicate key ${key}`);
+  const objects = parsed.document.objects ?? {};
+  const relative = (absolute) => path.relative(base, absolute).split(path.sep).join("/");
+  const parents = new Map();
+  for (const [id, object] of Object.entries(objects)) {
+    if (object.isa === "PBXGroup" || object.isa === "PBXVariantGroup") for (const child of object.children ?? []) parents.set(child, id);
+  }
+  const resolvePath = (id) => {
+    const chain = [];
+    for (let current = id; current; current = parents.get(current)) chain.unshift(objects[current]);
+    let directory = base;
+    for (const node of chain) {
+      const tree = node.sourceTree ?? "<group>";
+      const location = node.path ?? (node.isa === "PBXFileReference" ? node.name : undefined);
+      if (tree === "<group>") {
+        if (location !== undefined) directory = path.join(directory, location);
+      } else if (tree === "SOURCE_ROOT") directory = path.join(base, location ?? "");
+      else if (tree === "<absolute>") directory = location;
+      else return null;
+    }
+    return directory;
+  };
+  const referencedFiles = new Set();
+  for (const [id, object] of Object.entries(objects)) {
+    if (object.isa !== "PBXFileReference") continue;
+    const absolute = resolvePath(id);
+    if (!absolute || absolute.endsWith(".framework")) continue;
+    const rel = relative(absolute);
+    referencedFiles.add(rel);
+    if (!fs.existsSync(absolute) && !optionalFiles.includes(rel)) failures.push(`pbxproj: file reference ${id} points to missing ${rel}`);
+  }
+  for (const file of swiftFiles) {
+    if (!referencedFiles.has(file)) failures.push(`pbxproj: Swift file has no file reference: ${file}`);
+  }
+  const undefinedIds = new Set();
+  for (const [id, object] of Object.entries(objects)) {
+    pbxReferencedIds(object, (ref) => {
+      if (!Object.hasOwn(objects, ref)) undefinedIds.add(`${ref} (in ${id})`);
+    });
+  }
+  pbxReferencedIds(parsed.document.rootObject, (ref) => {
+    if (!Object.hasOwn(objects, ref)) undefinedIds.add(`${ref} (rootObject)`);
+  });
+  for (const ref of undefinedIds) failures.push(`pbxproj: undefined object ID ${ref}`);
+  const buildFiles = new Map(Object.entries(objects).filter(([, object]) => object.isa === "PBXBuildFile").map(([id, object]) => [id, object.fileRef]));
+  const sourcesRefs = new Set();
+  for (const object of Object.values(objects)) {
+    if (object.isa !== "PBXSourcesBuildPhase") continue;
+    for (const buildFile of object.files ?? []) if (buildFiles.has(buildFile)) sourcesRefs.add(buildFiles.get(buildFile));
+  }
+  for (const [id, object] of Object.entries(objects)) {
+    if (object.isa !== "PBXFileReference") continue;
+    const name = object.path ?? object.name ?? "";
+    if (name.endsWith(".swift") && !sourcesRefs.has(id)) failures.push(`pbxproj: Swift file is in no Sources build phase: ${name} (${id})`);
+  }
+  return failures;
+}
+
 export function validateWorkspace({ release = false, bundle = null } = {}) {
   const failures = [];
   const packageJson = readPackage();
@@ -151,6 +280,10 @@ export function validateWorkspace({ release = false, bundle = null } = {}) {
     assert(sparkleLine.replace("SPARKLE_PUBLIC_KEY =", "").trim().length > 0, "new KeyTab Sparkle public key is not configured", failures);
     assert(releaseArtworkReady(), "upstream placeholder app artwork remains", failures);
   }
+  const projectFailures = checkPbxproj(fs.readFileSync(path.join(root, "KeyTab.xcodeproj/project.pbxproj"), "utf8"), {
+    swiftFiles: filesUnder(path.join(root, "src")).filter((file) => file.endsWith(".swift")).map((file) => path.relative(root, file).split(path.sep).join("/")),
+  });
+  failures.push(...projectFailures);
   if (bundle) validateBundle(path.resolve(bundle), { version, buildNumber, release }, failures);
   if (failures.length) throw new Error(failures.join("\n"));
   return { version, buildNumber };

@@ -37,7 +37,7 @@ test("runtime branding scan flags AltTab in Swift string literals but not in com
     'let b = "see AltTab" // comment',
     'let url = "https://example.com" + "AltTab"',
     'let c = "a \\"quoted\\" AltTab"',
-    'NSTextField(wrappingLabelWithString: "KeyTab is a modified fork of AltTab v11.8.0 by Louis Pontoise")',
+    'NSTextField(wrappingLabelWithString: "KeyTab is a modified fork of AltTab v11.10.1 by Louis Pontoise")',
   ].join("\n");
   assert.deepEqual(swiftRuntimeBrandingLines(source), [1, 5, 6, 7]);
 });

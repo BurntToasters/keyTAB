@@ -11,12 +11,16 @@ positive here stops the switcher from appearing at all.
 ## Behavior & edge cases
 
 - Only surfaces owned by the `WindowManager` process count.
-- A shield (level 19) counts only when it is at least as large as one of the screens. The window manager
-  keeps a small 66×82 surface at that level, off-screen, while an app window is focused on macOS 27.
-  Counting it made every summon abort.
+- A shield (level 19) counts only when it is at least as large as one of the screens. On some machines
+  with macOS 27, a Stage Manager stage icon (66×82, off-screen while the strip is hidden) sits at that
+  level while an app window is focused, one per stage. Counting it made every summon abort.
 - Shield plus Spaces bar (level 14) is Mission Control. Shield alone is App Exposé.
 - With no shield, the Show Desktop overlay (level 18) is Show Desktop.
 - A shield with no bounds is not a gesture.
+- KeyTab's own surface events do not invalidate the overlay cache. Its panel IDs cover events before
+  the inventory knows their owner; other known KeyTab surfaces use the inventory. Unknown owners still
+  invalidate it, and destroyed surfaces are checked before their ownership is removed. This avoids a
+  window-list round trip between releasing the switcher shortcut and handing back the keyboard.
 
 ## Test scenarios
 

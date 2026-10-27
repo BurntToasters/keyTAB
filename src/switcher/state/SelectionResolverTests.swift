@@ -169,7 +169,7 @@ final class SelectionResolverTests: XCTestCase {
         ]
         let i = inputs(list: listAfterReorder, selectedIndex: 1, selectedTarget: "b")
         XCTAssertEqual(SelectionResolver.decide(i), .selectAt(2),
-                       "regression for upstream #5665 — the user picked 'b'; the highlight must follow 'b' " +
+                       "regression for upstream issue #5665 — the user picked 'b'; the highlight must follow 'b' " +
                        "to its new slot, not jump back to a 'previous app' re-pick.")
     }
 
@@ -182,7 +182,7 @@ final class SelectionResolverTests: XCTestCase {
                     w("target", focusOrder: 2), w("c", focusOrder: 3)]
         let i = inputs(list: list, selectedIndex: 4, selectedTarget: "target")
         XCTAssertEqual(SelectionResolver.decide(i), .selectAt(2),
-                       "regression for upstream #5665 — target moved to a different slot; highlight must follow.")
+                       "regression for upstream issue #5665 — target moved to a different slot; highlight must follow.")
     }
 
     /// B4. The list churns but the target happens to land at the same index.

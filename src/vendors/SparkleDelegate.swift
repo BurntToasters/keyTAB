@@ -11,14 +11,14 @@ class SparkleDelegate: NSObject, SPUUpdaterDelegate {
     }
 
     /// Session-scoped cache of the most recent update-check outcome. `nil` until the first
-    /// check (any kind — feedback preflight, manual Preferences click, scheduled background)
+    /// check (any kind — manual Preferences click, scheduled background)
     /// completes. Memory-only by design: a fresh app launch should re-check once.
     /// Always written through the Sparkle delegate callbacks below, so even a check we
     /// initiated for one purpose populates the cache for any later caller.
     var cachedResult: UpdateCheckResult?
 
-    /// One-shot completion handler used by callers that want to drive UI (e.g. the feedback
-    /// window's spinner). Cleared as soon as it fires, so each request gets exactly one
+    /// One-shot completion handler used by callers that want to drive UI (e.g. a
+    /// settings spinner). Cleared as soon as it fires, so each request gets exactly one
     /// callback. The cache update is independent of this listener — even if no one's
     /// subscribed, the result still lands in `cachedResult`.
     var onNextCheckCompletion: ((UpdateCheckResult) -> Void)?

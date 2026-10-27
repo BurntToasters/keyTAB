@@ -8,6 +8,10 @@ final class QAMenu: NSPanel {
     private let stack = NSStackView()
 
     static var openSettingsOnLaunch: Bool { UserDefaults.standard.bool(forKey: openSettingsOnLaunchKey) }
+    /// Not shown in a lifecycle session, nor with `--qa-no-menu`: automated runs drive the real desktop with
+    /// synthetic clicks, and this panel floats over every app on every Space, where the clicks can land on it
+    /// instead.
+    static var suppressed: Bool { QaLifecycle.enabled || CommandLine.arguments.contains("--qa-no-menu") }
     static var graphEnabled: Bool { UserDefaults.standard.bool(forKey: graphEnabledKey) }
 
     static func toggleVisibility() {

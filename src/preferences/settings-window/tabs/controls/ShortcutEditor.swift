@@ -135,8 +135,7 @@ final class ShortcutEditor {
     }
 
     /// Re-display values without changing the bound index. Called when a global appearance pref
-    /// changes (non-overridden controls need to resnap to the new global) or after a pro-lock
-    /// transition (stored values may have been downgraded).
+    /// changes (non-overridden controls need to resnap to the new global).
     func refreshFromCurrentBind() {
         bind(toShortcut: currentIndex)
     }

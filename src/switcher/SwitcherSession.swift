@@ -78,26 +78,33 @@ final class SwitcherSession {
     /// Keeps one-per-app tiles from changing identity while discovery, grouping and search settle.
     var representativeByPid = [pid_t: String]()
     var searchQuery: String = ""
+    /// Where the pointer was at the press, in Quartz coordinates. The cursor scopes filter against it for the
+    /// whole session: read again at a repaint, it would follow the pointer onto the switcher's own tiles.
+    let cursorAtSummon = CGEvent(source: nil)?.location
+    /// What `Windows.pidUnderCursor` found at `cursorAtSummon`: `nil` until a shortcut scoped to the app
+    /// under the cursor first asks, `.some(nil)` when no window was drawn there.
+    var pidUnderCursorAtSummon: pid_t??
 
     /// Full-resolution frames for the Preview panel, fetched just-in-time for the selected window and
     /// its cycling neighbors (`WindowThumbnails.fetchPreviewFrames`, AltTab #5861). Living on the session, they
     /// are released wholesale when it ends, so idle RAM only holds thumbnail-scale images. Capped +
     /// least-recently-used-evicted so a long session arrow-keying through many windows stays bounded.
     private static let maxPreviewFrames = 10
-    private var previewFrames = [CGWindowID: CALayerContents]()
+    /// each frame with the area its capture covered (`Window.capturedArea`)
+    private var previewFrames = [CGWindowID: (contents: CALayerContents, area: CGRect?)]()
     private var previewFramesLru = [CGWindowID]() // most recently used last
 
     func hasPreviewFrame(_ wid: CGWindowID) -> Bool { previewFrames[wid] != nil }
 
-    func previewFrame(_ wid: CGWindowID) -> CALayerContents? {
+    func previewFrame(_ wid: CGWindowID) -> (contents: CALayerContents, area: CGRect?)? {
         guard let frame = previewFrames[wid] else { return nil }
         previewFramesLru.removeAll { $0 == wid }
         previewFramesLru.append(wid)
         return frame
     }
 
-    func storePreviewFrame(_ wid: CGWindowID, _ frame: CALayerContents) {
-        previewFrames[wid] = frame
+    func storePreviewFrame(_ wid: CGWindowID, _ frame: CALayerContents, _ area: CGRect?) {
+        previewFrames[wid] = (frame, area)
         previewFramesLru.removeAll { $0 == wid }
         previewFramesLru.append(wid)
         if previewFramesLru.count > Self.maxPreviewFrames {

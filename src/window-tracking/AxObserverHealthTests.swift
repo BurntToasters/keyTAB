@@ -195,6 +195,22 @@ final class AxObserverHealthTests: XCTestCase {
         XCTAssertEqual(state.entry(for: process)?.notifications[.focusedWindowChanged], .unattempted)
     }
 
+    /// Nothing in cooldown, nothing to tick for: a healthy machine schedules no recovery wake-up at all.
+    func testRecoveryTickIsOwedOnlyWhileSomethingWaitsOutACooldown() {
+        var state = state([process, other])
+        XCTAssertFalse(state.awaitsRecovery)
+        let generation = begin(&state, process)
+        _ = complete(&state, process, generation, .focusedWindowChanged, .failed(.cannotComplete), 0)
+        XCTAssertTrue(state.awaitsRecovery)
+        _ = AxObserverHealth.reduce(&state, .cooldownElapsed(process, at: time(10)), policy: policy)
+        XCTAssertFalse(state.awaitsRecovery)
+        guard case let .observerCreationStarted(creation) = AxObserverHealth.reduce(&state,
+            .beginObserverCreation(other, at: time(0)), policy: policy) else { return XCTFail("creation did not start") }
+        _ = AxObserverHealth.reduce(&state, .observerCreationResult(other, observerGeneration: creation,
+            error: .genericFailure, at: time(0)), policy: policy)
+        XCTAssertTrue(state.awaitsRecovery)
+    }
+
     func testEveryBoundedRecoveryTriggerTransitionsWhenPermitted() {
         let triggers: [AxRecoveryTrigger] = [.processBecameFrontmost, .wake, .unlock, .recoveryTick]
         for trigger in triggers {
@@ -392,33 +408,42 @@ final class AxObserverHealthTests: XCTestCase {
 
     func testAxNodeReplacementAlwaysKeepsTheWindow() {
         XCTAssertEqual(AxElementEndPolicy.decide(ax: .foundReplacement, surfacePresent: false,
-            isTabbed: false, groupShrank: false, groupGone: false, axQueryCoversWindow: true), .replacementFound)
+            isTabbed: false, groupShrank: false, groupGone: false, axQueryCoversWindow: true, appHidden: false), .replacementFound)
     }
 
     func testAxDestroyAndWindowServerAbsenceConfirmClose() {
         XCTAssertEqual(AxElementEndPolicy.decide(ax: .noAnswer, surfacePresent: false,
-            isTabbed: true, groupShrank: false, groupGone: false, axQueryCoversWindow: false), .confirmedClosed)
+            isTabbed: true, groupShrank: false, groupGone: false, axQueryCoversWindow: false, appHidden: false), .confirmedClosed)
     }
 
     func testRetainedSurfaceDoesNotShieldSemanticClose() {
         XCTAssertEqual(AxElementEndPolicy.decide(ax: .absent, surfacePresent: true,
-            isTabbed: false, groupShrank: false, groupGone: false, axQueryCoversWindow: true), .confirmedClosed)
+            isTabbed: false, groupShrank: false, groupGone: false, axQueryCoversWindow: true, appHidden: false), .confirmedClosed)
     }
 
     func testWholeTabGroupCloseConfirmsWhenNoPublishedWindowHostsTheGroup() {
         XCTAssertEqual(AxElementEndPolicy.decide(ax: .absent, surfacePresent: true,
-            isTabbed: true, groupShrank: false, groupGone: true, axQueryCoversWindow: true), .confirmedClosed)
+            isTabbed: true, groupShrank: false, groupGone: true, axQueryCoversWindow: true, appHidden: false), .confirmedClosed)
         XCTAssertEqual(AxElementEndPolicy.decide(ax: .noAnswer, surfacePresent: true,
-            isTabbed: true, groupShrank: false, groupGone: true, axQueryCoversWindow: true), .inconclusive)
+            isTabbed: true, groupShrank: false, groupGone: true, axQueryCoversWindow: true, appHidden: false), .inconclusive)
+    }
+
+    func testHiddenAppAbsenceRemainsPending() {
+        XCTAssertEqual(AxElementEndPolicy.decide(ax: .absent, surfacePresent: true,
+            isTabbed: false, groupShrank: false, groupGone: false, axQueryCoversWindow: true, appHidden: true), .inconclusive)
+        XCTAssertEqual(AxElementEndPolicy.decide(ax: .absent, surfacePresent: true,
+            isTabbed: true, groupShrank: true, groupGone: true, axQueryCoversWindow: true, appHidden: true), .inconclusive)
+        XCTAssertEqual(AxElementEndPolicy.decide(ax: .absent, surfacePresent: false,
+            isTabbed: false, groupShrank: false, groupGone: false, axQueryCoversWindow: true, appHidden: true), .confirmedClosed)
     }
 
     func testAmbiguousTabAndOutOfScopeAbsencesRemainPending() {
         XCTAssertEqual(AxElementEndPolicy.decide(ax: .absent, surfacePresent: true,
-            isTabbed: true, groupShrank: false, groupGone: false, axQueryCoversWindow: true), .inconclusive)
+            isTabbed: true, groupShrank: false, groupGone: false, axQueryCoversWindow: true, appHidden: false), .inconclusive)
         XCTAssertEqual(AxElementEndPolicy.decide(ax: .absent, surfacePresent: true,
-            isTabbed: false, groupShrank: false, groupGone: false, axQueryCoversWindow: false), .inconclusive)
+            isTabbed: false, groupShrank: false, groupGone: false, axQueryCoversWindow: false, appHidden: false), .inconclusive)
         XCTAssertEqual(AxElementEndPolicy.decide(ax: .absent, surfacePresent: true,
-            isTabbed: true, groupShrank: true, groupGone: false, axQueryCoversWindow: true), .confirmedClosed)
+            isTabbed: true, groupShrank: true, groupGone: false, axQueryCoversWindow: true, appHidden: false), .confirmedClosed)
     }
 
 }

@@ -40,7 +40,9 @@ class KeyboardEvents {
             let modifiers = NSEvent.ModifierFlags(rawValue: UInt(cgEvent.flags.rawValue))
             let keyCode = UInt32(cgEvent.getIntegerValueField(.keyboardEventKeycode))
             let isARepeat = cgEvent.getIntegerValueField(.keyboardEventAutorepeat) != 0
-            ModifierReleaseLog.recordKeyDown(keyCode, modifiers, isARepeat: isARepeat)
+            if let keySequence = ModifierReleaseLog.recordKeyDown(keyCode, modifiers, isARepeat: isARepeat) {
+                forgetIfNeverReported(keySequence)
+            }
             return Unmanaged.passUnretained(cgEvent)
         case .tapDisabledByUserInput, .tapDisabledByTimeout:
             Logger.info { "input tap \(type == .tapDisabledByTimeout ? "timed out" : "was disabled by user input")" }
@@ -77,6 +79,14 @@ class KeyboardEvents {
             return Unmanaged.passUnretained(cgEvent)
         default:
             return Unmanaged.passUnretained(cgEvent)
+        }
+    }
+
+    /// Carbon delivers the hotkey on main, so the 1s only starts once main is free: a hotkey delayed behind a
+    /// stall (F-08) is claimed before its key-down is forgotten.
+    private static func forgetIfNeverReported(_ keySequence: UInt64) {
+        DispatchQueue.main.async {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) { ModifierReleaseLog.forgetUnreported(keySequence) }
         }
     }
 
@@ -196,9 +206,12 @@ class KeyboardEvents {
     // TODO: handle this on a background thread?
     private static func addLocalMonitorForKeyDownAndKeyUp() {
         localEventMonitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .keyUp]) { (event: NSEvent) in
+            if DismissalInput.discard(event) { return nil }
             let keyCode = event.type == .keyDown ? UInt32(event.keyCode) : nil
             let isARepeat = event.type == .keyDown ? event.isARepeat : false
             let shouldAbsorbEvent = handleKeyboardEvent(nil, nil, keyCode, event.modifierFlags, isARepeat, event)
+            // A key can settle a delayed hold release and close the switcher before this monitor returns it.
+            if DismissalInput.discard(event) { return nil }
             return shouldAbsorbEvent ? nil : event
         }
     }

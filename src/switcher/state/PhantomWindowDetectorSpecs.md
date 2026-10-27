@@ -5,7 +5,7 @@
 `PhantomWindowDetector` decides whether a window is a **phantom** — present in macOS APIs (AX returns it
 as a live window with a valid `CGWindowID`) but not something the app means to show the user, so KeyTab
 shouldn't offer it as a switch target. The pixel content may be absent, black, or anything; that's the
-symptom, not the definition. Producers: alpha=0 Outlook reminders (AltTab #5170/#5448), `orderOut:` /
+symptom, not the definition. Producers: alpha=0 Outlook reminders (AltTab #5170/AltTab #5448), `orderOut:` /
 `show:false` Electron windows (Codex/Slack AltTab #5714, Joplin AltTab #5495, Sprig AltTab #5496), WeChat/Teams/DingTalk
 hidden windows (AltTab #5508). Extracted as a pure kernel from `Window` / `Applications` so the "is this a
 phantom?" decision is unit-testable without CGS/AX.

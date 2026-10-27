@@ -69,6 +69,7 @@ enum QaSurfaces {
     private static var currentId: String?
     private static var windowsBefore = Set<UInt32>()
     private static var popovers = NSHashTable<NSPopover>.weakObjects()
+    private static var visualPopoverAnchor: NSWindow?
     private static var observingPopovers = false
     private static var renderGeneration = 0
     private static var settlingGeneration: Int?
@@ -105,6 +106,7 @@ enum QaSurfaces {
         pinVolatileContent()
         closeAll(keepSettings: surface.inSettings)
         currentId = id
+        AnchoredPopover.qaPositioningView = positioningView
         let generation = renderGeneration
         if id != "switcher" { App.shared.activate(ignoringOtherApps: true) }
         if surface.inSettings { SettingsWindow.shared?.disableScreenUpdatesUntilFlush() }
@@ -130,13 +132,15 @@ enum QaSurfaces {
             UInt32(exactly: window.windowNumber).map { ($0, window) }
         }
         let byNumber = Dictionary(numbered, uniquingKeysWith: { first, _ in first })
+        // An alert running modally is the window that has to be key, whatever the screen order of the new windows.
+        let modal = NSApp.modalWindow.flatMap { m in wids.contains { $0 == UInt32(exactly: m.windowNumber) } ? m : nil }
         let generation = renderGeneration
         guard !wids.isEmpty else { return Shown(wids: [], pages: pages) }
         if readyGeneration != generation {
             if settlingGeneration != generation {
                 let renderedWindows = windows.isEmpty ? wids.compactMap { byNumber[$0] } : windows
                 renderedWindows.forEach { prepareForRendering($0, generation) }
-                if currentId != "switcher", let front = wids.first.flatMap({ byNumber[$0] }) {
+                if currentId != "switcher", let front = modal ?? wids.first.flatMap({ byNumber[$0] }) {
                     App.shared.activate(ignoringOtherApps: true)
                     front.makeKey()
                     front.makeFirstResponder(nil)
@@ -148,8 +152,16 @@ enum QaSurfaces {
             }
             return Shown(wids: [], pages: pages)
         }
-        if currentId != "switcher", let front = wids.first.flatMap({ byNumber[$0] }) {
-            guard NSApp.isActive, front.isKeyWindow else { return Shown(wids: [], pages: pages) }
+        if currentId != "switcher", let front = modal ?? wids.first.flatMap({ byNumber[$0] }) {
+            guard NSApp.isActive, front.isKeyWindow else {
+                // The first pass can make the alert key before its modal session has started, and the window
+                // behind it keeps the key: every later answer was then empty for as long as the caller asked.
+                if front === modal {
+                    front.makeKey()
+                    front.makeFirstResponder(nil)
+                }
+                return Shown(wids: [], pages: pages)
+            }
         }
         return Shown(wids: wids, pages: pages)
     }
@@ -174,6 +186,8 @@ enum QaSurfaces {
         Menubar.menu.cancelTrackingWithoutAnimation()
         if NSApp.modalWindow != nil { NSApp.abortModal() }
         popovers.allObjects.forEach { $0.close() }
+        AnchoredPopover.qaPositioningView = nil
+        visualPopoverAnchor?.orderOut(nil)
         Popover.shared.hide()
         if SwitcherSession.isActive { App.hideUi() }
         if let settings = SettingsWindow.shared, let sheet = settings.attachedSheet {
@@ -192,7 +206,7 @@ enum QaSurfaces {
     // MARK: - the surfaces
 
     private static let surfaces: [Surface] = settingsSurfaces() + controlsSurfaces() + sheetSurfaces()
-        + windowSurfaces() + proSurfaces() + alertSurfaces() + menubarSurfaces()
+        + windowSurfaces() + alertSurfaces() + menubarSurfaces()
 
     private static func settingsSurfaces() -> [Surface] {
         ["appearance", "general", "exceptions"].map { section in
@@ -250,25 +264,30 @@ enum QaSurfaces {
         ]
     }
 
-    private static func proSurfaces() -> [Surface] {
-        []
-    }
-
-    /// Alerts run a modal loop of their own, so they are opened on the next turn of the main loop and the
-    /// harness finds their window among the ones that appeared. `closeAll` aborts the loop, and every caller
-    /// here reads an aborted alert as neither of its buttons, so nothing is reset, activated or sent.
+    /// Alerts are opened on the next turn of the main loop: some run a modal loop of their own. The launch-time
+    /// ones are app-modal, and the harness finds their window among the ones that appeared. The others are sheets
+    /// on the Settings section they belong to. `closeAll` aborts any loop and ends the sheets, and every caller
+    /// here reads that as neither of its buttons, so nothing is reset, activated or sent.
     private static func alertSurfaces() -> [Surface] {
-        let alerts: [(String, () -> Void)] = [
-            ("reset-settings", { GeneralTab.resetPreferences() }),
-            ("language-change", { GeneralTab.setLanguageCallback(NSControl()) }),
-            ("conflicting-shortcut", { _ = ControlsTab.confirmUnassigningConflict("• " + NSLocalizedString("Show", comment: "Menubar option")) }),
+        let appModal: [(String, () -> Void)] = [
             ("settings-not-saved.symlink", { PreferencesPersistenceCheck.debugShowDialog(symlinked: true) }),
             ("settings-not-saved.unwritable", { PreferencesPersistenceCheck.debugShowDialog(symlinked: false) }),
         ]
-        return alerts.map { name, show in
+        let settingsSheets: [(String, String, () -> Void)] = [
+            ("reset-settings", "general", { GeneralTab.resetPreferences() }),
+            ("language-change", "general", { GeneralTab.setLanguageCallback(NSControl()) }),
+            ("conflicting-shortcut", "controls", { _ = ControlsTab.confirmUnassigningConflict("• " + NSLocalizedString("Show", comment: "Menubar option")) }),
+        ]
+        return appModal.map { name, show in
             Surface(id: "alert.\(name)", inSettings: false) {
                 later(show)
                 return Target()
+            }
+        } + settingsSheets.map { name, section, show in
+            Surface(id: "alert.\(name)", inSettings: true) {
+                _ = settings(section)
+                later(show)
+                return Target(windows: { [SettingsWindow.shared?.attachedSheet].compactMap { $0 } })
             }
         }
     }
@@ -307,7 +326,7 @@ enum QaSurfaces {
                       pager: { SettingsWindow.shared?.qaPager(section) })
     }
 
-    /// The permission timer repaints the statuses every few seconds, so "missing" is forced rather than set.
+    /// Every permission check repaints the statuses, so "missing" is forced rather than set.
     private static func permissions(granted: Bool) -> Target {
         PermissionsWindow.qaForcedStatus = granted ? nil : .notGranted
         App.showPermissionsWindow()
@@ -345,6 +364,31 @@ enum QaSurfaces {
     }
 
     // MARK: - holding things still
+
+    /// A wide popover is clamped to the screen edge, so its arrow moves with the status item's position
+    /// (including the clock's changing width). VR-01 uses a fixed anchor away from the edges; lifecycle
+    /// and ordinary presentations retain the real status item. The native arrow stays in the comparison.
+    private static func positioningView(_ proposed: NSView) -> NSView {
+        guard currentId != nil, proposed === Menubar.statusItem?.button,
+              let screen = proposed.window?.screen else { return proposed }
+        let window = visualPopoverAnchor ?? makeVisualPopoverAnchor()
+        visualPopoverAnchor = window
+        window.appearance = proposed.effectiveAppearance
+        window.setFrameOrigin(NSPoint(x: screen.frame.midX, y: screen.visibleFrame.maxY))
+        window.orderFrontRegardless()
+        return window.contentView!
+    }
+
+    private static func makeVisualPopoverAnchor() -> NSWindow {
+        let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 1, height: 1), styleMask: .borderless, backing: .buffered, defer: false)
+        window.isReleasedWhenClosed = false
+        window.isOpaque = false
+        window.backgroundColor = .clear
+        window.ignoresMouseEvents = true
+        window.level = .statusBar
+        window.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .ignoresCycle]
+        return window
+    }
 
     /// Relative to now, and re-pinned before every surface, so a week's count cannot drift as the run goes on.
     private static func pinVolatileContent() {
@@ -439,7 +483,8 @@ enum QaSurfaces {
     private static func onScreenWindowNumbers() -> [UInt32] {
         let pid = ProcessInfo.processInfo.processIdentifier
         let infos = CGWindowListCopyWindowInfo([.optionOnScreenOnly], kCGNullWindowID) as? [[String: Any]] ?? []
-        let excluded = Set([QAMenu.shared?.windowNumber, Menubar.statusItem?.button?.window?.windowNumber].compactMap { $0 })
+        let excluded = Set([QAMenu.shared?.windowNumber, Menubar.statusItem?.button?.window?.windowNumber,
+                            visualPopoverAnchor?.windowNumber].compactMap { $0 })
         return infos.compactMap { info in
             guard info[kCGWindowOwnerPID as String] as? pid_t == pid,
                   let number = info[kCGWindowNumber as String] as? UInt32,

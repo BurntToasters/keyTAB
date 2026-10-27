@@ -2,6 +2,9 @@ import AppKit
 import Darwin
 
 #if DEBUG
+if let cleanup = CommandLine.arguments.first(where: { $0.hasPrefix("--qa-lifecycle-cleanup=") }) {
+    exit(QaLifecycle.cleanup(String(cleanup.dropFirst("--qa-lifecycle-cleanup=".count))))
+}
 if let command = CliClient.detectCommand() {
     CliClient.sendCommandAndProcessResponse(command)
 }
@@ -82,7 +85,7 @@ fileprivate func emergencyExit(_ logs: Any?...) {
 }
 
 func makeSureAllCapturesAreFinished() {
-    App.isTerminating = true
+    ActiveWindowCaptures.beginTermination()
     let timeout = 5.0
     let startTime = DispatchTime.now()
     var elapsedTime = 0.0

@@ -125,7 +125,7 @@ class WindowServerEvents {
     /// The four window-lifecycle cases each tell `MissionControl` to take a look: the overlay that says a
     /// gesture is up is created, ordered in, ordered out and destroyed like any other surface, and that is
     /// the only announcement left on macOS 27 (see `MissionControl`). The look is coalesced there, so every
-    /// other window doing the same thing costs one throttled window-list read.
+    /// other app's window doing the same thing costs one throttled window-list read.
     private static func handle(_ n: WsEventRouting.Notification, _ w0: UInt32, _ space: UInt64, _ widInSpace: UInt32,
                               _ at: TimeInterval) {
         switch n {
@@ -141,11 +141,11 @@ class WindowServerEvents {
             // Creation bookkeeping lives in the reducer (`.windowCreated`). Window numbers are unique for
             // the login session, so this event must not discard facts already learned for the same surface.
             // Discovery subscribes after it has read the level.
-            MissionControl.surfacesChanged()
+            missionControlSurfaceChanged(w0)
         case .windowDestroyed:
+            missionControlSurfaceChanged(w0)
             unsubscribe(w0)
             WindowSurfaceInventory.remove(w0)
-            MissionControl.surfacesChanged()
         case .windowOrderedIn:
             // Our own panel's orderedIn is the true "pixels on screen" moment — it can trail the show's
             // main-thread work by ~500ms while the WindowServer settles a Space transition. Anchor the
@@ -154,9 +154,9 @@ class WindowServerEvents {
                let panel = TilesPanel.shared, panel.windowNumber > 0, w0 == CGWindowID(panel.windowNumber) {
                 session.panelBecameVisibleAt = ProcessInfo.processInfo.systemUptime
             }
-            MissionControl.surfacesChanged()
+            missionControlSurfaceChanged(w0)
         case .windowOrderedOut:
-            MissionControl.surfacesChanged()
+            missionControlSurfaceChanged(w0)
         default:
             break
         }
@@ -166,6 +166,15 @@ class WindowServerEvents {
         // second log channel was invented to escape. The one notification that reaches no reducer input is
         // the Space transition, which is debounced; it logs below.
         route(n, w0, space, widInSpace, at)
+    }
+
+    /// Our panels cannot be gesture overlays. Invalidating their own show/hide forces the release path
+    /// to synchronously query the window list before handing back the keyboard.
+    /// The panel IDs cover creation before inventory admission; unknown owners remain conservative.
+    private static func missionControlSurfaceChanged(_ wid: CGWindowID) {
+        guard wid != TilesPanel.windowIdSnapshot, wid != PreviewPanel.windowId,
+              WindowSurfaceInventory.raw(wid)?.pid != getpid() else { return }
+        MissionControl.surfacesChanged()
     }
 
     /// Turn a WindowServer notification into a `ReducerInput` and dispatch it through the reducer — which owns
@@ -188,9 +197,11 @@ class WindowServerEvents {
                 TrackedWindowStateBridge.dispatch(.windowMovedOrResized(wid: w0, inSpaceTransition: inSpaceTransition))
             }
         case .updateSpaceMembership:
+            guard !isOwnWindow(widInSpace) else { return }
             TrackedWindowStateBridge.dispatch(.spaceMembershipChanged(wid: widInSpace, spaceId: space,
                 added: n == .windowAddedToSpace, now: now, inSpaceTransition: inSpaceTransition))
         case .acquireAndDiscriminate:
+            guard !isOwnWindow(w0) else { return }
             TrackedWindowStateBridge.dispatch(.windowCreated(wid: w0, now: now, inSpaceTransition: inSpaceTransition))
         case .spaceTransition:
             // 1329/1401 fire during the transition (manuallyRefreshAllWindows above stays muted ~0.5s to
@@ -200,6 +211,13 @@ class WindowServerEvents {
             Logger.debug { "WS \(n) space=\(space)" }
             scheduleSpaceChangeHandling()
         }
+    }
+
+    /// Our own windows are never tracked, and must not pass for one arriving: a window being created or joining
+    /// the visible Space is what the reducer reads as a new tab on its way (`shouldHoldVisibleThroughDiscovery`),
+    /// and the switcher panel joins every Space the instant it shows.
+    private static func isOwnWindow(_ wid: CGWindowID) -> Bool {
+        NSApp.windows.contains { $0.windowNumber == Int(wid) }
     }
 
     /// Arm the hold-release re-check (the reducer's `scheduleHoldReleaseCheck` effect): the shell owns the
@@ -217,6 +235,12 @@ class WindowServerEvents {
     static func armDragOutCheck(_ wid: CGWindowID, previousRepWid: CGWindowID, attempt: Int) {
         DispatchQueue.main.asyncAfter(deadline: .now() + recheckInterval) {
             TrackedWindowStateBridge.dispatch(.dragOutCheck(wid: wid, previousRepWid: previousRepWid, attempt: attempt))
+        }
+    }
+
+    static func requeryLater(_ wids: [CGWindowID]) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + recheckInterval) {
+            Applications.updateWindowStatesViaWindowServer(wids)
         }
     }
 
@@ -239,38 +263,53 @@ class WindowServerEvents {
     /// activation, so for an app whose AX focus notifications never arrive this read is the only thing that
     /// says the user moved (`testTwoKeyTabsIntoTheSameAppBothMoveTheOrder`). A focus that did not take reads
     /// back the window that kept focus, and the order stays true to the screen (AltTab #6055).
-    static func readFocusedWindowAfterFocusing(_ pid: pid_t) {
-        readFocusedWindow(pid, key: "pid-\(pid)-post-focus", viaActivationRead: false)
+    static func readFocusedWindowAfterFocusing(_ pid: pid_t, attempt: Int = 0) {
+        readFocusedWindow(pid, key: "pid-\(pid)-post-focus", viaActivationRead: false, attempt: attempt)
     }
 
     /// A dedicated element carries the measured 250ms cap, so a wedged app can occupy one bounded worker but
-    /// never the main thread or the observer runloop.
-    private static func readFocusedWindow(_ pid: pid_t, key: String, viaActivationRead: Bool) {
+    /// never the main thread or the observer runloop. A read the cap cut short is asked again rather than
+    /// answered empty (`FocusIntentPolicy.focusedWindowAnswer`).
+    private static func readFocusedWindow(_ pid: pid_t, key: String, viaActivationRead: Bool, attempt: Int = 0) {
         guard Applications.findOrCreate(pid) != nil else { return }
         AXCallScheduler.shared.schedule(key: key, pid: pid) {
             let appAx = AXUIElementCreateApplication(pid)
             AXUIElementSetMessagingTimeout(appAx, 0.25)
             // Our own windows (e.g. Preferences) are tracked like any app's; both reads use the pid-aware
             // wrappers so an own-process query runs AppKit on main.
-            let focused = try? appAx.attributes([kAXFocusedWindowAttribute], pid: pid).focusedWindow
+            let focused = try FocusIntentPolicy.focusedWindowAnswer {
+                try appAx.attributes([kAXFocusedWindowAttribute], pid: pid).focusedWindow
+            }
             let wid = focused.flatMap { try? $0.cgWindowId(pid: pid) }
-            DispatchQueue.main.async { focusedWindowAnswered(pid, wid, viaActivationRead) }
+            DispatchQueue.main.async { focusedWindowAnswered(pid, wid, viaActivationRead, attempt) }
         }
     }
 
     /// The read came back. The post-focus one is the answer the pending switch was waiting for, whether or
-    /// not the app named a window: a wedged app that cannot answer must not keep the rest of the model
-    /// waiting on it either.
-    private static func focusedWindowAnswered(_ pid: pid_t, _ wid: CGWindowID?, _ viaActivationRead: Bool) {
-        if !viaActivationRead { FocusIntents.shared.heardBack(pid: pid) }
+    /// not the app named a window.
+    private static func focusedWindowAnswered(_ pid: pid_t, _ wid: CGWindowID?, _ viaActivationRead: Bool,
+                                              _ attempt: Int) {
+        if !viaActivationRead {
+            guard !readAgainIfTooEarly(pid, wid, attempt) else { return }
+            FocusIntents.shared.heardBack(pid: pid)
+        }
         if let wid {
             return TrackedWindowStateBridge.dispatch(.axFocusedWindowRead(pid: pid, wid: wid,
                 viaActivationRead: viaActivationRead))
         }
-        // A wedged or windowless app. The activation read reports it: the model asked for that read and would
-        // otherwise keep waiting on it forever.
+        // A windowless app, or one refusing the read. The activation read reports it: the model asked for that
+        // read and would otherwise keep waiting on it forever.
         guard viaActivationRead else { return }
         TrackedWindowStateBridge.dispatch(.axFocusedWindowReadFailed(pid: pid))
+    }
+
+    /// See `FocusIntentPolicy.answeredTooEarly`.
+    private static func readAgainIfTooEarly(_ pid: pid_t, _ wid: CGWindowID?, _ attempt: Int) -> Bool {
+        guard FocusIntents.shared.answeredTooEarly(pid: pid, wid: wid, attempt: attempt) else { return false }
+        DispatchQueue.main.asyncAfter(deadline: .now() + FocusIntentPolicy.earlyAnswerRereadDelay) {
+            readFocusedWindowAfterFocusing(pid, attempt: attempt + 1)
+        }
+        return true
     }
 
     /// 1329/1401 can fire several times during one Space transition; debounce so the topology refresh + UI
@@ -290,6 +329,8 @@ class WindowServerEvents {
     /// Replaces AX's kAXApplicationHidden/Shown: "hidden" is an AppKit state the WindowServer doesn't own.
     private static func applicationVisibilityChanged(_ pid: pid_t, hidden: Bool) {
         guard let app = Applications.list.first(where: { $0.pid == pid }) else { return }
+        // Timestamped so a capture can place the hide/unhide against the per-window AX end it races (AltTab #6020).
+        Logger.debug { "appVisibility \(app.runningApplication.bundleIdentifier ?? "?") hidden=\(hidden)" }
         app.isHidden = hidden
         App.refreshOpenUiAfterExternalEvent(Windows.list.filter { $0.application.pid == pid })
     }

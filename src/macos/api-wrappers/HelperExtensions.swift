@@ -48,18 +48,6 @@ extension NSColor {
         NSColor(name: nil) { $0.isDarkMode ? dark : light }
     }
 
-    class var tableBorderColor: NSColor {
-        dynamicAppearanceColor(
-            light: NSColor(srgbRed: 229 / 255, green: 229 / 255, blue: 229 / 255, alpha: 0.8),  // #e5e5e5
-            dark: NSColor(srgbRed: 75 / 255, green: 75 / 255, blue: 75 / 255, alpha: 0.8))       // #4b4b4b
-    }
-
-    class var tableBackgroundColor: NSColor {
-        dynamicAppearanceColor(
-            light: NSColor(srgbRed: 242 / 255, green: 242 / 255, blue: 242 / 255, alpha: 0.8),  // #f2f2f2
-            dark: NSColor(srgbRed: 43 / 255, green: 43 / 255, blue: 43 / 255, alpha: 0.8))       // #2b2b2b
-    }
-
     class var tableSeparatorColor: NSColor {
         dynamicAppearanceColor(
             light: NSColor(srgbRed: 231 / 255, green: 231 / 255, blue: 231 / 255, alpha: 0.8),  // #e7e7e7
@@ -181,18 +169,19 @@ extension NSImage {
         return NSImage(named: name)!.copy() as! NSImage
     }
 
-    static func fromSymbol(_ symbol: Symbols, pointSize: CGFloat, rotated180: Bool = false) -> NSImage {
+    static func fromSymbol(_ symbol: Symbols, pointSize: CGFloat, rotated180: Bool = false, margin: CGFloat = 0) -> NSImage {
         let base = NSImage(systemSymbolName: symbol.rawValue, accessibilityDescription: nil)!
         let configuration = NSImage.SymbolConfiguration(pointSize: pointSize, weight: .regular)
         let configured = base.withSymbolConfiguration(configuration) ?? base
-        guard rotated180 else { configured.isTemplate = true; return configured }
-        let image = NSImage(size: configured.size, flipped: false) { rect in
+        guard rotated180 || margin > 0 else { configured.isTemplate = true; return configured }
+        let size = NSSize(width: configured.size.width + 2 * margin, height: configured.size.height + 2 * margin)
+        let image = NSImage(size: size, flipped: false) { rect in
             let transform = NSAffineTransform()
             transform.translateX(by: rect.midX, yBy: rect.midY)
-            transform.rotate(byDegrees: 180)
+            if rotated180 { transform.rotate(byDegrees: 180) }
             transform.translateX(by: -rect.midX, yBy: -rect.midY)
             transform.concat()
-            configured.draw(in: rect)
+            configured.draw(in: rect.insetBy(dx: margin, dy: margin))
             return true
         }
         image.isTemplate = true
@@ -215,12 +204,6 @@ extension CGImage {
         let imageSource = CGImageSourceCreateWithURL(imageURL as CFURL, nil)!
         let count = CGImageSourceGetCount(imageSource)
         return (0..<count).compactMap { CGImageSourceCreateImageAtIndex(imageSource, $0, nil) }
-    }
-
-    static func bestMatch(_ images: [CGImage], for size: NSSize) -> CGImage {
-        let targetPx = Int(size.width.rounded())
-        return images.filter { $0.width >= targetPx }.min(by: { $0.width < $1.width })
-            ?? images.max(by: { $0.width < $1.width })!
     }
 
     func size() -> NSSize {
@@ -334,7 +317,7 @@ extension NSWindow {
 
     /// Safe replacement for `setFrameAutosaveName`: that call doesn't just register a name, it
     /// immediately applies the frame persisted under "NSWindow Frame <name>". A corrupt persisted
-    /// frame makes that apply throw and aborts the app (legacy feedback form crash f481d5b0). Drop the bad
+    /// frame makes that apply throw and aborts the app (legacy form crash f481d5b0). Drop the bad
     /// value first so AppKit never sees it. Returns whether a valid saved frame is present.
     @discardableResult
     func setFrameAutosaveNameSafely(_ name: NSWindow.FrameAutosaveName) -> Bool {
