@@ -105,6 +105,7 @@
 "Language Change" = "Смена языка";
 "Large" = "Большой";
 "Later" = "Позже";
+"License" = "Лицензия";
 "Light" = "Светлая";
 "macOS reserves ⌘⌥⎋, ⌘⌥⇧⎋, and ⌘⌥⇧⌃⎋ for Force Quit and they cannot be unbound. KeyTab cannot use them.\n\nYour change would assign one of these to: %@." = "macOS резервирует ⌘⌥⎋, ⌘⌥⇧⎋ и ⌘⌥⇧⌃⎋ для «Завершить принудительно», и их нельзя отвязать. KeyTab не может их использовать.\n\nВаше изменение назначит одно из них на: %@.";
 "Medium" = "Средний";
@@ -209,7 +210,6 @@
 "Vim keys" = "Клавиши Vim";
 "Vim keys already assigned to other actions:\n%@" = "Клавиши Vim уже назначены другим действиям:\n%@";
 "Visible Spaces" = "Видимые пространства";
-"Website" = "Сайт";
 "Weekend recipes" = "Мои рецепты";
 "When disabled, avoids the macOS purple screen-recording indicator, and avoids flickers when playing DRM video. Thumbnails will be less up-to-date." = "Когда отключено, нет фиолетового индикатора записи экрана macOS и нет мерцаний при воспроизведении DRM-видео. Миниатюры будут менее актуальны.";
 "When fullscreen" = "В полноэкранном режиме";

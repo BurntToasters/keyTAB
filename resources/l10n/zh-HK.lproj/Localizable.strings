@@ -105,6 +105,7 @@
 "Language Change" = "語言變更";
 "Large" = "大";
 "Later" = "稍後";
+"License" = "授權條款";
 "Light" = "淺色";
 "macOS reserves ⌘⌥⎋, ⌘⌥⇧⎋, and ⌘⌥⇧⌃⎋ for Force Quit and they cannot be unbound. KeyTab cannot use them.\n\nYour change would assign one of these to: %@." = "macOS 保留 ⌘⌥⎋、⌘⌥⇧⎋ 及 ⌘⌥⇧⌃⎋ 用於強制結束,無法解除綁定。KeyTab 無法使用這些組合鍵。\n\n您的變更會將其中之一指派給:%@。";
 "Medium" = "中";
@@ -209,7 +210,6 @@
 "Vim keys" = "Vim 按鍵";
 "Vim keys already assigned to other actions:\n%@" = "Vim 按鍵已指派給其他動作:\n%@";
 "Visible Spaces" = "可見的空間";
-"Website" = "網站";
 "Weekend recipes" = "週末食譜";
 "When disabled, avoids the macOS purple screen-recording indicator, and avoids flickers when playing DRM video. Thumbnails will be less up-to-date." = "停用時可避免 macOS 紫色螢幕錄製指示器,並避免播放 DRM 影片時閃爍。縮圖將不夠即時。";
 "When fullscreen" = "全螢幕時";

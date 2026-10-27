@@ -105,6 +105,7 @@
 "Language Change" = "言語の変更";
 "Large" = "大";
 "Later" = "後で";
+"License" = "ライセンス";
 "Light" = "ライト";
 "macOS reserves ⌘⌥⎋, ⌘⌥⇧⎋, and ⌘⌥⇧⌃⎋ for Force Quit and they cannot be unbound. KeyTab cannot use them.\n\nYour change would assign one of these to: %@." = "macOS は ⌘⌥⎋、⌘⌥⇧⎋、⌘⌥⇧⌃⎋ を強制終了用に予約しており、解除できません。KeyTab では使用できません。\n\n変更しようとしている割り当て: %@。";
 "Medium" = "中";
@@ -209,7 +210,6 @@
 "Vim keys" = "Vim キー";
 "Vim keys already assigned to other actions:\n%@" = "Vim キーはすでに他のアクションに割り当てられています:\n%@";
 "Visible Spaces" = "表示中の Space";
-"Website" = "Web サイト";
 "Weekend recipes" = "週末のレシピ";
 "When disabled, avoids the macOS purple screen-recording indicator, and avoids flickers when playing DRM video. Thumbnails will be less up-to-date." = "無効にすると、macOS の紫色の画面収録インジケータを回避し、DRM ビデオ再生時のちらつきを防げます。サムネイルの更新頻度は低くなります。";
 "When fullscreen" = "フルスクリーン時";

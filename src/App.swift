@@ -17,6 +17,7 @@ class App: NSApplication {
     static let copyright = Bundle.main.object(forInfoDictionaryKey: "NSHumanReadableCopyright") as! String
     static let repository = "https://github.com/BurntToasters/KeyTab"
     static let issues = "\(repository)/issues"
+    static let licence = "\(repository)/blob/v\(version)/LICENCE.md"
     static let appIconReps = CGImage.allNamed("AppIcon.icns")
     static let appIcon: CGImage = appIconReps.max { $0.width < $1.width }!
 

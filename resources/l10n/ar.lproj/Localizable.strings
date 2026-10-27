@@ -105,6 +105,7 @@
 "Language Change" = "تغيير اللغة";
 "Large" = "كبير";
 "Later" = "لاحقًا";
+"License" = "الترخيص";
 "Light" = "فاتح";
 "macOS reserves ⌘⌥⎋, ⌘⌥⇧⎋, and ⌘⌥⇧⌃⎋ for Force Quit and they cannot be unbound. KeyTab cannot use them.\n\nYour change would assign one of these to: %@." = "يحجز macOS ⌘⌥⎋ و⌘⌥⇧⎋ و⌘⌥⇧⌃⎋ لإنهاء بالقوة ولا يمكن إلغاء ربطها. لا يمكن لـ KeyTab استخدامها.\n\nسيؤدي تغييرك إلى تعيين أحدها إلى: %@.";
 "Medium" = "متوسط";
@@ -209,7 +210,6 @@
 "Vim keys" = "مفاتيح Vim";
 "Vim keys already assigned to other actions:\n%@" = "مفاتيح Vim معيّنة بالفعل لإجراءات أخرى:\n%@";
 "Visible Spaces" = "المساحات المرئية";
-"Website" = "الموقع الإلكتروني";
 "Weekend recipes" = "وصفات للعطلة";
 "When disabled, avoids the macOS purple screen-recording indicator, and avoids flickers when playing DRM video. Thumbnails will be less up-to-date." = "عند التعطيل، يتجنب مؤشر تسجيل الشاشة الأرجواني في macOS، ويتجنب الومضات عند تشغيل فيديو DRM. ستكون المصغّرات أقل حداثة.";
 "When fullscreen" = "عند ملء الشاشة";

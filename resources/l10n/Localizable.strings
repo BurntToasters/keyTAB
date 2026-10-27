@@ -254,11 +254,11 @@
 /* No comment provided by engineer. */
 "Hide/Show app" = "Hide/Show app";
 
-/* No comment provided by engineer. */
-"Hold" = "Hold";
-
 /* Onboarding popover, above the key to keep down */
 "hold" = "hold";
+
+/* No comment provided by engineer. */
+"Hold" = "Hold";
 
 /* LetsMove replacement alert */
 "I can move myself to the Applications folder if you'd like." = "I can move myself to the Applications folder if you'd like.";
@@ -279,7 +279,7 @@
 "Japan trip" = "Japan trip";
 
 /* No comment provided by engineer. */
-"Keep holding %@ then press %@" = "Keep holding %@ then press %@";
+"Keep holding %@ then press %@" = "Keep holding %1$@ then press %2$@";
 
 /* Onboarding popover */
 "KeyTab is ready" = "KeyTab is ready";
@@ -319,6 +319,9 @@
 
 /* No comment provided by engineer. */
 "Later" = "Later";
+
+/* No comment provided by engineer. */
+"License" = "License";
 
 /* No comment provided by engineer. */
 "Light" = "Light";
@@ -632,9 +635,6 @@
 /* No comment provided by engineer. */
 "Visible Spaces" = "Visible Spaces";
 
-/* No comment provided by engineer. */
-"Website" = "Website";
-
 /* Illustration: window.recipes */
 "Weekend recipes" = "Weekend recipes";
 
@@ -682,3 +682,4 @@
 
 /* No comment provided by engineer. */
 "Your settings reset every time KeyTab restarts." = "Your settings reset every time KeyTab restarts.";
+
