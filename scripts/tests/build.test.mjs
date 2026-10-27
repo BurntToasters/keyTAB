@@ -13,7 +13,7 @@ test("unsigned smoke disables signing without injecting an identity", () => {
 });
 
 test("release signing covers every Sparkle helper and signs inside-out", () => {
-  const app = "/dist/KeyTab-1.0.0.app";
+  const app = "/dist/KeyTab.app";
   const targets = releaseSigningTargets(app);
   const sparkle = path.join(app, "Contents/Frameworks/Sparkle.framework");
   for (const nested of ["Versions/A/Autoupdate", "Versions/A/Updater.app"]) assert.ok(targets.includes(path.join(sparkle, nested)), nested);
