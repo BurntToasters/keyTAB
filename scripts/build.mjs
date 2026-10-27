@@ -56,13 +56,12 @@ export function buildDebug() {
 export function buildRelease() {
   validate({ release: true });
   const { version } = versionInfo();
-  const releaseRoot = path.join(root, "dist/release-build");
+  const dist = path.join(root, "dist");
+  const releaseRoot = path.join(dist, "release-build");
   const derivedData = path.join(releaseRoot, "DerivedData");
-  const app = path.join(root, "dist", "KeyTab.app");
-  const zip = path.join(root, "dist", `KeyTab-${version}.zip`);
-  fs.rmSync(releaseRoot, { recursive: true, force: true });
-  fs.rmSync(app, { recursive: true, force: true });
-  fs.rmSync(zip, { force: true });
+  const app = path.join(dist, "KeyTab.app");
+  const zip = path.join(dist, `KeyTab-${version}.zip`);
+  fs.rmSync(dist, { recursive: true, force: true });
   ensureDirectory(releaseRoot);
   run("xcodebuild", ["-project", project, "-scheme", "Release", "-configuration", "Release", "-derivedDataPath", derivedData, "-destination", "generic/platform=macOS", "ARCHS=arm64 x86_64", "ONLY_ACTIVE_ARCH=NO", "CODE_SIGNING_ALLOWED=NO", "clean", "build"], { env: { KEYTAB_SKIP_EMBED_SIGNING: "1" } });
   const builtApp = path.join(derivedData, "Build/Products/Release/KeyTab.app");
