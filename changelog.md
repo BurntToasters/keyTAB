@@ -1,5 +1,11 @@
 # KeyTab changelog
 
+## 0.1.3
+
+### Bug Fixes
+
+* The update window shows what changed instead of loading the GitHub release page.
+
 ## 0.1.2
 
 ### Bug Fixes

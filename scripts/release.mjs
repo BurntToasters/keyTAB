@@ -4,7 +4,7 @@ import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { buildRelease } from "./build.mjs";
 import { appcastFilename, writeAppcast } from "./lib/appcast.mjs";
-import { releaseNotes } from "./lib/changelog.mjs";
+import { changelogSection, releaseNotes } from "./lib/changelog.mjs";
 import { ensureDirectory, output, repository, repositoryUrl, root, run, sha256File, versionInfo } from "./lib/core.mjs";
 import { runPreflight, sparkleCredentialSources } from "./release-preflight.mjs";
 import { createSession, verifySession } from "./release-session.mjs";
@@ -120,7 +120,8 @@ function continueRelease() {
   ensureDraft(info, session.identity.commit);
   const { zip } = buildRelease();
   const signature = signSparkle(zip, true);
-  const appcast = writeAppcast(path.dirname(zip), { ...info, signature, length: fs.statSync(zip).size });
+  const changes = changelogSection(info.version, fs.readFileSync(path.join(root, "changelog.md"), "utf8"));
+  const appcast = writeAppcast(path.dirname(zip), { ...info, signature, length: fs.statSync(zip).size, notes: changes });
   signSparkle(appcast);
   const feeds = feedFilenames(info.channel).map((name) => path.join(path.dirname(zip), name));
   for (const feed of feeds.filter((feed) => feed !== appcast)) fs.copyFileSync(appcast, feed);
