@@ -7,6 +7,9 @@ KeyTab is a free, open-source macOS window switcher. It brings Windows-style win
 - Bundle identifier: `run.rosie.keytab`
 - Source and releases: <https://github.com/BurntToasters/KeyTab>
 
+## Verify Releases
+Releases of KeyTab are codesigned by my apple developer account and also by GPG: https://tuxedo.rosie.run/GPG/KeyTAB_2963E96C_Public.asc
+
 ## Build and test
 
 Install Xcode 26 or newer (KeyTab builds against the macOS 26 and 27 SDKs while still running on macOS 14; Xcode 26 is also the minimum for the Icon Composer app icon) and Node.js 22.12 or newer, then run:
