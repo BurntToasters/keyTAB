@@ -6,13 +6,13 @@
     {
       "layers" : [
         {
-          "image-name" : "Untitled-1.png",
-          "name" : "Untitled-1",
+          "image-name" : "KeyTAB.png",
+          "name" : "KeyTAB",
           "position-specializations" : [
             {
               "idiom" : "square",
               "value" : {
-                "scale" : 1.5,
+                "scale" : 1.45,
                 "translation-in-points" : [
                   0,
                   0
