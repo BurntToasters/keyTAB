@@ -4,7 +4,7 @@
 #
 # Runs after Xcode's Embed Frameworks phase, before Xcode's final code-signing of KeyTab.app:
 #   1. Copy Sparkle's prebuilt Updater.app + Autoupdate (already Developer ID-signed at
-#      vendor time by vendor/scripts/update_sparkle.sh) into Sparkle.framework/Versions/A/,
+#      vendor time by get_sparkle.sh) into Sparkle.framework/Versions/A/,
 #      AND add the top-level Sparkle.framework/Autoupdate and /Updater.app symlinks. Sparkle's
 #      installer locates these via `-[NSBundle URLForAuxiliaryExecutable:]` which only walks the
 #      framework root — so the symlinks (or the files themselves at framework root, like
@@ -112,7 +112,7 @@ done
 
 # Re-seal Sparkle.framework so its _CodeSignature/CodeResources reflects our CFBundleIdentifier
 # rewrite + the helper/resource copies above. Updater.app / Autoupdate keep their vendor-time
-# signature (upstream AltTab's Developer ID, see vendor/scripts/update_sparkle.sh) in Debug builds.
+# signature (KeyTab's Developer ID, applied by get_sparkle.sh) in Debug builds.
 # Release builds re-sign them inside-out with KeyTab's identity (`signRelease` in scripts/build.mjs),
 # and release validation rejects any nested Mach-O not signed by the KeyTab team.
 # Why this can't be Xcode's --deep alone: Release adds --deep via release.xcconfig and Xcode does

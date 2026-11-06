@@ -2,6 +2,18 @@
 
 `package.json` owns the semantic `version` and numeric `buildNumber`. Raise `buildNumber` with every release: Sparkle offers an update only when its build number is higher than the installed one, and preflight rejects a build number that is not higher than every released tag's. After changing either value, run `npm run sync-version` and commit what it updates: `config/version.xcconfig` (also read by the unit-test target), `package-lock.json`, and a new `## <version>` section in `changelog.md` when none exists. Stable versions use `main`; versions ending in `-beta.n` use `beta`.
 
+## Updating Sparkle
+
+`sparkle_pin.yml` names the Sparkle release KeyTab vendors: its version, build, tag commit, and the SHA-256 of the
+official `Sparkle-<version>.tar.xz`. To move to another release, take those values from
+<https://github.com/sparkle-project/Sparkle/releases> (the file's comments list the commands), then run
+`./get_sparkle.sh`. It refuses to install unless the download matches the pinned checksum and GitHub's published
+digest, the tag resolves to the pinned commit, and the release reports the pinned version and build. It updates
+only pristine library sources, keeps KeyTab's Sparkle translations and local edits that upstream did not touch,
+stops on any other conflict, and re-signs changed helpers with the `FYJZP8B2KG` Developer ID. Add a changelog
+entry, run `npm run test:all`, and commit. `./get_sparkle.sh --verify-only` checks `vendor/Sparkle` against the
+official release without writing anything; `npm run validate` checks the versions offline.
+
 ## One-time Sparkle setup
 
 Sparkle is the open-source (MIT-licensed) update framework KeyTab ships with. It costs nothing and needs no
@@ -11,7 +23,7 @@ update is installed only if the private key signed it. The only paid prerequisit
 Apple's Developer Program (the Developer ID certificate and notarization), not Sparkle.
 
 1. On the Mac that will sign releases, download the Sparkle release matching `vendor/Sparkle/UPSTREAM` (currently
-   2.9.1) from <https://github.com/sparkle-project/Sparkle/releases> and unpack it. The vendored copy omits
+   2.9.6) from <https://github.com/sparkle-project/Sparkle/releases> and unpack it. The vendored copy omits
    `generate_keys`.
 2. Run `./bin/generate_keys`. It creates the private key in your login keychain (account `ed25519`) and prints
    the public key. Run it again later with `-p` to print the public key.
@@ -48,7 +60,7 @@ Node scripts remove private key material, GPG passphrases, keychain passwords, a
 
 ## Publishing
 
-Release signing is inside-out and never uses `--deep`: Sparkle's `Autoupdate` and `Updater.app`, then `Sparkle.framework`, then `KeyTab.app` (the only target that receives `KeyTab.entitlements`). Release validation rejects any Mach-O in the bundle that is not signed by team `FYJZP8B2KG`, including the vendored helpers, which are committed with upstream's signature.
+Release signing is inside-out and never uses `--deep`: Sparkle's `Autoupdate` and `Updater.app`, then `Sparkle.framework`, then `KeyTab.app` (the only target that receives `KeyTab.entitlements`). Release validation rejects any Mach-O in the bundle that is not signed by team `FYJZP8B2KG`, including the vendored helpers, which are committed with KeyTab's vendor-time signature.
 
 The draft contains the notarized and stapled `KeyTab-<version>.zip`, its Sparkle-signed appcast (plus the `appcast-beta.xml` copy on stable releases), `SHA256SUMS`, and detached armored GPG signatures for each file. The draft's notes are the version's `## <version>` section of `changelog.md` plus a GPL source notice; preflight fails when that section is missing or empty.
 

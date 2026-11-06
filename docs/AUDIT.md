@@ -71,7 +71,7 @@ or multi-display behavior, Intel behavior, or macOS 26 behavior.
 ### Medium
 
 - **M4 — Resolved in 0.1.2.** The illustrations embedded two photographs (Mount Fuji, a bowl of ramen) whose provenance upstream does not document, and they shipped in 0.1.0 and 0.1.1. Every placement is now original vector art; `resources/native-illustrations/` holds no JPEGs.
-- **M8 — Vendored helper re-signing at vendor time.** `vendor/scripts/update_sparkle.sh` still re-signs the
+- **M8 — Resolved in 1.0.0.** `get_sparkle.sh` replaced `vendor/scripts/update_sparkle.sh` and signs the helpers with KeyTab's `FYJZP8B2KG` identity. Original finding: `vendor/scripts/update_sparkle.sh` still re-signed the
   helpers with whatever Developer ID is in the keychain. That was AltTab's maintainer last time. Since F6 re-signs
   at release, the next Sparkle update should sign them with KeyTab's identity, or leave them ad hoc.
 

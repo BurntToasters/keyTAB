@@ -1,5 +1,22 @@
 # KeyTab changelog
 
+## 1.0.0
+
+KeyTab 1.0.0 is based on AltTab 11.10.1.
+
+### Changes
+
+* New KeyTab app icon.
+
+### Security
+
+* The built-in updater moves to Sparkle 2.9.6, fixing five Sparkle security advisories:
+  * A race in the privileged installer, where an update was checked at one path but installed from another (GHSA-3x7w-j75x-ppq5).
+  * A root-privileged cache cleanup that followed symbolic links in your home folder (GHSA-4v99-qgq9-6pxp).
+  * Two flaws in applying delta updates that could write files outside the app (GHSA-hg88-v3cw-3qrh, GHSA-gmj2-gq3j-vqmj).
+  * An installer connection that accepted update details from unverified processes (GHSA-g3hp-f6mg-559v).
+* KeyTab's copy of Sparkle is now pinned to the official release and checked against its published checksum before it is built in.
+
 ## 0.1.3
 
 ### Bug Fixes
