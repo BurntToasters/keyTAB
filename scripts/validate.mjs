@@ -92,6 +92,28 @@ function assert(condition, message, failures) {
   if (!condition) failures.push(message);
 }
 
+/// Offline check that vendor/Sparkle is the release sparkle_pin.yml names; get_sparkle.sh --verify-only checks the bytes.
+export function sparklePinMismatches(base = root) {
+  const read = (file) => fs.readFileSync(path.join(base, file), "utf8");
+  const pin = Object.fromEntries([...read("sparkle_pin.yml").matchAll(/^(\w+):\s*(\S+)\s*$/gm)].map((match) => [match[1], match[2]]));
+  const upstream = Object.fromEntries([...read("vendor/Sparkle/UPSTREAM").matchAll(/^(\w+)=(.*)$/gm)].map((match) => [match[1], match[2]]));
+  const define = (key) => read("vendor/Sparkle/Package.swift").match(new RegExp(`\\.define\\("${key}", to: "\\\\"([^"\\\\]*)\\\\""\\)`))?.[1];
+  const updater = read("vendor/Sparkle/Helpers/Updater.app/Contents/Info.plist");
+  const plistValue = (key) => updater.match(new RegExp(`<key>${key}</key>\\s*<string>([^<]*)</string>`))?.[1];
+  const checks = [
+    ["vendor/Sparkle/UPSTREAM VERSION", upstream.VERSION, pin.version],
+    ["vendor/Sparkle/UPSTREAM COMMIT", upstream.COMMIT, pin.commit],
+    ["vendor/Sparkle/UPSTREAM SHA256", upstream.SHA256, pin.tarball_sha256],
+    ["Package.swift MARKETING_VERSION", define("MARKETING_VERSION"), pin.version],
+    ["Package.swift CURRENT_PROJECT_VERSION", define("CURRENT_PROJECT_VERSION"), pin.build],
+    ["Updater.app CFBundleShortVersionString", plistValue("CFBundleShortVersionString"), pin.version],
+    ["Updater.app CFBundleVersion", plistValue("CFBundleVersion"), pin.build],
+  ];
+  const mismatches = checks.filter(([, actual, expected]) => !expected || actual !== expected).map(([label, actual, expected]) => `${label} is ${actual ?? "missing"}, sparkle_pin.yml pins ${expected ?? "nothing"}; run ./get_sparkle.sh`);
+  if (!read("THIRD_PARTY_NOTICES.md").includes(`## Sparkle ${pin.version}\n`)) mismatches.push(`THIRD_PARTY_NOTICES.md does not name Sparkle ${pin.version}`);
+  return mismatches;
+}
+
 function scanText(filePaths, pattern, label, failures, allowed = () => false) {
   for (const file of filePaths) {
     const contents = fs.readFileSync(file, "utf8");
@@ -286,6 +308,7 @@ export function validateWorkspace({ release = false, bundle = null } = {}) {
     swiftFiles: filesUnder(path.join(root, "src")).filter((file) => file.endsWith(".swift")).map((file) => path.relative(root, file).split(path.sep).join("/")),
   });
   failures.push(...projectFailures);
+  failures.push(...sparklePinMismatches());
   if (bundle) validateBundle(path.resolve(bundle), { version, buildNumber, release }, failures);
   if (failures.length) throw new Error(failures.join("\n"));
   return { version, buildNumber };

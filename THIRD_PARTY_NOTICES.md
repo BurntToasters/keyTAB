@@ -2,7 +2,7 @@
 
 KeyTab vendors its build dependencies so a release tag contains the source actually used to build the app.
 
-## Sparkle 2.9.1
+## Sparkle 2.9.6
 
 - Project: <https://github.com/sparkle-project/Sparkle>
 - Local source: `vendor/Sparkle`

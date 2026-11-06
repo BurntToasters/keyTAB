@@ -31,6 +31,7 @@
 ## Dependencies and licensing
 
 - Use vendored local Swift packages. Do not restore CocoaPods, workspace-based builds, AppCenter, or network dependency resolution during builds.
+- `sparkle_pin.yml` pins the vendored Sparkle release. Change Sparkle only by editing the pin and running `./get_sparkle.sh`; never hand-edit `vendor/Sparkle` sources, helpers, or `sign_update`.
 - Keep Sparkle and ShortcutRecorder license files, `LICENCE.md`, `NOTICE.md`, `THIRD_PARTY_NOTICES.md`, and `docs/ASSET_LICENSES.md` accurate and distributed with releases.
 - Do not remove upstream copyright or modification provenance. Every binary release must have a matching public source tag containing the complete corresponding source, vendored dependencies, build scripts, and notices.
 - Treat `GPL-3.0-only` compliance as a release gate, not optional documentation.

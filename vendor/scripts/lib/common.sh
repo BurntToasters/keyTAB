@@ -13,7 +13,7 @@
 
 # require_update_flag <user-args...> -- <script_path> <description>
 # Bash can't easily take "$@" then trailing args, so the calling convention is:
-#   require_update_flag "${1:-}" "$0" "refreshes vendor/Sparkle to 2.9.1"
+#   require_update_flag "${1:-}" "$0" "refreshes vendor/Sparkle to 2.9.6"
 require_update_flag() {
     local arg="$1" script="$2" desc="$3"
     if [[ "$arg" != "--update" ]]; then

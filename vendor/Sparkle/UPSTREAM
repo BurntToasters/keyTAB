@@ -1,3 +1,5 @@
-VERSION=2.9.1
-SOURCE=https://github.com/sparkle-project/Sparkle/releases/download/2.9.1/Sparkle-2.9.1.tar.xz
-DATE=2026-05-12
+VERSION=2.9.6
+COMMIT=ac2def288cbff5cfc7df3ffef6abdf45b72bcb0a
+SHA256=52bf9e88cdd972fc0c81501377a880e90d47031bd8ca5462488f843e2609e192
+SOURCE=https://github.com/sparkle-project/Sparkle/releases/download/2.9.6/Sparkle-2.9.6.tar.xz
+DATE=2026-11-06
