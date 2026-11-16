@@ -51,7 +51,7 @@
 "Cursor follows focus" = "เคอร์เซอร์ตามโฟกัส";
 "Customize more…" = "ปรับแต่งเพิ่มเติม…";
 "Dark" = "มืด";
-"Debug tools" = "เครื่องมือแก้ไขข้อบกพร่อง";
+"Debug Logs" = "บันทึกการแก้ไขข้อบกพร่อง";
 "Device Control" = "การควบคุมอุปกรณ์";
 "Disabled" = "ปิดใช้งาน";
 "Do Not Move" = "ไม่ย้าย";
@@ -92,6 +92,8 @@
 "Japan itinerary" = "แผนเที่ยวญี่ปุ่น";
 "Japan trip" = "เที่ยวญี่ปุ่น";
 "Keep holding %@ then press %@" = "กด %@ ค้างไว้ แล้วกด %@";
+"KeyTab couldn’t access the keyboard or mouse. You can try again or quit KeyTab." = "KeyTab ไม่สามารถเข้าถึงแป้นพิมพ์หรือเมาส์ได้ คุณสามารถลองอีกครั้งหรือออกจาก KeyTab";
+"KeyTab couldn’t start." = "ไม่สามารถเริ่ม KeyTab ได้";
 "KeyTab is ready" = "KeyTab พร้อมแล้ว";
 "KeyTab is running without Screen Recording permissions. %@ won’t show." = "KeyTab กำลังทำงานโดยไม่มีสิทธิ์การบันทึกหน้าจอ %@จะไม่แสดง";
 "KeyTab on GitHub" = "KeyTab บน GitHub";
@@ -202,6 +204,7 @@
 "Trigger" = "ทริกเกอร์";
 "Trip checklist" = "รายการเดินทาง";
 "Trip list" = "ของใช้";
+"Try again" = "ลองอีกครั้ง";
 "Try it right now" = "ลองเลยตอนนี้";
 "Unassign existing shortcut and continue" = "ยกเลิกการกำหนดทางลัดที่มีอยู่และดำเนินการต่อ";
 "Updates policy" = "นโยบายการอัปเดต";

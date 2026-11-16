@@ -14,9 +14,15 @@ and upstream merges can check against it.
   Debug-only symbol leakage into Release, and the brand artwork.
 - **Pass 4**, 2026-10-27. Updated from AltTab 11.8.0 to 11.10.1, then re-audited the merged tree: paywall residue,
   dropped declarations, Xcode project integrity, localization completeness, runtime network surface.
+- **Pass 5**, 2026-11-16, against `09bb320` plus the uncommitted AltTab 11.10.2 merge (KeyTab 1.0.1). Compared
+  KeyTab's per-file delta from upstream before and after the merge, read upstream's changes inside the paths the
+  sync excludes, and reviewed the new startup-recovery, status-item, focus-event and permission-startup code in
+  KeyTab's context. Also covered Xcode target membership, localization, the network and IPC surface, Debug-only
+  leakage into the Release binary, Sparkle advisories, the build scripts and documentation drift.
 
-Off-macOS limits: all passes ran on a host without Xcode, so `npm run test:all` and `ai/build.sh` were not run
-there. Swift changes are validated by CI on `main`: the Xcode 26 test gate, the Debug build and, since pass 3, an
+Off-macOS limits: passes 1 to 4 ran on a host without Xcode, so `npm run test:all` and `ai/build.sh` were not run
+there. Pass 5 ran on macOS 27.2 with the macOS 27.2 SDK: `npm run test:all` (1,421 tests), `ai/build.sh`, three
+consecutive incremental Debug builds and `npm run build:release-smoke` all pass, and the Release binary was scanned. Swift changes are validated by CI on `main`: the Xcode 26 test gate, the Debug build and, since pass 3, an
 unsigned Release compile. Pass 4 also ran without Xcode, so its Swift changes are unverified until CI compiles them.
 Node tests and `npm run validate` pass. Nothing below is evidence of notarization, Gatekeeper, Sparkle update installation, Space
 or multi-display behavior, Intel behavior, or macOS 26 behavior.
@@ -55,6 +61,9 @@ or multi-display behavior, Intel behavior, or macOS 26 behavior.
 | F28 | 4 | M9, telemetry recorded in Release. | Recording entry points are no-ops outside Debug. |
 | F29 | 4 | The search hint's speech-bubble tail pointed at the removed Pro mascot. | Plain rounded bubble. |
 | F30 | 4 | No upstream sync procedure (M5) and no KeyTab changelog (M6). | `docs/UPSTREAM.md`; a KeyTab 1.0.0 section at the top of `changelog.md`. |
+| F31 | 5 | `Menubar.badgeDotLayer`, left from the Pro menubar badge that F20 removed, came back with the 11.10.1 merge as a declaration nothing assigned. The 11.10.2 merge added code that cleared it. | Removed. `StatusItemLifecycleSpecs.md` no longer describes a badge. |
+| F32 | 5 | Signed incremental Debug builds failed every other run: `codesign --verify --deep --strict` reported that `Sparkle.framework` "has no resources but signature indicates they must be present". `copy_sparkle_helpers.sh` rewrites the `PackageFrameworks` copy's `Info.plist`, so the next build regenerates it and Embed Frameworks replaces the framework, after Xcode has already judged the helper phase up to date. The new copy lacked the helpers and the seal. `ai/build.sh` was affected; clean builds (CI, `build:release`) were not. | The Copy Sparkle Helpers phase is `alwaysOutOfDate`, with the reason in the script header. Three consecutive incremental builds pass. |
+| F33 | 5 | `docs/UPSTREAM.md` did not cover what the 11.10.2 sync hit: `git apply` aborting on a file upstream replaced (`DebugWindow.swift`), upstream's README in the patch, Pro calls threaded through shared files, and hand-merging the generated strings catalog. | Documented, with the local `test:all` and `build:release-smoke` checks. |
 
 ## Open findings
 
@@ -71,6 +80,17 @@ or multi-display behavior, Intel behavior, or macOS 26 behavior.
 ### Medium
 
 - **M4 — Resolved in 0.1.2.** The illustrations embedded two photographs (Mount Fuji, a bowl of ramen) whose provenance upstream does not document, and they shipped in 0.1.0 and 0.1.1. Every placement is now original vector art; `resources/native-illustrations/` holds no JPEGs.
+- **M10 — Native verification of the 11.10.2 focus click.** `makeKeyWindow` now posts a mouse-down and the matching
+  mouse-up, so SDL games such as Minecraft get mouse capture back (AltTab #6148). Both coordinate fields hold a point
+  far outside the window. The previous down-only event is what closed AltTab #5381, where switching to Figma, Telegram
+  or Wezterm clicked a top-left control: if an app still moves the point into its content, the pair is now a complete
+  click. Switch repeatedly to fullscreen Figma, Telegram and Wezterm and confirm no control activates, then confirm
+  Minecraft keeps mouse capture.
+- **M11 — Native verification of startup recovery.** Unit tests cover the policy, the persisted budget and the
+  status-item lifecycle, but nothing in this repository runs the recovery path end to end. In a Debug build, use the
+  lifecycle QA `input-failure` command through the Debug CLI: failing `keyboard` with no recovery count should restart
+  after 1 s and 3 s, then show the window with Try again and Quit KeyTab; a recovery count of 1 should restart once and
+  then launch normally. Also revoke Accessibility while KeyTab runs.
 - **M8 — Resolved in 1.0.0.** `get_sparkle.sh` replaced `vendor/scripts/update_sparkle.sh` and signs the helpers with KeyTab's `FYJZP8B2KG` identity. Original finding: `vendor/scripts/update_sparkle.sh` still re-signed the
   helpers with whatever Developer ID is in the keychain. That was AltTab's maintainer last time. Since F6 re-signs
   at release, the next Sparkle update should sign them with KeyTab's identity, or leave them ad hoc.
@@ -80,15 +100,39 @@ or multi-display behavior, Intel behavior, or macOS 26 behavior.
 - **L3 — The keychain password is passed in argv** to `security` on the release host. This is a limitation of the
   `security` tool, so keep the release host single-user.
 - **L4 — Vendored dependencies have no update signal.** Check Sparkle releases at least every quarter and before
-  each KeyTab release.
+  each KeyTab release. Checked 2026-11-16: the pin is 2.9.6 and the latest release is 2.10.1. No published advisory is
+  newer than 2.9.6, and 2.10.x changes are functional, so upgrading is optional.
 - **L5 — Resolved in 0.1.3.** CI moved to `macos-26`: on `macos-15`, `actool` crashes compiling the Icon Composer
   `AppIcon.icon`, which failed every CI run since 0.1.1. Intel is build-only support and is not tested.
-- **L6 — Nine inherited `TODO`s**, including what to do when the Debug CLI port is already taken. Triage them into
-  issues.
+- **L6 — Five inherited `TODO`s** outside tests. AltTab 11.10.2 removed the one about the Debug CLI port already
+  being taken. Triage the rest into issues.
 - **L8 — The branding scan does not see multi-line (`"""`) string content.** Text inside those blocks is not
   checked for "AltTab". Extend `swiftRuntimeBrandingLines` if new multi-line user-facing strings appear.
 - **L9 — Resolved in 0.1.3.** 'KeyTab on GitHub' and 'Acknowledgments are unavailable.' are translated into every
   supported language.
+
+- **L10 — Startup recovery adds file I/O on the main thread.** Every launch now creates
+  `~/Library/Application Support/run.rosie.keytab/` and `startup-recovery.lock`, and `StartupRecovery.becameReady`
+  reads the record under `flock` on the main thread. It is a few small system calls on a lock held for microseconds,
+  but it is new persistent state and runs against the no-main-thread-I/O rule in `AGENTS.md`. It is kept as upstream
+  wrote it, to keep future merges simple.
+
+## Verified clean (pass 5)
+
+- **Merge fidelity:** in every file the sync touched, each change to KeyTab's delta from upstream is a Pro removal,
+  KeyTab naming, an `AltTab #` reference or a Debug gate. The paths the patch filter excludes changed only in Pro,
+  checkout, README and appcast code.
+- **Release binary:** no `CliEvents`, `CliServer`, `QaLifecycle`, `ProTransition`, `LicenseManager` or `LateReminder`
+  strings. Swift stores strings of 15 bytes or fewer inline, so short strings were checked in source instead.
+- **Network and IPC:** unchanged. The only URLs are the KeyTab repository link and the Sparkle feed, and the only
+  port is the Debug-only `CliEvents`.
+- **Startup recovery:** the record and its lock live in KeyTab's own Application Support folder, never under
+  AltTab's. The folder is created 0700 when missing and the lock 0600; the record holds only a failure count and a
+  UUID. Only the same user can write them, and a corrupt record stops automatic restarts rather than granting more. Every caller of `StartupRecovery.failed` runs on the main thread, as its precondition
+  requires.
+- **Project and localization:** the new files' target membership matches upstream exactly. All 21 catalogs match
+  the source, and the new recovery strings read naturally with "KeyTab".
+- **Security:** no finding crosses a trust boundary.
 
 ## Verified clean (pass 2)
 

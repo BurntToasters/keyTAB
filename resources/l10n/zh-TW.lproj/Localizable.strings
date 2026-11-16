@@ -51,7 +51,7 @@
 "Cursor follows focus" = "游標跟隨焦點";
 "Customize more…" = "更多自訂…";
 "Dark" = "深色";
-"Debug tools" = "除錯工具";
+"Debug Logs" = "除錯記錄";
 "Device Control" = "裝置控制";
 "Disabled" = "已停用";
 "Do Not Move" = "不要移動";
@@ -92,6 +92,8 @@
 "Japan itinerary" = "日本行程";
 "Japan trip" = "日本之旅";
 "Keep holding %@ then press %@" = "按住 %@，然後按 %@";
+"KeyTab couldn’t access the keyboard or mouse. You can try again or quit KeyTab." = "KeyTab 無法存取鍵盤或滑鼠。你可以重試或結束 KeyTab。";
+"KeyTab couldn’t start." = "KeyTab 無法啟動。";
 "KeyTab is ready" = "KeyTab 已準備就緒";
 "KeyTab is running without Screen Recording permissions. %@ won’t show." = "KeyTab 正在沒有「螢幕錄影」權限的情況下執行，將無法顯示%@。";
 "KeyTab on GitHub" = "GitHub 上的 KeyTab";
@@ -202,6 +204,7 @@
 "Trigger" = "觸發方式";
 "Trip checklist" = "旅行清單";
 "Trip list" = "旅行清單";
+"Try again" = "重試";
 "Try it right now" = "立即試試看";
 "Unassign existing shortcut and continue" = "取消指派現有快速鍵並繼續";
 "Updates policy" = "更新政策";

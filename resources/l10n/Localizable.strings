@@ -158,7 +158,7 @@
 "Dark" = "Dark";
 
 /* Menubar option */
-"Debug tools" = "Debug tools";
+"Debug Logs" = "Debug Logs";
 
 /* Name of the Accessibility permission since macOS 27: the first half of \"Device Control and Data Access\", as System Settings shows it */
 "Device Control" = "Device Control";
@@ -280,6 +280,12 @@
 
 /* No comment provided by engineer. */
 "Keep holding %@ then press %@" = "Keep holding %1$@ then press %2$@";
+
+/* Startup recovery */
+"KeyTab couldn’t access the keyboard or mouse. You can try again or quit KeyTab." = "KeyTab couldn’t access the keyboard or mouse. You can try again or quit KeyTab.";
+
+/* Startup recovery */
+"KeyTab couldn’t start." = "KeyTab couldn’t start.";
 
 /* Onboarding popover */
 "KeyTab is ready" = "KeyTab is ready";
@@ -610,6 +616,9 @@
 
 /* Illustration: window.checklist */
 "Trip list" = "Trip list";
+
+/* Startup recovery */
+"Try again" = "Try again";
 
 /* Onboarding popover */
 "Try it right now" = "Try it right now";

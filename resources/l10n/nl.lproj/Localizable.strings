@@ -51,7 +51,7 @@
 "Cursor follows focus" = "Cursor volgt focus";
 "Customize more…" = "Meer aanpassen…";
 "Dark" = "Donker";
-"Debug tools" = "Foutopsporingstools";
+"Debug Logs" = "Foutopsporingslogboeken";
 "Device Control" = "Apparaatbeheer";
 "Disabled" = "Uitgeschakeld";
 "Do Not Move" = "Niet verplaatsen";
@@ -92,6 +92,8 @@
 "Japan itinerary" = "Reisplan Japan";
 "Japan trip" = "Japan-reis";
 "Keep holding %@ then press %@" = "Houd %@ ingedrukt en druk op %@";
+"KeyTab couldn’t access the keyboard or mouse. You can try again or quit KeyTab." = "KeyTab kon geen toegang krijgen tot het toetsenbord of de muis. Je kunt het opnieuw proberen of KeyTab afsluiten.";
+"KeyTab couldn’t start." = "KeyTab kon niet starten.";
 "KeyTab is ready" = "KeyTab is klaar";
 "KeyTab is running without Screen Recording permissions. %@ won’t show." = "KeyTab werkt zonder toegang voor Schermopname. %@ worden niet weergegeven.";
 "KeyTab on GitHub" = "KeyTab op GitHub";
@@ -202,6 +204,7 @@
 "Trigger" = "Activering";
 "Trip checklist" = "Reislijst";
 "Trip list" = "Reislijst";
+"Try again" = "Opnieuw proberen";
 "Try it right now" = "Probeer het nu";
 "Unassign existing shortcut and continue" = "Bestaande sneltoets vrijmaken en doorgaan";
 "Updates policy" = "Updatebeleid";

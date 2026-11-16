@@ -19,6 +19,11 @@
 #      helper lookups (which hardcode that identifier) work.
 #
 # Re-seals Sparkle.framework at the end — see comment near codesign call.
+#
+# The phase is marked alwaysOutOfDate. Step 2 rewrites PackageFrameworks' Info.plist, so the next
+# incremental build regenerates it and Embed Frameworks replaces Sparkle.framework, dropping the
+# helpers and the seal. Xcode plans this phase before that copy runs, so declared inputs and
+# outputs alone would skip it and leave `codesign --verify --deep --strict` failing.
 set -euo pipefail
 
 SPARKLE_FW="$BUILT_PRODUCTS_DIR/$FRAMEWORKS_FOLDER_PATH/Sparkle.framework"

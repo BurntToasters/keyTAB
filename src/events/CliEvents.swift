@@ -2,23 +2,24 @@
 /// The QA and E2E command port. Debug builds only: a shipped KeyTab exposes no command interface, so no other
 /// process can read window inventory through KeyTab's Accessibility and Screen Recording grants.
 class CliEvents {
-    private static var listening = false
+    private static var messagePort: CFMessagePort?
     static let portName = "\(App.bundleIdentifier).cli"
 
     static func observe() {
-        guard !listening else { return }
-        listening = true
+        guard messagePort == nil else { return }
         var context = CFMessagePortContext(version: 0, info: nil, retain: nil, release: nil, copyDescription: nil)
         if let messagePort = CFMessagePortCreateLocal(nil, portName as CFString, handleEvent, &context, nil),
            let source = CFMessagePortCreateRunLoopSource(nil, messagePort, 0) {
+            self.messagePort = messagePort
             CFRunLoopAddSource(BackgroundWork.cliEventsThread.runLoop, source, .commonModes)
         } else {
             Logger.error { "Can't listen on message port. Is another KeyTab already running?" }
-            // TODO: should we quit or restart here?
-            // It's complex since KeyTab can be restarted sometimes,
-            // and the new instance may coexist with the old for some duration
-            // There is also the case of multiple instances at login
         }
+    }
+
+    static func stop() {
+        if let messagePort { CFMessagePortInvalidate(messagePort) }
+        messagePort = nil
     }
 
     /// Returning nil is not an error the caller can see: a NULL from a message-port callback arrives as a
@@ -280,6 +281,8 @@ class CliServer {
             screens: qaScreens(),
             missionControl: MissionControl.state().rawValue,
             switcherVisible: SwitcherSession.isActive,
+            previewWid: PreviewPanel.qaWindowId,
+            previewPixelSize: PreviewPanel.qaPixelSize,
             selectedIndex: SwitcherSession.current?.selectedIndex,
             selectionCommitCount: selectionCommitCount,
             lastSelectionCommitWid: lastSelectionCommitWid,
@@ -398,6 +401,9 @@ class CliServer {
         /// skipped, and whether a pick may focus — and nothing else reports it.
         var missionControl: String
         var switcherVisible: Bool
+        var previewObservation = true
+        var previewWid: CGWindowID?
+        var previewPixelSize: CGSize?
         var selectedIndex: Int?
         /// DEBUG builds count the selections handed to the focus path. The QA harness snapshots the count
         /// before injecting input, so it can judge a release after the switcher has correctly closed.

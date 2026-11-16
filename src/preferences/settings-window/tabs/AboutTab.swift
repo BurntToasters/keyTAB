@@ -15,7 +15,7 @@ class AboutTab {
             BoldLabel(App.name),
             NSTextField(wrappingLabelWithString: NSLocalizedString("Version", comment: "") + " \(App.version) (\(App.build))"),
             NSTextField(wrappingLabelWithString: App.copyright),
-            NSTextField(wrappingLabelWithString: "KeyTab is a modified fork of AltTab v11.10.1 by Louis Pontoise and contributors; KeyTab modifications began August 2026 from AltTab v11.4.4; not affiliated with or endorsed by the upstream project."),
+            NSTextField(wrappingLabelWithString: "KeyTab is a modified fork of AltTab v11.10.2 by Louis Pontoise and contributors; KeyTab modifications began August 2026 from AltTab v11.4.4; not affiliated with or endorsed by the upstream project."),
             HyperlinkLabel(NSLocalizedString("Source code", comment: ""), App.repository),
             HyperlinkLabel(NSLocalizedString("License", comment: ""), App.licence),
         ], .vertical)

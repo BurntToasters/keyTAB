@@ -25,10 +25,13 @@ git diff --binary refs/upstream/vOLD refs/upstream/vNEW -- . \
   :!src/secondary-windows/FeedbackWindow.swift :!resources/icons :!resources/pro-rabbit.png :!changelog.md :!docs/contributors.md \
   :!config/release.xcconfig :!Info.plist :!resources/illustrations :!resources/native-illustrations :!resources/svg-illustrations \
   :!scripts/assets :!ai :!src/preferences/PreferencesMigrationsTests.swift \
+  :!README.md :!scripts/update_readme_and_website.sh \
   | sed 's#alt-tab-macos\.xcodeproj/#KeyTab.xcodeproj/#g' > /path/outside/repo/upstream-vOLD-vNEW.patch
 ```
 
 Write the patch outside the repository. If `git apply` reports a file as missing from the index, add that file to the patch by hand from `refs/upstream/vNEW`.
+
+`git apply` is all-or-nothing: one file that fails aborts the whole patch. This happens when upstream deletes or renames a file that KeyTab has modified (11.10.2 replaced `DebugWindow.swift` with `DebugLogsWindow.swift`). Add both paths as `:!` exclusions, apply, then `git rm` the old file, copy the new one from `refs/upstream/vNEW`, and carry KeyTab's edits over by hand. In the project file, keep the object IDs and change only the names in the comments.
 
 ## 3. Apply and resolve
 
@@ -36,7 +39,9 @@ Write the patch outside the repository. If `git apply` reports a file as missing
 git apply --3way /path/outside/repo/upstream-vOLD-vNEW.patch
 ```
 
-Resolve each conflict by the rules above. Keep KeyTab's build settings, target and product names, bundle identifier and config file references. Take upstream's non-paywall build-setting and build-phase changes when they do not conflict. Remove references to files that the sync deleted, and add references to new files in `KeyTab.xcodeproj/project.pbxproj`. `node scripts/validate.mjs` checks that every Swift file has a reference and that no reference points to a missing file.
+Resolve each conflict by the rules above. Upstream also threads Pro calls through shared files that the filter cannot exclude (in 11.10.2: `App.swift`, `QaLifecycle.swift`, `StartupRecovery.swift`, `PreferencesMigrations.swift` and `UsageStats.swift`). Remove those lines, including ones that applied without a conflict; step 5 finds what was missed. Keep KeyTab's build settings, target and product names, bundle identifier and config file references. Take upstream's non-paywall build-setting and build-phase changes when they do not conflict. Remove references to files that the sync deleted, and add references to new files in `KeyTab.xcodeproj/project.pbxproj`. `node scripts/validate.mjs` checks that every Swift file has a reference and that no reference points to a missing file.
+
+Do not hand-merge `resources/l10n/Localizable.strings`. Take KeyTab's side, then regenerate it from source with `bash scripts/l10n/extract_l10n_strings.sh` once the Swift is final. In each `*.lproj/Localizable.strings`, keep only the keys the source still uses, written without comments and sorted case-insensitively, and drop upstream's Pro, license and feedback strings. Take new translations from `refs/upstream/vNEW` with "AltTab" changed to "KeyTab" in both key and value. `python3 scripts/l10n/validate_localizations.py` checks that every catalog matches the source.
 
 ## 4. Illustrations
 
@@ -58,7 +63,7 @@ python3 scripts/assets/compile_illustrations.py --check
 
 3. Declarations dropped by the merge but still referenced: build the list of identifiers the patch removed and grep for their uses.
 4. `npm run validate` and `node --test scripts/tests/*.test.mjs`.
-5. CI on macOS for the Swift build and the unit tests. Linux hosts cannot compile the app.
+5. On macOS: `npm run test:all` and `npm run build:release-smoke`; the Release compile catches Debug-only symbols that a Debug build accepts. Otherwise CI on macOS. Linux hosts cannot compile the app.
 
 ## 6. Bump the base version
 

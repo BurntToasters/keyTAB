@@ -51,7 +51,7 @@
 "Cursor follows focus" = "カーソルがフォーカスに従う";
 "Customize more…" = "さらにカスタマイズ…";
 "Dark" = "ダーク";
-"Debug tools" = "デバッグツール";
+"Debug Logs" = "デバッグログ";
 "Device Control" = "デバイスの制御";
 "Disabled" = "無効";
 "Do Not Move" = "移動しない";
@@ -92,6 +92,8 @@
 "Japan itinerary" = "日本旅行の日程";
 "Japan trip" = "日本旅行";
 "Keep holding %@ then press %@" = "%@を押したまま%@を押す";
+"KeyTab couldn’t access the keyboard or mouse. You can try again or quit KeyTab." = "KeyTabがキーボードまたはマウスにアクセスできませんでした。再試行するか、KeyTabを終了してください。";
+"KeyTab couldn’t start." = "KeyTabを起動できませんでした。";
 "KeyTab is ready" = "KeyTab の準備ができました";
 "KeyTab is running without Screen Recording permissions. %@ won’t show." = "KeyTab は画面収録の権限なしで動作しています。%@は表示されません。";
 "KeyTab on GitHub" = "GitHub の KeyTab";
@@ -202,6 +204,7 @@
 "Trigger" = "トリガー";
 "Trip checklist" = "旅行の持ち物";
 "Trip list" = "旅行リスト";
+"Try again" = "再試行";
 "Try it right now" = "今すぐ試してみましょう";
 "Unassign existing shortcut and continue" = "既存のショートカットを解除して続行";
 "Updates policy" = "アップデートのポリシー";
