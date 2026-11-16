@@ -2,8 +2,8 @@
   "name": "keytab",
   "private": true,
   "type": "module",
-  "version": "1.0.0",
-  "buildNumber": 5,
+  "version": "1.0.1",
+  "buildNumber": 6,
   "license": "GPL-3.0-only",
   "engines": {
     "node": ">=22.12"

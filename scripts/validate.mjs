@@ -44,7 +44,7 @@ function swiftStringLiterals(line) {
 
 export function swiftRuntimeBrandingLines(source) {
   return source.split("\n").flatMap((line, index) => {
-    if (line.includes("modified fork of AltTab v11.10.1")) return [];
+    if (line.includes("modified fork of AltTab v11.10.2")) return [];
     return swiftStringLiterals(line).some((literal) => literal.includes("AltTab")) ? [index + 1] : [];
   });
 }

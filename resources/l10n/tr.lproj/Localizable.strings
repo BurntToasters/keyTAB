@@ -51,7 +51,7 @@
 "Cursor follows focus" = "İmleç odağı izler";
 "Customize more…" = "Daha fazla özelleştir…";
 "Dark" = "Karanlık";
-"Debug tools" = "Hata ayıklama araçları";
+"Debug Logs" = "Hata ayıklama günlükleri";
 "Device Control" = "Aygıt Denetimi";
 "Disabled" = "Devre dışı";
 "Do Not Move" = "Taşıma";
@@ -92,6 +92,8 @@
 "Japan itinerary" = "Japonya gezi planı";
 "Japan trip" = "Japonya gezisi";
 "Keep holding %@ then press %@" = "%@ tuşunu basılı tutarken %@ tuşuna basın";
+"KeyTab couldn’t access the keyboard or mouse. You can try again or quit KeyTab." = "KeyTab klavyeye veya fareye erişemedi. Yeniden deneyebilir veya KeyTab’dan çıkabilirsiniz.";
+"KeyTab couldn’t start." = "KeyTab başlatılamadı.";
 "KeyTab is ready" = "KeyTab hazır";
 "KeyTab is running without Screen Recording permissions. %@ won’t show." = "KeyTab, Ekran Kaydı izinleri olmadan çalışıyor. %@ gösterilmeyecek.";
 "KeyTab on GitHub" = "GitHub'da KeyTab";
@@ -202,6 +204,7 @@
 "Trigger" = "Tetikleyici";
 "Trip checklist" = "Gezi listesi";
 "Trip list" = "Gezi listesi";
+"Try again" = "Yeniden dene";
 "Try it right now" = "Hemen deneyin";
 "Unassign existing shortcut and continue" = "Mevcut kısayolun atamasını kaldır ve devam et";
 "Updates policy" = "Güncelleme ilkesi";

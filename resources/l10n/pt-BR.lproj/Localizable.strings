@@ -51,7 +51,7 @@
 "Cursor follows focus" = "Cursor segue o foco";
 "Customize more…" = "Personalizar mais…";
 "Dark" = "Escura";
-"Debug tools" = "Ferramentas de depuração";
+"Debug Logs" = "Logs de depuração";
 "Device Control" = "Controle do Dispositivo";
 "Disabled" = "Desativado";
 "Do Not Move" = "Não Mover";
@@ -92,6 +92,8 @@
 "Japan itinerary" = "Roteiro no Japão";
 "Japan trip" = "Tour no Japão";
 "Keep holding %@ then press %@" = "Continue segurando %@ e pressione %@";
+"KeyTab couldn’t access the keyboard or mouse. You can try again or quit KeyTab." = "O KeyTab não conseguiu acessar o teclado ou o mouse. Você pode tentar novamente ou encerrar o KeyTab.";
+"KeyTab couldn’t start." = "Não foi possível iniciar o KeyTab.";
 "KeyTab is ready" = "O KeyTab está pronto";
 "KeyTab is running without Screen Recording permissions. %@ won’t show." = "O KeyTab está em execução sem permissão de Gravação de Tela. %@ não serão exibidas.";
 "KeyTab on GitHub" = "KeyTab no GitHub";
@@ -202,6 +204,7 @@
 "Trigger" = "Acionador";
 "Trip checklist" = "Lista de viagem";
 "Trip list" = "Na mala";
+"Try again" = "Tentar novamente";
 "Try it right now" = "Experimente agora";
 "Unassign existing shortcut and continue" = "Remover atalho existente e continuar";
 "Updates policy" = "Política de atualizações";

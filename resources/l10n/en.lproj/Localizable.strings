@@ -51,7 +51,7 @@
 "Cursor follows focus" = "Cursor follows focus";
 "Customize more…" = "Customize more…";
 "Dark" = "Dark";
-"Debug tools" = "Debug tools";
+"Debug Logs" = "Debug Logs";
 "Device Control" = "Device Control";
 "Disabled" = "Disabled";
 "Do Not Move" = "Do Not Move";
@@ -92,6 +92,8 @@
 "Japan itinerary" = "Japan itinerary";
 "Japan trip" = "Japan trip";
 "Keep holding %@ then press %@" = "Keep holding %@ then press %@";
+"KeyTab couldn’t access the keyboard or mouse. You can try again or quit KeyTab." = "KeyTab couldn’t access the keyboard or mouse. You can try again or quit KeyTab.";
+"KeyTab couldn’t start." = "KeyTab couldn’t start.";
 "KeyTab is ready" = "KeyTab is ready";
 "KeyTab is running without Screen Recording permissions. %@ won’t show." = "KeyTab is running without Screen Recording permissions. %@ won’t show.";
 "KeyTab on GitHub" = "KeyTab on GitHub";
@@ -202,6 +204,7 @@
 "Trigger" = "Trigger";
 "Trip checklist" = "Trip checklist";
 "Trip list" = "Trip list";
+"Try again" = "Try again";
 "Try it right now" = "Try it right now";
 "Unassign existing shortcut and continue" = "Unassign existing shortcut and continue";
 "Updates policy" = "Updates policy";

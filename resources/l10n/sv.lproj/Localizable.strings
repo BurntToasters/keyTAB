@@ -51,7 +51,7 @@
 "Cursor follows focus" = "Markören följer fokus";
 "Customize more…" = "Anpassa mer…";
 "Dark" = "Mörk";
-"Debug tools" = "Felsökningsverktyg";
+"Debug Logs" = "Felsökningsloggar";
 "Device Control" = "Enhetskontroll";
 "Disabled" = "Inaktiverad";
 "Do Not Move" = "Flytta inte";
@@ -92,6 +92,8 @@
 "Japan itinerary" = "Resplan för Japan";
 "Japan trip" = "Japan-resa";
 "Keep holding %@ then press %@" = "Fortsätt hålla ned %@ och tryck på %@";
+"KeyTab couldn’t access the keyboard or mouse. You can try again or quit KeyTab." = "KeyTab kunde inte komma åt tangentbordet eller musen. Du kan försöka igen eller avsluta KeyTab.";
+"KeyTab couldn’t start." = "KeyTab kunde inte starta.";
 "KeyTab is ready" = "KeyTab är redo";
 "KeyTab is running without Screen Recording permissions. %@ won’t show." = "KeyTab körs utan behörighet för Skärminspelning. %@ visas inte.";
 "KeyTab on GitHub" = "KeyTab på GitHub";
@@ -202,6 +204,7 @@
 "Trigger" = "Utlösare";
 "Trip checklist" = "Reselista";
 "Trip list" = "Reselista";
+"Try again" = "Försök igen";
 "Try it right now" = "Testa nu direkt";
 "Unassign existing shortcut and continue" = "Ta bort befintligt kortkommando och fortsätt";
 "Updates policy" = "Policy för uppdateringar";

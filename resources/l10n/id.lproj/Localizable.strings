@@ -51,7 +51,7 @@
 "Cursor follows focus" = "Kursor mengikuti fokus";
 "Customize more…" = "Sesuaikan lebih lanjut…";
 "Dark" = "Gelap";
-"Debug tools" = "Alat debug";
+"Debug Logs" = "Log debug";
 "Device Control" = "Kontrol Perangkat";
 "Disabled" = "Dinonaktifkan";
 "Do Not Move" = "Jangan Pindahkan";
@@ -92,6 +92,8 @@
 "Japan itinerary" = "Rute Jepang";
 "Japan trip" = "Wisata Jepang";
 "Keep holding %@ then press %@" = "Tetap tahan %@ lalu tekan %@";
+"KeyTab couldn’t access the keyboard or mouse. You can try again or quit KeyTab." = "KeyTab tidak dapat mengakses keyboard atau mouse. Anda dapat mencoba lagi atau keluar dari KeyTab.";
+"KeyTab couldn’t start." = "KeyTab tidak dapat dimulai.";
 "KeyTab is ready" = "KeyTab sudah siap";
 "KeyTab is running without Screen Recording permissions. %@ won’t show." = "KeyTab berjalan tanpa izin Perekaman Layar. %@ tidak akan ditampilkan.";
 "KeyTab on GitHub" = "KeyTab di GitHub";
@@ -202,6 +204,7 @@
 "Trigger" = "Pemicu";
 "Trip checklist" = "Daftar perjalanan";
 "Trip list" = "Bawaan";
+"Try again" = "Coba lagi";
 "Try it right now" = "Coba sekarang";
 "Unassign existing shortcut and continue" = "Hapus penetapan pintasan yang ada dan lanjutkan";
 "Updates policy" = "Kebijakan pembaruan";

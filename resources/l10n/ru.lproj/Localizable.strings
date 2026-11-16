@@ -51,7 +51,7 @@
 "Cursor follows focus" = "Курсор следует за фокусом";
 "Customize more…" = "Дополнительная настройка…";
 "Dark" = "Тёмная";
-"Debug tools" = "Инструменты отладки";
+"Debug Logs" = "Журналы отладки";
 "Device Control" = "Управление устройством";
 "Disabled" = "Отключено";
 "Do Not Move" = "Не перемещать";
@@ -92,6 +92,8 @@
 "Japan itinerary" = "Маршрут: Япония";
 "Japan trip" = "Тур: Япония";
 "Keep holding %@ then press %@" = "Удерживайте %@ и нажмите %@";
+"KeyTab couldn’t access the keyboard or mouse. You can try again or quit KeyTab." = "KeyTab не удалось получить доступ к клавиатуре или мыши. Вы можете повторить попытку или выйти из KeyTab.";
+"KeyTab couldn’t start." = "Не удалось запустить KeyTab.";
 "KeyTab is ready" = "KeyTab готов";
 "KeyTab is running without Screen Recording permissions. %@ won’t show." = "KeyTab работает без разрешения на запись экрана. %@ не будут отображаться.";
 "KeyTab on GitHub" = "KeyTab на GitHub";
@@ -202,6 +204,7 @@
 "Trigger" = "Триггер";
 "Trip checklist" = "Список в дорогу";
 "Trip list" = "В дорогу";
+"Try again" = "Повторить попытку";
 "Try it right now" = "Попробуйте прямо сейчас";
 "Unassign existing shortcut and continue" = "Снять текущее сочетание и продолжить";
 "Updates policy" = "Политика обновлений";

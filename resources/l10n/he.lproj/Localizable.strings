@@ -51,7 +51,7 @@
 "Cursor follows focus" = "הסמן עוקב אחר המיקוד";
 "Customize more…" = "התאמה אישית נוספת…";
 "Dark" = "כהה";
-"Debug tools" = "כלי איתור באגים";
+"Debug Logs" = "יומני איתור באגים";
 "Device Control" = "שליטה במכשיר";
 "Disabled" = "מושבת";
 "Do Not Move" = "אל תעביר";
@@ -92,6 +92,8 @@
 "Japan itinerary" = "מסלול ביפן";
 "Japan trip" = "טיול ביפן";
 "Keep holding %@ then press %@" = "המשיכו להחזיק את %@ ואז לחצו על %@";
+"KeyTab couldn’t access the keyboard or mouse. You can try again or quit KeyTab." = "ל-KeyTab לא הייתה גישה למקלדת או לעכבר. אפשר לנסות שוב או לצאת מ-KeyTab.";
+"KeyTab couldn’t start." = "לא ניתן היה להפעיל את KeyTab.";
 "KeyTab is ready" = "KeyTab מוכן";
 "KeyTab is running without Screen Recording permissions. %@ won’t show." = "KeyTab פועל ללא הרשאות הקלטת מסך. %@ לא יוצגו.";
 "KeyTab on GitHub" = "KeyTab ב-GitHub";
@@ -202,6 +204,7 @@
 "Trigger" = "טריגר";
 "Trip checklist" = "רשימת נסיעה";
 "Trip list" = "רשימת ציוד";
+"Try again" = "ניסיון נוסף";
 "Try it right now" = "נסה עכשיו";
 "Unassign existing shortcut and continue" = "בטל שיוך של קיצור דרך קיים והמשך";
 "Updates policy" = "מדיניות עדכונים";
